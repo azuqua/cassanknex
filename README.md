@@ -5,7 +5,7 @@
 
 [npm-image]: https://img.shields.io/npm/v/cassanknex.svg?style=flat
 [npm-url]: https://npmjs.org/package/cassanknex
-[inch-image]: http://inch-ci.org/github/azuqua/cassanknex.svg?branch=master
+[inch-image]: http://inch-ci.org/github/azuqua/cassanknex.svg?branch=master&style=shields
 [inch-url]: http://inch-ci.org/github/azuqua/cassanknex
 [travis-image]: https://travis-ci.org/azuqua/cassanknex.svg?branch=master&style=flat
 [travis-url]: https://travis-ci.org/azuqua/cassanknex
