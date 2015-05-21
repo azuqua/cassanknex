@@ -17,7 +17,7 @@ A CLQ query builder written in the spirit of [Knex](knexjs.org) for [CQL 3.1.x](
 ## Why
 
 CQL was purposefully designed to be SQL-esq to enhance ease of access for those familiar w/ relational databases
-while Knex is the canonical NodeJS query builder for SQL dialects; however, even given the lexical similarities, the differences
+while Knex is the canonical NodeJS query builder for SQL dialects; however, even given the lexical similarities, the difference
 between the usage of CQL vs SQL is significant enough that adding CQL as yet another Knex SQL dialect does not make sense.
 Thus, CassanKnex.
 
