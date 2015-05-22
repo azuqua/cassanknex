@@ -192,6 +192,7 @@ qb.insert(values)
 - createColumnFamilyIfNotExists
 - dropColumnFamily
 - dropColumnFamilyIfExists
+- createIndex
 
 #### *For keyspace queries*:
 - alterKeyspace

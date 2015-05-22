@@ -36,6 +36,9 @@ module.exports = {
     arguments.length = 2;
     return this._wrapMethod(component, "alterColumnFamily", _getAlterColumnFamily(), arguments);
   },
+  createIndex: function () {
+    return this._wrapMethod(component, "createIndex", _getCreateIndex(), arguments);
+  },
   dropColumnFamily: function () {
     if (arguments.length === 1) {
       arguments[1] = null; // set stand in keyspace value
@@ -106,6 +109,33 @@ function _getAlterColumnFamily() {
     }
     cql += _compileWith(this);
     cql += _compileAlter(this);
+
+    cql += ";";
+    this.query({
+      cql: cql
+    });
+
+    return this;
+  };
+}
+
+function _getCreateIndex() {
+
+  return function (columnFamily, indexName, onColumn) {
+
+    var compiling = this.getCompiling("createIndex", {
+      columnFamily: columnFamily,
+      indexName: indexName,
+      onColumn: onColumn
+    });
+
+    if (compiling.value.columnFamily)
+      this._setColumnFamily(compiling.value.columnFamily);
+
+    var createStatement = "CREATE INDEX"
+      , cql = [createStatement, compiling.value.indexName, "ON"].join(" ") +
+        " " + [this.keyspace(), this.columnFamily()].join(".") +
+        " " + ["(", compiling.value.onColumn, ")"].join(" ");
 
     cql += ";";
     this.query({

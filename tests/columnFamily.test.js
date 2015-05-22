@@ -160,6 +160,18 @@ describe("ColumnFamilyMethods", function () {
     assert(_cql === cql, "Expected compilation: '" + cql + "' but compiled: " + _cql);
   });
 
+  // CREATE INDEX
+
+  it("should compile an add column alter column family statement", function () {
+
+    var cql = "CREATE INDEX foo_key ON cassanKnexy.columnFamily ( foo );"
+      , qb = cassanKnex("cassanKnexy")
+        .createIndex("columnFamily", "foo_key", "foo");
+
+    var _cql = qb.cql();
+    assert(_cql === cql, "Expected compilation: '" + cql + "' but compiled: " + _cql);
+  });
+
   // DROP COLUMN FAMILY
 
   it("should compile a drop column family statement", function () {
