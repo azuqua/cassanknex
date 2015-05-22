@@ -249,3 +249,9 @@ qb.insert(values)
 - withNetworkTopologyStrategy
 - withSimpleStrategy
 - withDurableWrites
+
+### ChangeLog
+
+- 1.1.0
+  - Add QueryCommand `createIndex`.
+  - Add QueryModifier `allowFiltering`.

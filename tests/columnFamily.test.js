@@ -162,7 +162,7 @@ describe("ColumnFamilyMethods", function () {
 
   // CREATE INDEX
 
-  it("should compile an add column alter column family statement", function () {
+  it("should compile a create index statement", function () {
 
     var cql = "CREATE INDEX foo_key ON cassanKnexy.columnFamily ( foo );"
       , qb = cassanKnex("cassanKnexy")
