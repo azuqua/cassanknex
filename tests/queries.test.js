@@ -67,6 +67,17 @@ describe("QueryMethods", function () {
     var _cql = qb.cql();
     assert(_cql === cql, "Expected compilation: '" + cql + "' but compiled: " + _cql);
   });
+  it("should compile an 'allow filtering' simple 'select' query string", function () {
+
+    var cql = "SELECT id FROM cassanKnexy.columnFamily ALLOW FILTERING;"
+      , qb = cassanKnex("cassanKnexy");
+    qb.select("id")
+      .allowFiltering()
+      .from("columnFamily");
+
+    var _cql = qb.cql();
+    assert(_cql === cql, "Expected compilation: '" + cql + "' but compiled: " + _cql);
+  });
   it("should compile a select query string", function () {
 
     var cql = "SELECT id,foo,bar,baz FROM cassanKnexy.columnFamily WHERE id = ? OR id in (?, ?) OR baz = ? AND foo IN (?, ?) LIMIT ?;"

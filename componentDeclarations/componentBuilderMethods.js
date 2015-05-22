@@ -58,6 +58,8 @@ module.exports = {
     "usingTTL": {"name": "usingTTL", "grouping": "using"},
     "usingTimestamp": {"name": "usingTimestamp", "grouping": "using"},
 
-    "limit": {"name": "limit", "grouping": "limit"}
+    "limit": {"name": "limit", "grouping": "limit"},
+
+    "allowFiltering": {"name": "allowFiltering", "grouping": "allow"}
   }
 };

@@ -1,7 +1,7 @@
 {
   "name": "cassanknex",
   "version": "1.0.0",
-  "description": "A CLQ query builder written in the spirit of Knex.",
+  "description": "A CQL query builder written in the spirit of Knex.",
   "main": "index.js",
   "homepage": "https://github.com/azuqua/cassanknex",
   "repository": {

@@ -38,6 +38,11 @@ _.each(Object.keys(methods), function (method) {
         return this._wrapMethod(null, methods[method].name, _getLimit(methods[method].name), arguments);
       };
       break;
+    case "allow":
+      queryBuilder[method] = function () {
+        return this._wrapMethod(null, methods[method].name, _getAllowFiltering(methods[method].name), arguments);
+      };
+      break;
   }
 });
 
@@ -96,6 +101,14 @@ function _getUsing(type) {
 function _getLimit() {
   return function (limit) {
     this._single.limit = {grouping: "limit", limit: limit};
+
+    return this;
+  };
+}
+
+function _getAllowFiltering() {
+  return function () {
+    this._single.allowFiltering = {grouping: "allow", allow: true};
 
     return this;
   };

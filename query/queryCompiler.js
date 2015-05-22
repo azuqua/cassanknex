@@ -90,6 +90,10 @@ function _getSelect() {
     if (_.has(this._single, "limit")) {
       cql += " LIMIT " + formatter.parameterize(this._single.limit.limit, this);
     }
+    if (_.has(this._single, "allowFiltering") && this._single.allowFiltering.allow) {
+      cql += " ALLOW FILTERING";
+    }
+
     this.query({
       cql: cql + ";"
     });
