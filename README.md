@@ -12,7 +12,7 @@
 
 # CassanKnex
 
-A CLQ query builder written in the spirit of [Knex](knexjs.org) for [CQL 3.1.x](http://docs.datastax.com/en/cql/3.1/cql/cql_reference/cqlReferenceTOC.html).
+A CQL query builder written in the spirit of [Knex](knexjs.org) for [CQL 3.1.x](http://docs.datastax.com/en/cql/3.1/cql/cql_reference/cqlReferenceTOC.html).
 
 ## Why
 
