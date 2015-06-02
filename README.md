@@ -23,7 +23,7 @@ Thus, CassanKnex.
 
 ## Usage
 
-CassanKnex can be used to execute queries against a Cassandra cluster or as a simple CQL statement generator via the following relative instantiations:
+CassanKnex can be used to execute queries against a Cassandra cluster via [`cassandra-driver`](https://github.com/datastax/nodejs-driver) (the official DataStax NodeJS driver) or as a simple CQL statement generator via the following relative instantiations:
 
 - As a query executor
 ```js
