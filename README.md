@@ -14,7 +14,7 @@
 
 # CassanKnex
 
-A CQL query builder written in the spirit of [Knex](knexjs.org) for [CQL 3.1.x](http://docs.datastax.com/en/cql/3.1/cql/cql_reference/cqlReferenceTOC.html).
+An Apache Cassandra CQL query builder with support for the DataStax NodeJS driver, written in the spirit of [Knex](knexjs.org) for [CQL 3.1.x](http://docs.datastax.com/en/cql/3.1/cql/cql_reference/cqlReferenceTOC.html).
 
 ## Why
 
@@ -30,7 +30,7 @@ CassanKnex can be used to execute queries against a Cassandra cluster via [`cass
 ### As a query executor
 
 Execution of a given query is performed by invoking either the `exec` or `stream` methods
-(which are straight pass throughs to the DataStax driver's `execute` and `stream` [methods](http://docs.datastax.com/en/drivers/nodejs/2.1/Client.html)).
+(which are straight pass throughs to the DataStax driver's `execute` and `stream` [methods](http://docs.datastax.com/en/drivers/nodejs/2.1/Client.html), respectively).
 
 ```js
 var cassanKnex = require("cassanknex")({
