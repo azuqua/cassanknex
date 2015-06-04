@@ -19,7 +19,8 @@ describe("yolo", function () {
 
   var cassanKnex
     , keyspace = "cassanknexy"
-    , columnFamily = "isis";
+    , columnFamily = "isis"
+    , rows = 50;
 
   before(function (done) {
 
@@ -37,11 +38,21 @@ describe("yolo", function () {
     });
   });
 
-  it("should create a keyspace and table and execute several insertions into the table", function (done) {
+  it("should drop the keyspace (if exists) 'cassanknexy' recreate it, " +
+    "build a sample table and execute several insertions into that table, " +
+    "and read records inserted using both the 'exec' and 'stream' methods.", function (done) {
 
     this.timeout(0);
 
     async.series([
+      // test drop keyspace
+      function (next) {
+
+        var qb = cassanKnex()
+          .dropKeyspaceIfExists(keyspace)
+          .exec(next);
+      },
+      // test create keyspace
       function (next) {
 
         var qb = cassanKnex()
@@ -49,6 +60,7 @@ describe("yolo", function () {
           .withSimpleStrategy(1)
           .exec(next);
       },
+      // test create column family
       function (next) {
 
         var qb = cassanKnex(keyspace)
@@ -59,10 +71,11 @@ describe("yolo", function () {
           .primary("id", "timestamp")
           .exec(next);
       },
+      // test simple insert
       function (next) {
 
-        var items = _.map(Array(50), function () {
-          return {id: uuid.v4(), timestamp: Date.now(), data: ""};
+        var items = _.map(Array(rows), function () {
+          return {id: uuid.v4(), timestamp: new Date(), data: ""};
         });
 
         async.each(items, function (item, done) {
@@ -72,6 +85,49 @@ describe("yolo", function () {
             .into(columnFamily)
             .exec(done);
         }, next);
+      },
+      // test the execution method
+      function (next) {
+
+        var qb = cassanKnex(keyspace)
+          .select()
+          .from(columnFamily)
+          .exec(function (err, resp) {
+            assert(!err, err);
+            assert(resp.rowLength === rows, "Must have read as many rows as was inserted");
+            next(err);
+          });
+      },
+      // test the stream method
+      function (next) {
+
+        var onReadable = function () {
+            // Readable is emitted as soon a row is received and parsed
+            var row;
+            while (row = this.read()) {
+              assert(_.has(row, "id"), "Response must contain the id.");
+            }
+          }
+          , onEnd = function () {
+            // Stream ended, there aren't any more rows
+            next();
+          }
+          , onError = function (err) {
+            // Something went wrong: err is a response error from Cassandra
+            assert(!err, "query error", err);
+            next(err);
+          };
+
+        var qb = cassanKnex(keyspace)
+          .select()
+          .from(columnFamily);
+
+        // Invoke the stream method
+        qb.stream({
+          "readable": onReadable,
+          "end": onEnd,
+          "error": onError
+        });
       }
     ], function (err) {
 
