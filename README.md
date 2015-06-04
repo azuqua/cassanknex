@@ -27,7 +27,11 @@ Thus, CassanKnex.
 
 CassanKnex can be used to execute queries against a Cassandra cluster via [`cassandra-driver`][cassandra-driver-url] (the official DataStax NodeJS driver) or as a simple CQL statement generator via the following relative instantiations:
 
-- As a query executor
+### As a query executor
+
+Execution of a given query is performed by invoking either the `exec` or `stream` methods
+(which are straight pass throughs to the DataStax driver's `execute` and `stream` [methods](http://docs.datastax.com/en/drivers/nodejs/2.1/Client.html)).
+
 ```js
 var cassanKnex = require("cassanknex")({
   connection: {
@@ -80,7 +84,10 @@ cassanKnex.on("ready", function (err) {
 });
 ```
 
-- As a query generator
+### As a query generator
+
+Compiled CQL statements can be retrieved at any time via the `cql` method.
+
 ```js
 var cassanKnex = require("cassanknex")();
 var qb = cassanKnex.QUERY_COMMAND()
@@ -96,7 +103,7 @@ Where `QUERY_COMMAND` and `QUERY_MODIFIER` are among the list of available [Quer
 
 While fuller documentation for all methods is in the works, **the [test files](./tests) provide thorough examples as to method usage**.
 
-### Quickstart
+#### Quickstart
 
 
 ```js
@@ -143,7 +150,7 @@ cassanKnex.on("ready", function (err) {
 
 ```
 
-### Debugging
+#### Debugging
 
 To enable `debug` mode pass `{ debug: true }` into the CassanKnex `require` statement, e.g.
 
@@ -206,15 +213,15 @@ qb.insert(values)
   ... }
 ```
 
-### <a name="QueryCommands"></a>Query Commands
+#### <a name="QueryCommands"></a>Query Commands
 
-#### *For standard queries*:
+##### *For standard queries*:
 - delete
 - insert
 - select
 - update
 
-#### *For column family queries*:
+##### *For column family queries*:
 - alterColumnFamily
 - createColumnFamily
 - createColumnFamilyIfNotExists
@@ -222,16 +229,16 @@ qb.insert(values)
 - dropColumnFamilyIfExists
 - createIndex
 
-#### *For keyspace queries*:
+##### *For keyspace queries*:
 - alterKeyspace
 - createKeyspace
 - createKeyspaceIfNotExists
 - dropKeyspace
 - dropKeyspaceIfExists
 
-### <a name="QueryModifiers"></a>Query Modifiers
+#### <a name="QueryModifiers"></a>Query Modifiers
 
-#### *For standard queries*:
+##### *For standard queries*:
 - from
 - into
 - where
@@ -245,7 +252,7 @@ qb.insert(values)
 - usingTimestamp
 - limit
 
-#### *For column family queries*:
+##### *For column family queries*:
 - alter
 - drop
 - rename
@@ -273,12 +280,12 @@ qb.insert(values)
 - withCompaction
 - withClusteringOrderBy
 
-#### *For keyspace queries*:
+##### *For keyspace queries*:
 - withNetworkTopologyStrategy
 - withSimpleStrategy
 - withDurableWrites
 
-### ChangeLog
+#### ChangeLog
 
 - 1.2.0
   - Add support for the DataStax driver `stream` method.
