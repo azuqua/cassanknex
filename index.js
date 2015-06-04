@@ -89,7 +89,8 @@ CassanKnex.initialize = function (config) {
           .on("error", onError);
       }
       else {
-        cb(new Error("Cassandra client is not initialized."));
+        console.error("Cassandra client is not initialized.");
+        onError(new Error("Cassandra client is not initialized."));
       }
 
       // maintain chain
