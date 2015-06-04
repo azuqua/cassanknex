@@ -10,7 +10,7 @@ An Apache Cassandra CQL query builder with support for the DataStax NodeJS drive
 ## Index
 
 - [Why Cassanknex](#WhyCassanknex)
-- [Usage(#Usage)
+- [Usage](#Usage)
   - [Generating Queries](#GeneratingQueries)
   - [Executing Queries](#ExecutingQueries)
   - [Quick Start](#Quickstart)
