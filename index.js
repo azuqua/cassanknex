@@ -40,6 +40,7 @@ CassanKnex.initialize = function (config) {
       qb.use(keyspace);
     }
 
+    // create the exec function for a pass through to the datastax driver
     qb.exec = function (options, cb) {
 
       var _options = _.isFunction(options) ? {} : options
@@ -62,6 +63,30 @@ CassanKnex.initialize = function (config) {
       if (cassandra !== null && cassandra.connected) {
         var cql = qb.cql();
         cassandra.execute(cql, qb.bindings(), _options, _cb);
+      }
+      else {
+        cb(new Error("Cassandra client is not initialized."));
+      }
+
+      // maintain chain
+      return qb;
+    };
+
+    // create the stream function for a pass through to the datastax driver
+    qb.stream = function (options, cbs) {
+
+      var _options = _.isObject(cbs) ? options : {}
+        , _cbs = _.isObject(cbs) ? cbs : options
+        , onReadable = _cbs.readable || _.noop
+        , onEnd = _cbs.end || _.noop
+        , onError = _cbs.error || _.noop;
+
+      if (cassandra !== null && cassandra.connected) {
+        var cql = qb.cql();
+        cassandra.stream(cql, qb.bindings())
+          .on("readable", onReadable)
+          .on("end", onEnd)
+          .on("error", onError);
       }
       else {
         cb(new Error("Cassandra client is not initialized."));

@@ -10,6 +10,8 @@
 [travis-image]: https://travis-ci.org/azuqua/cassanknex.svg?branch=master&style=flat
 [travis-url]: https://travis-ci.org/azuqua/cassanknex
 
+[cassandra-driver-url]: https://github.com/datastax/nodejs-driver
+
 # CassanKnex
 
 A CQL query builder written in the spirit of [Knex](knexjs.org) for [CQL 3.1.x](http://docs.datastax.com/en/cql/3.1/cql/cql_reference/cqlReferenceTOC.html).
@@ -23,7 +25,7 @@ Thus, CassanKnex.
 
 ## Usage
 
-CassanKnex can be used to execute queries against a Cassandra cluster via [`cassandra-driver`](https://github.com/datastax/nodejs-driver) (the official DataStax NodeJS driver) or as a simple CQL statement generator via the following relative instantiations:
+CassanKnex can be used to execute queries against a Cassandra cluster via [`cassandra-driver`][cassandra-driver-url] (the official DataStax NodeJS driver) or as a simple CQL statement generator via the following relative instantiations:
 
 - As a query executor
 ```js
@@ -46,8 +48,34 @@ cassanKnex.on("ready", function (err) {
           .
           .QUERY_MODIFIER_N();
 
+  // pass through to the underlying DataStax nodejs-driver 'execute' method
   qb.exec(function(err, res) {
     // do something w/ your query response
+  });
+
+  // or pass through to the underlying DataStax nodejs-driver 'stream' method
+  var onReadable = function () {
+      // Readable is emitted as soon a row is received and parsed
+      var row;
+      while (row = this.read()) {
+        console.log(row);
+        // do something w/ the row response
+      }
+    }
+    , onEnd = function () {
+      // Stream ended, there aren't any more rows
+      console.log("query finished");
+    }
+    , onError = function (err) {
+      // Something went wrong: err is a response error from Cassandra
+      console.log("query error", err);
+    };
+
+  // Invoke the stream method
+  qb.stream({
+    "readable": onReadable,
+    "end": onEnd,
+    "error": onError
   });
 });
 ```
@@ -252,6 +280,8 @@ qb.insert(values)
 
 ### ChangeLog
 
+- 1.2.0
+  - Add support for the DataStax driver `stream` method.
 - 1.1.0
   - Add QueryCommand `createIndex`.
   - Add QueryModifier `allowFiltering`.
