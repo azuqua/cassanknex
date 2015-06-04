@@ -3,34 +3,60 @@
 [![Inline docs][inch-image]][inch-url]
 [![Build Status][travis-image]][travis-url]
 
-[npm-image]: https://img.shields.io/npm/v/cassanknex.svg?style=flat
-[npm-url]: https://npmjs.org/package/cassanknex
-[inch-image]: http://inch-ci.org/github/azuqua/cassanknex.svg?branch=master&style=shields
-[inch-url]: http://inch-ci.org/github/azuqua/cassanknex
-[travis-image]: https://travis-ci.org/azuqua/cassanknex.svg?branch=master&style=flat
-[travis-url]: https://travis-ci.org/azuqua/cassanknex
-
-[cassandra-driver-url]: https://github.com/datastax/nodejs-driver
-
 # CassanKnex
 
-An Apache Cassandra CQL query builder with support for the DataStax NodeJS driver, written in the spirit of [Knex](knexjs.org) for [CQL 3.1.x](http://docs.datastax.com/en/cql/3.1/cql/cql_reference/cqlReferenceTOC.html).
+An Apache Cassandra CQL query builder with support for the DataStax NodeJS driver, written in the spirit of [Knex](knexjs.org) for [CQL 3.1.x][cassandra-cql-3_1-ref-url].
 
-## Why
+## Index
+
+- [Why Cassanknex](#WhyCassanknex)
+- [Usage(#Usage)
+  - [Generating Queries](#GeneratingQueries)
+  - [Executing Queries](#ExecutingQueries)
+  - [Quick Start](#Quickstart)
+  - [Debugging Queries](#Debugging)
+  - [Query Commands](#QueryCommands)
+    - [Rows](#QueryCommands-Rows)
+    - [Column Families](#QueryCommands-ColumnFamilies)
+    - [Keyspaces](#QueryCommands-Keyspaces)
+  - [Query Modifiers](#QueryModifiers)
+    - [Rows](#QueryModifiers-Rows)
+    - [Column Families](#QueryModifiers-ColumnFamilies)
+    - [Keyspaces](#QueryModifiers-Keyspaces)
+- [ChangeLog](#ChangeLog)
+
+## <a name="WhyCassanknex"></a>Why
 
 CQL was purposefully designed to be SQL-esq to enhance ease of access for those familiar w/ relational databases
 while Knex is the canonical NodeJS query builder for SQL dialects; however, even given the lexical similarities, the difference
 between the usage of CQL vs SQL is significant enough that adding CQL as yet another Knex SQL dialect does not make sense.
 Thus, CassanKnex.
 
-## Usage
+## <a name="Usage"></a>Usage
 
 CassanKnex can be used to execute queries against a Cassandra cluster via [`cassandra-driver`][cassandra-driver-url] (the official DataStax NodeJS driver) or as a simple CQL statement generator via the following relative instantiations:
 
-### As a query executor
+### <a name="GeneratingQueries"></a>As a query generator
+
+Compiled CQL statements can be retrieved at any time via the `cql` method.
+
+```js
+var cassanKnex = require("cassanknex")();
+var qb = cassanKnex.QUERY_COMMAND()
+          .QUERY_MODIFIER_1()
+          .
+          .
+          .QUERY_MODIFIER_N();
+
+var cql = qb.cql(); // get the cql statement
+```
+
+Where `QUERY_COMMAND` and `QUERY_MODIFIER` are among the list of available [Query Commands](#QueryCommands)  and [Query Modifiers](#QueryModifiers).
+
+### <a name="ExecutingQueries"></a>As a query executor
 
 Execution of a given query is performed by invoking either the `exec` or `stream` methods
-(which are straight pass throughs to the DataStax driver's `execute` and `stream` [methods](http://docs.datastax.com/en/drivers/nodejs/2.1/Client.html), respectively).
+(which are straight pass throughs to the DataStax driver's `execute` and `stream` [methods][cassandra-driver-docs-url], respectively).
 
 ```js
 var cassanKnex = require("cassanknex")({
@@ -84,26 +110,9 @@ cassanKnex.on("ready", function (err) {
 });
 ```
 
-### As a query generator
-
-Compiled CQL statements can be retrieved at any time via the `cql` method.
-
-```js
-var cassanKnex = require("cassanknex")();
-var qb = cassanKnex.QUERY_COMMAND()
-          .QUERY_MODIFIER_1()
-          .
-          .
-          .QUERY_MODIFIER_N();
-
-var cql = qb.cql(); // get the cql statement
-```
-
-Where `QUERY_COMMAND` and `QUERY_MODIFIER` are among the list of available [Query Commands](#QueryCommands)  and [Query Modifiers](#QueryModifiers).
-
 While fuller documentation for all methods is in the works, **the [test files](./tests) provide thorough examples as to method usage**.
 
-#### Quickstart
+#### <a name="Quickstart"></a>Quickstart
 
 
 ```js
@@ -150,7 +159,7 @@ cassanKnex.on("ready", function (err) {
 
 ```
 
-#### Debugging
+#### <a name="Debugging"></a>Debugging
 
 To enable `debug` mode pass `{ debug: true }` into the CassanKnex `require` statement, e.g.
 
@@ -215,13 +224,13 @@ qb.insert(values)
 
 #### <a name="QueryCommands"></a>Query Commands
 
-##### *For standard queries*:
+##### <a name="QueryCommands-Rows"></a>*For standard (row) queries*:
 - delete
 - insert
 - select
 - update
 
-##### *For column family queries*:
+##### <a name="QueryCommands-ColumnFamilies"></a>*For column family queries*:
 - alterColumnFamily
 - createColumnFamily
 - createColumnFamilyIfNotExists
@@ -229,7 +238,7 @@ qb.insert(values)
 - dropColumnFamilyIfExists
 - createIndex
 
-##### *For keyspace queries*:
+##### <a name="QueryCommands-Keyspaces"></a>*For keyspace queries*:
 - alterKeyspace
 - createKeyspace
 - createKeyspaceIfNotExists
@@ -238,7 +247,7 @@ qb.insert(values)
 
 #### <a name="QueryModifiers"></a>Query Modifiers
 
-##### *For standard queries*:
+##### <a name="QueryModifiers-Rows"></a>*For standard (row) queries*:
 - from
 - into
 - where
@@ -252,7 +261,7 @@ qb.insert(values)
 - usingTimestamp
 - limit
 
-##### *For column family queries*:
+##### <a name="QueryModifiers-ColumnFamilies"></a>*For column family queries*:
 - alter
 - drop
 - rename
@@ -280,15 +289,26 @@ qb.insert(values)
 - withCompaction
 - withClusteringOrderBy
 
-##### *For keyspace queries*:
+##### <a name="QueryModifiers-Keyspaces"></a>*For keyspace queries*:
 - withNetworkTopologyStrategy
 - withSimpleStrategy
 - withDurableWrites
 
-#### ChangeLog
+#### <a name="ChangeLog"></a>ChangeLog
 
 - 1.2.0
   - Add support for the DataStax driver `stream` method.
 - 1.1.0
   - Add QueryCommand `createIndex`.
   - Add QueryModifier `allowFiltering`.
+
+[npm-image]: https://img.shields.io/npm/v/cassanknex.svg?style=flat
+[npm-url]: https://npmjs.org/package/cassanknex
+[inch-image]: http://inch-ci.org/github/azuqua/cassanknex.svg?branch=master&style=shields
+[inch-url]: http://inch-ci.org/github/azuqua/cassanknex
+[travis-image]: https://travis-ci.org/azuqua/cassanknex.svg?branch=master&style=flat
+[travis-url]: https://travis-ci.org/azuqua/cassanknex
+
+[cassandra-cql-3_1-ref-url]: http://docs.datastax.com/en/cql/3.1/cql/cql_reference/cqlReferenceTOC.html
+[cassandra-driver-url]: https://github.com/datastax/nodejs-driver
+[cassandra-driver-docs-url]: http://docs.datastax.com/en/drivers/nodejs/2.1/Client.html
