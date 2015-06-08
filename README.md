@@ -5,7 +5,7 @@
 
 # CassanKnex
 
-An Apache Cassandra CQL query builder with support for the DataStax NodeJS driver, written in the spirit of [Knex](knexjs.org) for [CQL 3.1.x][cassandra-cql-3_1-ref-url].
+An Apache Cassandra CQL query builder with support for the DataStax NodeJS driver, written in the spirit of [Knex][knexjs-url] for [CQL 3.1.x][cassandra-cql-3_1-ref-url].
 
 ## Index
 
@@ -312,3 +312,4 @@ qb.insert(values)
 [cassandra-cql-3_1-ref-url]: http://docs.datastax.com/en/cql/3.1/cql/cql_reference/cqlReferenceTOC.html
 [cassandra-driver-url]: https://github.com/datastax/nodejs-driver
 [cassandra-driver-docs-url]: http://docs.datastax.com/en/drivers/nodejs/2.1/Client.html
+[knexjs-url]: http://knexjs.org/
