@@ -40,7 +40,7 @@ describe("yolo", function () {
 
   it("should drop the keyspace (if exists) 'cassanknexy' recreate it, " +
     "build a sample table and execute several insertions into that table, " +
-    "and read records inserted using both the 'exec' and 'stream' methods.", function (done) {
+    "and read records inserted using both the 'exec' and 'stream' and 'eachRow' methods.", function (done) {
 
     this.timeout(0);
 
@@ -128,6 +128,26 @@ describe("yolo", function () {
           "end": onEnd,
           "error": onError
         });
+      },
+      // test the eachRow method
+      function (next) {
+
+        var rowCallback = function (n, row) {
+            // Readable is emitted as soon a row is received and parsed
+            assert(_.has(row, "id"), "Response must contain the id.");
+          }
+          , errorCb = function (err) {
+            // Something went wrong: err is a response error from Cassandra
+            assert(!err, "query error", err);
+            next(err);
+          };
+
+        var qb = cassanKnex(keyspace)
+          .select()
+          .from(columnFamily);
+
+        // Invoke the eachRow method
+        qb.eachRow(rowCallback, errorCb);
       }
     ], function (err) {
 
