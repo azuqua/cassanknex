@@ -55,8 +55,8 @@ Where `QUERY_COMMAND` and `QUERY_MODIFIER` are among the list of available [Quer
 
 ### <a name="ExecutingQueries"></a>As a query executor
 
-Execution of a given query is performed by invoking either the `exec` or `stream` methods
-(which are straight pass throughs to the DataStax driver's `execute` and `stream` [methods][cassandra-driver-docs-url], respectively).
+Execution of a given query is performed by invoking either the `exec`, `stream` or `eachRow` methods
+(which are straight pass throughs to the DataStax driver's `execute`, `stream` and `eachRow` [methods][cassandra-driver-docs-url], respectively).
 
 ```js
 var cassanKnex = require("cassanknex")({
@@ -79,11 +79,13 @@ cassanKnex.on("ready", function (err) {
           .QUERY_MODIFIER_N();
 
   // pass through to the underlying DataStax nodejs-driver 'execute' method
+
   qb.exec(function(err, res) {
     // do something w/ your query response
   });
 
-  // or pass through to the underlying DataStax nodejs-driver 'stream' method
+  // OR pass through to the underlying DataStax nodejs-driver 'stream' method
+
   var onReadable = function () {
       // Readable is emitted as soon a row is received and parsed
       var row;
@@ -107,6 +109,21 @@ cassanKnex.on("ready", function (err) {
     "end": onEnd,
     "error": onError
   });
+
+  // OR pass through to the underlying DataStax nodejs-driver 'eachRow' method
+
+  var rowCallback = function (n, row) {
+      // The callback will be invoked per each row as soon as they are received
+      console.log(row);
+      // do something w/ the row response
+    }
+    , errorCb = function (err) {
+      // Something went wrong: err is a response error from Cassandra
+      console.log("query error", err);
+    };
+
+  // Invoke the eachRow method
+  qb.eachRow(rowCallback, errorCb);
 });
 ```
 
@@ -296,6 +313,8 @@ qb.insert(values)
 
 #### <a name="ChangeLog"></a>ChangeLog
 
+- 1.3.0
+  - Add support for the DataStax driver `eachRow` method.
 - 1.2.0
   - Add support for the DataStax driver `stream` method.
 - 1.1.0

@@ -97,6 +97,28 @@ CassanKnex.initialize = function (config) {
       return qb;
     };
 
+    // create the eachRow function for a pass through to the datastax driver
+    qb.eachRow = function (rowCb, errorCb) {
+
+      if (!_.isFunction(rowCb)) {
+        rowCb = _.noop;
+      }
+      if (!_.isFunction(errorCb)) {
+        errorCb = _.noop;
+      }
+
+      if (cassandra !== null && cassandra.connected) {
+        var cql = qb.cql();
+        cassandra.eachRow(cql, qb.bindings(), rowCb, errorCb);
+      }
+      else {
+        errorCb(new Error("Cassandra client is not initialized."));
+      }
+
+      // maintain chain
+      return qb;
+    };
+
     return qb;
   }
 
