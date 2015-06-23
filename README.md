@@ -15,6 +15,7 @@ An Apache Cassandra CQL query builder with support for the DataStax NodeJS drive
   - [Executing Queries](#ExecutingQueries)
   - [Quick Start](#Quickstart)
   - [Debugging Queries](#Debugging)
+  - [Query Executors (Examples)](#QueryExecutors)
   - [Query Commands (Examples)](#QueryCommands)
     - [Rows](#QueryCommands-Rows)
     - [Column Families](#QueryCommands-ColumnFamilies)
@@ -238,6 +239,67 @@ qb.insert(values)
 ```
 
 > While fuller documentation for all methods is in the works, **the [test files](./tests) provide thorough examples as to method usage**.
+
+#### <a name="QueryExecutors"></a>Query Executors
+- exec - *execute a query and return the response via a callback*:
+
+  ```js
+  var item = {
+    foo: "bar",
+    bar: ["foo", "baz"]
+  };
+  var qb = cassanKnex("cassanKnexy")
+    .insert(item)
+    .into("columnFamily")
+    .exec(function(err, result) {
+      // do something w/ your err/result
+    });
+  ```
+- forEach - *execute a query and as each row is received invoke a callback*:
+
+  ```js
+  var rowCallback = function (n, row) {
+      // Readable is emitted as soon a row is received and parsed
+    }
+    , errorCallback = function (err) {
+      // Something went wrong: err is a response error from Cassandra
+    };
+
+  var qb = cassanKnex("cassanKnexy")
+    .select()
+    .from("columnFamily");
+
+  // Invoke the eachRow method
+  qb.eachRow(rowCallback, errorCallback);
+  ```
+- stream - *execute a query and stream each row as it is received*:
+
+  ```js
+  var onReadable = function () {
+      // Readable is emitted as soon a row is received and parsed
+      var row;
+      while (row = this.read()) {
+        // do something w/ your row
+      }
+    }
+    , onEnd = function () {
+      // Stream ended, there aren't any more rows
+    }
+    , onError = function (err) {
+      // Something went wrong: err is a response error from Cassandra
+    };
+
+  var qb = cassanKnex("cassanKnexy")
+    .select()
+    .from("columnFamily");
+
+  // Invoke the stream method
+  qb.stream({
+    "readable": onReadable,
+    "end": onEnd,
+    "error": onError
+  });
+  ```
 
 #### <a name="QueryCommands"></a>Query Commands
 
