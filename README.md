@@ -256,7 +256,10 @@ qb.insert(values)
         .usingTTL(50000)
         .into("columnFamily");
 
-      // => INSERT INTO cassanKnexy.columnFamily (id,bar,baz) VALUES (?, ?, ?) USING TIMESTAMP ? AND USING TTL ?;
+      // => INSERT INTO cassanKnexy.columnFamily (id,bar,baz)
+      //      VALUES (?, ?, ?)
+      //      USING TIMESTAMP ?
+      //      AND USING TTL ?;
   ```
 - select - *compile a **select OR select as** query string*
   - select all columns for a given query:
@@ -298,7 +301,10 @@ qb.insert(values)
       .where("foo[bar]", "=", "baz")
       .where("id", "in", ["1", "1", "2", "3", "5"]);
 
-    // => UPDATE cassanKnexy.columnFamily SET bar = ?,foo = ? WHERE foo[bar] = ? AND id in (?, ?, ?, ?, ?);
+    // => UPDATE cassanKnexy.columnFamily
+    //      SET bar = ?,foo = ?
+    //      WHERE foo[bar] = ?
+    //      AND id in (?, ?, ?, ?, ?);
   ```
   - set column values using object parameters:
 
@@ -312,7 +318,10 @@ qb.insert(values)
     .where("foo[bar]", "=", "baz")
     .where("id", "in", ["1", "1", "2", "3", "5"]);
 
-  // => UPDATE cassanKnexy.columnFamily SET bar = ?,foo = ? WHERE foo[bar] = ? AND id in (?, ?, ?, ?, ?);
+  // => UPDATE cassanKnexy.columnFamily
+  //      SET bar = ?,foo = ?
+  //      WHERE foo[bar] = ?
+  //      AND id in (?, ?, ?, ?, ?);
   ```
 - delete - *compile a **delete** query string*
   - delete all columns for a given row:
@@ -324,7 +333,9 @@ qb.insert(values)
         .where("foo[bar]", "=", "baz")
         .where("id", "in", ["1", "1", "2", "3", "5"]);
 
-      // => DELETE  FROM cassanKnexy.columnFamily WHERE foo[bar] = ? AND id in (?, ?, ?, ?, ?);
+      // => DELETE  FROM cassanKnexy.columnFamily
+      //      WHERE foo[bar] = ?
+      //      AND id in (?, ?, ?, ?, ?);
     ```
   - delete specified columns for a given row:
 
@@ -338,7 +349,9 @@ qb.insert(values)
         .where("foo[bar]", "=", "baz")
         .where("id", "in", ["1", "1", "2", "3", "5"]);
 
-      // => DELETE foo,bar FROM cassanKnexy.columnFamily WHERE foo[bar] = ? AND id in (?, ?, ?, ?, ?);
+      // => DELETE foo,bar FROM cassanKnexy.columnFamily
+      //      WHERE foo[bar] = ?
+      //      AND id in (?, ?, ?, ?, ?);
     ```
 
 ##### <a name="QueryCommands-ColumnFamilies"></a>*For column family queries*:
