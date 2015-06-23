@@ -41,8 +41,8 @@ module.exports = {
     //"raw": {"name": "raw", "grouping": "raw"}
   },
   "query": {
-    "from": {"name": "table", "grouping": "source"},
-    "into": {"name": "table", "grouping": "source"},
+    "from": {"name": "from", "grouping": "source"},
+    "into": {"name": "into", "grouping": "source"},
 
     "where": {"name": "where", "grouping": "where"},
     //"whereRaw": {"name": "whereRaw", "grouping": "where"},

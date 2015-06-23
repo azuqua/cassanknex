@@ -127,8 +127,6 @@ cassanKnex.on("ready", function (err) {
 });
 ```
 
-While fuller documentation for all methods is in the works, **the [test files](./tests) provide thorough examples as to method usage**.
-
 #### <a name="Quickstart"></a>Quickstart
 
 
@@ -239,6 +237,8 @@ qb.insert(values)
   ... }
 ```
 
+> While fuller documentation for all methods is in the works, **the [test files](./tests) provide thorough examples as to method usage**.
+
 #### <a name="QueryCommands"></a>Query Commands
 
 ##### <a name="QueryCommands-Rows"></a>*For standard (row) queries*:
@@ -313,6 +313,8 @@ qb.insert(values)
 
 #### <a name="ChangeLog"></a>ChangeLog
 
+- 1.5.0
+  - Add QueryCommand `delete`.
 - 1.4.0
   - Add support for object style `set` calls; e.g. `.set(<Object := {<String>: <Mixed>, ...}>)`.
 - 1.3.0

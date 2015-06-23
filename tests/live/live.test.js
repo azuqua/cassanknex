@@ -40,7 +40,8 @@ describe("yolo", function () {
 
   it("should drop the keyspace (if exists) 'cassanknexy' recreate it, " +
     "build a sample table and execute several insertions into that table, " +
-    "and read records inserted using both the 'exec' and 'stream' and 'eachRow' methods.", function (done) {
+    "and read records inserted using both the 'exec' and 'stream' and 'eachRow' methods" +
+    " - then delete all rows from the test table.", function (done) {
 
     this.timeout(0);
 
@@ -148,6 +149,49 @@ describe("yolo", function () {
 
         // Invoke the eachRow method
         qb.eachRow(rowCallback, errorCb);
+      },
+      // test the delete method
+      function (next) {
+
+        async.waterfall([
+          function (next) {
+
+            var qb = cassanKnex(keyspace)
+              .select()
+              .from(columnFamily)
+              .exec(function (err, resp) {
+                assert(!err, err);
+                next(err, resp.rows);
+              });
+          },
+          function (rows, next) {
+
+            async.each(rows, function (row, done) {
+
+              var qb = cassanKnex(keyspace)
+                .delete()
+                .from(columnFamily)
+                .where("id", "=", row.id)
+                .andWhere("timestamp", "=", row.timestamp)
+                .exec(function (err, resp) {
+                  assert(!err, err);
+                  done(err);
+                });
+            }, next);
+          }
+        ], next);
+      },
+      // confirm the delete worked
+      function (next) {
+
+        var qb = cassanKnex(keyspace)
+          .select()
+          .from(columnFamily)
+          .exec(function (err, resp) {
+            assert(!err, err);
+            assert(resp.rowLength === 0, "All rows must be deleted!");
+            next(err);
+          });
       }
     ], function (err) {
 

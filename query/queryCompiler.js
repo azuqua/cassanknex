@@ -21,6 +21,9 @@ module.exports = {
   },
   update: function () {
     return this._wrapMethod(component, "update", _getUpdate(), arguments);
+  },
+  delete: function () {
+    return this._wrapMethod(component, "delete", _getDelete(), arguments);
   }
 };
 
@@ -119,6 +122,29 @@ function _getUpdate() {
     if (_.has(this._grouped, "set")) {
       cql += " SET " + _compileSet(this, this._grouped.set);
     }
+    if (_.has(this._grouped, "where")) {
+      cql += " WHERE " + _compileWhere(this, this._grouped.where);
+    }
+
+    this.query({
+      cql: cql + ";"
+    });
+
+    return this;
+  };
+}
+
+function _getDelete() {
+  return function () {
+
+    var compiling = this.getCompiling("delete", {
+      columns: _.toArray(arguments)
+    });
+
+    var source = (this._keyspace && this._columnFamily ? [this._keyspace, this._columnFamily].join(".") : (this._columnFamily ? this._columnFamily : ""))
+      , deleteStatement = "DELETE " + compiling.value.columns.join(",") + " FROM " + source
+      , cql = deleteStatement;
+
     if (_.has(this._grouped, "where")) {
       cql += " WHERE " + _compileWhere(this, this._grouped.where);
     }
