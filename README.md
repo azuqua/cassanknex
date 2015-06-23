@@ -304,7 +304,7 @@ qb.insert(values)
 #### <a name="QueryCommands"></a>Query Commands
 
 ##### <a name="QueryCommands-Rows"></a>*For standard (row) queries*:
-- insert - *compile an **insert** query string*
+- insert - *compile an __insert__ query string*
 
   ```js
       var qb = cassanKnex("cassanKnexy")
@@ -323,7 +323,7 @@ qb.insert(values)
       //      USING TIMESTAMP ?
       //      AND USING TTL ?;
   ```
-- select - *compile a **select OR select as** query string*
+- select - *compile a __select OR select as__ query string*
   - select all columns for a given query:
 
     ```js
@@ -352,7 +352,7 @@ qb.insert(values)
 
     // => SELECT id AS foo FROM cassanKnexy.columnFamily;
     ```
-- update - *compile an **update** query string*
+- update - *compile an __update__ query string*
   - simple set column values:
 
   ```js
@@ -385,7 +385,7 @@ qb.insert(values)
   //      WHERE foo[bar] = ?
   //      AND id in (?, ?, ?, ?, ?);
   ```
-- delete - *compile a **delete** query string*
+- delete - *compile a __delete__ query string*
   - delete all columns for a given row:
 
     ```js
