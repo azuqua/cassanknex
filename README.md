@@ -482,6 +482,8 @@ qb.insert(values)
 
 #### <a name="ChangeLog"></a>ChangeLog
 
+- 1.5.1
+  - OMG DOCS!
 - 1.5.0
   - Add QueryCommand `delete`.
 - 1.4.0
