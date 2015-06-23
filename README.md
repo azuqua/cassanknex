@@ -244,6 +244,7 @@ qb.insert(values)
 ##### <a name="QueryCommands-Rows"></a>*For standard (row) queries*:
 - delete - *compile a delete query string*
   - delete all columns for a given row:
+  
     ```js
       var qb = cassanknex("cassanKnexy");
       qb.delete()
@@ -253,6 +254,7 @@ qb.insert(values)
       // generates cql => DELETE  FROM cassanKnexy.columnFamily WHERE foo[bar] = ? AND id in (?, ?, ?, ?, ?);
     ```
   - delete specified columns for a given row:
+
     ```js
       var qb = cassanknex("cassanKnexy");
       qb.delete(["foo", "bar"])
