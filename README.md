@@ -255,7 +255,7 @@ qb.insert(values)
       // do something w/ your err/result
     });
   ```
-- forEach - *execute a query and as each row is received invoke a callback*:
+- eachRow - *execute a query and invoke a callback as each row is received*:
 
   ```js
   var rowCallback = function (n, row) {
