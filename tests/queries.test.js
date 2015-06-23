@@ -132,4 +132,19 @@ describe("QueryMethods", function () {
     var _cql = qb.cql();
     assert(_cql === cql, "Expected compilation: '" + cql + "' but compiled: " + _cql);
   });
+  it("should compile an update query string using an object param", function () {
+
+    var cql = "UPDATE cassanKnexy.columnFamily SET bar = ?,foo = ? WHERE foo[bar] = ? AND id in (?, ?, ?, ?, ?);"
+      , qb = cassanKnex("cassanKnexy");
+    qb.update("columnFamily")
+      .set({
+        "bar": "baz",
+        "foo": ["bar", "baz"]
+      })
+      .where("foo[bar]", "=", "baz")
+      .where("id", "in", ["1", "1", "2", "3", "5"]);
+
+    var _cql = qb.cql();
+    assert(_cql === cql, "Expected compilation: '" + cql + "' but compiled: " + _cql);
+  });
 });
