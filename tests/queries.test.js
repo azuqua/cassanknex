@@ -10,6 +10,9 @@ var assert = require("chai").assert
   });
 
 describe("QueryMethods", function () {
+
+  // SELECT
+
   it("should compile an insert query string", function () {
 
     var cql = "INSERT INTO cassanKnexy.columnFamily (id,bar,baz) VALUES (?, ?, ?) USING TIMESTAMP ? AND USING TTL ?;"
@@ -108,6 +111,9 @@ describe("QueryMethods", function () {
     var _cql = qb.cql();
     assert(_cql === cql, "Expected compilation: '" + cql + "' but compiled: " + _cql);
   });
+
+  // UPDATE
+
   it("should compile an update query string", function () {
 
     var cql = "UPDATE cassanKnexy.columnFamily SET bar = ? WHERE foo[bar] = ? AND id in (?, ?, ?, ?, ?);"
@@ -147,4 +153,44 @@ describe("QueryMethods", function () {
     var _cql = qb.cql();
     assert(_cql === cql, "Expected compilation: '" + cql + "' but compiled: " + _cql);
   });
+
+  // DELETE
+
+  it("should compile a simple delete query string", function () {
+
+    var cql = "DELETE  FROM cassanKnexy.columnFamily WHERE foo[bar] = ? AND id in (?, ?, ?, ?, ?);"
+      , qb = cassanKnex("cassanKnexy");
+    qb.delete()
+      .from("columnFamily")
+      .where("foo[bar]", "=", "baz")
+      .where("id", "in", ["1", "1", "2", "3", "5"]);
+
+    var _cql = qb.cql();
+    assert(_cql === cql, "Expected compilation: '" + cql + "' but compiled: " + _cql);
+  });
+  it("should compile a delete columns query string", function () {
+
+    var cql = "DELETE foo,bar FROM cassanKnexy.columnFamily WHERE foo[bar] = ? AND id in (?, ?, ?, ?, ?);"
+      , qb = cassanKnex("cassanKnexy");
+    qb.delete("foo", "bar")
+      .from("columnFamily")
+      .where("foo[bar]", "=", "baz")
+      .where("id", "in", ["1", "1", "2", "3", "5"]);
+
+    var _cql = qb.cql();
+    assert(_cql === cql, "Expected compilation: '" + cql + "' but compiled: " + _cql);
+  });
+  it("should compile a delete columns query string using an array as input", function () {
+
+    var cql = "DELETE foo,bar FROM cassanKnexy.columnFamily WHERE foo[bar] = ? AND id in (?, ?, ?, ?, ?);"
+      , qb = cassanKnex("cassanKnexy");
+    qb.delete(["foo", "bar"])
+      .from("columnFamily")
+      .where("foo[bar]", "=", "baz")
+      .where("id", "in", ["1", "1", "2", "3", "5"]);
+
+    var _cql = qb.cql();
+    assert(_cql === cql, "Expected compilation: '" + cql + "' but compiled: " + _cql);
+  });
+
 });
