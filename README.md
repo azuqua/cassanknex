@@ -242,7 +242,28 @@ qb.insert(values)
 #### <a name="QueryCommands"></a>Query Commands
 
 ##### <a name="QueryCommands-Rows"></a>*For standard (row) queries*:
-- delete
+- delete - *compile a delete query string*
+  - delete all columns for a given row:
+    ```js
+      var qb = cassanknex("cassanKnexy");
+      qb.delete()
+        .from("columnFamily")
+        .where("foo[bar]", "=", "baz")
+        .where("id", "in", ["1", "1", "2", "3", "5"]);
+      // generates cql => DELETE  FROM cassanKnexy.columnFamily WHERE foo[bar] = ? AND id in (?, ?, ?, ?, ?);
+    ```
+  - delete specified columns for a given row:
+    ```js
+      var qb = cassanknex("cassanKnexy");
+      qb.delete(["foo", "bar"])
+      // OR
+      qb.delete("foo", "bar")
+
+        .from("columnFamily")
+        .where("foo[bar]", "=", "baz")
+        .where("id", "in", ["1", "1", "2", "3", "5"]);
+      // generates cql => DELETE foo,bar FROM cassanKnexy.columnFamily WHERE foo[bar] = ? AND id in (?, ?, ?, ?, ?);
+    ```
 - insert
 - select
 - update
