@@ -313,6 +313,8 @@ qb.insert(values)
 
 #### <a name="ChangeLog"></a>ChangeLog
 
+- 1.4.0
+  - Add support for object style `set` calls; e.g. `.set(<Object := {<String>: <Mixed>, ...}>)`.
 - 1.3.0
   - Add support for the DataStax driver `eachRow` method.
 - 1.2.0

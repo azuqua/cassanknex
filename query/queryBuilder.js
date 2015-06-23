@@ -72,13 +72,30 @@ function _getWhere(type) {
 function _getSet(type) {
   return function (identifier, value) {
 
-    var statement = {
-      grouping: "set",
-      type: type,
-      key: identifier,
-      val: value
-    };
-    this._statements.push(statement);
+    // object type 'set' called => .set(<Object> := {<String>: <Mixed>, ...})
+    if (_.isObject(identifier)) {
+      var self = this;
+      _.each(identifier, function (value, identifier) {
+
+        var statement = {
+          grouping: "set",
+          type: type,
+          key: identifier,
+          val: value
+        };
+        self._statements.push(statement);
+      });
+    }
+    // simple 'set' called => .set(<String>, <Mixed>)
+    else {
+      var statement = {
+        grouping: "set",
+        type: type,
+        key: identifier,
+        val: value
+      };
+      this._statements.push(statement);
+    }
 
     return this;
   };
