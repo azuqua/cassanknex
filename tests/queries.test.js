@@ -11,7 +11,7 @@ var assert = require("chai").assert
 
 describe("QueryMethods", function () {
 
-  // SELECT
+  // INSERT
 
   it("should compile an insert query string", function () {
 
@@ -30,6 +30,9 @@ describe("QueryMethods", function () {
     var _cql = qb.cql();
     assert(_cql === cql, "Expected compilation: '" + cql + "' but compiled: " + _cql);
   });
+
+  // SELECT
+
   it("should compile a simple 'select' query string", function () {
 
     var cql = "SELECT id FROM cassanKnexy.columnFamily;"

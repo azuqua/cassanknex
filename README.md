@@ -15,7 +15,8 @@ An Apache Cassandra CQL query builder with support for the DataStax NodeJS drive
   - [Executing Queries](#ExecutingQueries)
   - [Quick Start](#Quickstart)
   - [Debugging Queries](#Debugging)
-  - [Query Commands](#QueryCommands)
+  - [Query Executors (Examples)](#QueryExecutors)
+  - [Query Commands (Examples)](#QueryCommands)
     - [Rows](#QueryCommands-Rows)
     - [Column Families](#QueryCommands-ColumnFamilies)
     - [Keyspaces](#QueryCommands-Keyspaces)
@@ -239,13 +240,181 @@ qb.insert(values)
 
 > While fuller documentation for all methods is in the works, **the [test files](./tests) provide thorough examples as to method usage**.
 
+#### <a name="QueryExecutors"></a>Query Executors
+- exec - *execute a query and return the response via a callback*:
+
+  ```js
+  var item = {
+    foo: "bar",
+    bar: ["foo", "baz"]
+  };
+  var qb = cassanKnex("cassanKnexy")
+    .insert(item)
+    .into("columnFamily")
+    .exec(function(err, result) {
+      // do something w/ your err/result
+    });
+  ```
+- eachRow - *execute a query and invoke a callback as each row is received*:
+
+  ```js
+  var rowCallback = function (n, row) {
+      // Readable is emitted as soon a row is received and parsed
+    }
+    , errorCallback = function (err) {
+      // Something went wrong: err is a response error from Cassandra
+    };
+
+  var qb = cassanKnex("cassanKnexy")
+    .select()
+    .from("columnFamily");
+
+  // Invoke the eachRow method
+  qb.eachRow(rowCallback, errorCallback);
+  ```
+- stream - *execute a query and stream each row as it is received*:
+
+  ```js
+  var onReadable = function () {
+      // Readable is emitted as soon a row is received and parsed
+      var row;
+      while (row = this.read()) {
+        // do something w/ your row
+      }
+    }
+    , onEnd = function () {
+      // Stream ended, there aren't any more rows
+    }
+    , onError = function (err) {
+      // Something went wrong: err is a response error from Cassandra
+    };
+
+  var qb = cassanKnex("cassanKnexy")
+    .select()
+    .from("columnFamily");
+
+  // Invoke the stream method
+  qb.stream({
+    "readable": onReadable,
+    "end": onEnd,
+    "error": onError
+  });
+  ```
+
 #### <a name="QueryCommands"></a>Query Commands
 
 ##### <a name="QueryCommands-Rows"></a>*For standard (row) queries*:
-- delete
-- insert
-- select
-- update
+- insert - *compile an **insert** query string*
+
+  ```js
+      var qb = cassanKnex("cassanKnexy")
+        , values = {
+          "id": "foo"
+          , "bar": "baz"
+          , "baz": ["foo", "bar"]
+        };
+      qb.insert(values)
+        .usingTimestamp(250000)
+        .usingTTL(50000)
+        .into("columnFamily");
+
+      // => INSERT INTO cassanKnexy.columnFamily (id,bar,baz)
+      //      VALUES (?, ?, ?)
+      //      USING TIMESTAMP ?
+      //      AND USING TTL ?;
+  ```
+- select - *compile a **select OR select as** query string*
+  - select all columns for a given query:
+
+    ```js
+    var qb = cassanKnex("cassanKnexy");
+    qb.select("id", "foo", "bar", "baz")
+      .where("id", "=", "1")
+      .orWhere("id", "in", ["2", "3"])
+      .orWhere("baz", "=", "bar")
+      .andWhere("foo", "IN", ["baz", "bar"])
+      .limit(10)
+      .from("columnFamily");
+
+    // => SELECT id,foo,bar,baz FROM cassanKnexy.columnFamily
+    //      WHERE id = ?
+    //      OR id in (?, ?)
+    //      OR baz = ?
+    //      AND foo IN (?, ?)
+    //      LIMIT ?;
+    ```
+  - 'select as' specified columns:
+
+    ```js
+    var qb = cassanKnex("cassanKnexy");
+    qb.select({"id": "foo"})
+      .from("columnFamily");
+
+    // => SELECT id AS foo FROM cassanKnexy.columnFamily;
+    ```
+- update - *compile an **update** query string*
+  - simple set column values:
+
+  ```js
+    var qb = cassanKnex("cassanKnexy");
+    qb.update("columnFamily")
+      .set("bar", "foo")
+      .set("foo", "bar")
+      .where("foo[bar]", "=", "baz")
+      .where("id", "in", ["1", "1", "2", "3", "5"]);
+
+    // => UPDATE cassanKnexy.columnFamily
+    //      SET bar = ?,foo = ?
+    //      WHERE foo[bar] = ?
+    //      AND id in (?, ?, ?, ?, ?);
+  ```
+  - set column values using object parameters:
+
+  ```js
+  var qb = cassanKnex("cassanKnexy");
+  qb.update("columnFamily")
+    .set({
+      "bar": "baz",
+      "foo": ["bar", "baz"]
+    })
+    .where("foo[bar]", "=", "baz")
+    .where("id", "in", ["1", "1", "2", "3", "5"]);
+
+  // => UPDATE cassanKnexy.columnFamily
+  //      SET bar = ?,foo = ?
+  //      WHERE foo[bar] = ?
+  //      AND id in (?, ?, ?, ?, ?);
+  ```
+- delete - *compile a **delete** query string*
+  - delete all columns for a given row:
+
+    ```js
+      var qb = cassanknex("cassanKnexy");
+      qb.delete()
+        .from("columnFamily")
+        .where("foo[bar]", "=", "baz")
+        .where("id", "in", ["1", "1", "2", "3", "5"]);
+
+      // => DELETE  FROM cassanKnexy.columnFamily
+      //      WHERE foo[bar] = ?
+      //      AND id in (?, ?, ?, ?, ?);
+    ```
+  - delete specified columns for a given row:
+
+    ```js
+      var qb = cassanknex("cassanKnexy");
+      qb.delete(["foo", "bar"])
+      // OR
+      qb.delete("foo", "bar")
+
+        .from("columnFamily")
+        .where("foo[bar]", "=", "baz")
+        .where("id", "in", ["1", "1", "2", "3", "5"]);
+
+      // => DELETE foo,bar FROM cassanKnexy.columnFamily
+      //      WHERE foo[bar] = ?
+      //      AND id in (?, ?, ?, ?, ?);
+    ```
 
 ##### <a name="QueryCommands-ColumnFamilies"></a>*For column family queries*:
 - alterColumnFamily
@@ -313,6 +482,8 @@ qb.insert(values)
 
 #### <a name="ChangeLog"></a>ChangeLog
 
+- 1.5.1
+  - OMG DOCS!
 - 1.5.0
   - Add QueryCommand `delete`.
 - 1.4.0
