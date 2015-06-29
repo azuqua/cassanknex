@@ -43,7 +43,7 @@ Compiled CQL statements can be retrieved at any time via the `cql` method.
 
 ```js
 var cassanKnex = require("cassanknex")();
-var qb = cassanKnex.QUERY_COMMAND()
+var qb = cassanKnex(KEYSPACE).QUERY_COMMAND()
           .QUERY_MODIFIER_1()
           .
           .
@@ -52,7 +52,8 @@ var qb = cassanKnex.QUERY_COMMAND()
 var cql = qb.cql(); // get the cql statement
 ```
 
-Where `QUERY_COMMAND` and `QUERY_MODIFIER` are among the list of available [Query Commands](#QueryCommands)  and [Query Modifiers](#QueryModifiers).
+Where `KEYSPACE` is the name of the relevant keyspace and
+`QUERY_COMMAND` and `QUERY_MODIFIER` are among the list of available [Query Commands](#QueryCommands)  and [Query Modifiers](#QueryModifiers).
 
 ### <a name="ExecutingQueries"></a>As a query executor
 
@@ -73,7 +74,7 @@ cassanKnex.on("ready", function (err) {
   else
     console.log("Cassandra Connected");
 
-  var qb = cassanKnex.QUERY_COMMAND()
+  var qb = cassanKnex(KEYSPACE).QUERY_COMMAND()
           .QUERY_MODIFIER_1()
           .
           .
@@ -148,7 +149,7 @@ cassanKnex.on("ready", function (err) {
   else {
     console.log("Cassandra Connected");
 
-  var qb.select("id", "foo", "bar", "baz")
+  var qb("keyspace").select("id", "foo", "bar", "baz")
     .where("id", "=", "1")
     .orWhere("id", "in", ["2", "3"])
     .orWhere("baz", "=", "bar")
@@ -158,7 +159,7 @@ cassanKnex.on("ready", function (err) {
     .exec(function(err, res) {
 
       // executes query :
-      //  "SELECT id,foo,bar,baz FROM cassanKnexy.table
+      //  "SELECT id,foo,bar,baz FROM keyspace.table
       //    WHERE id = ? OR id in (?, ?)
       //    OR baz = ? AND foo IN (?, ?)
       //    LIMIT 10;"
@@ -482,7 +483,7 @@ qb.insert(values)
 
 #### <a name="ChangeLog"></a>ChangeLog
 
-- 1.5.1
+- 1.5.1, 1.5.2
   - OMG DOCS!
 - 1.5.0
   - Add QueryCommand `delete`.
