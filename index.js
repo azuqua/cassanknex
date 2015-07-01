@@ -83,7 +83,7 @@ CassanKnex.initialize = function (config) {
 
       if (cassandra !== null && cassandra.connected) {
         var cql = qb.cql();
-        cassandra.stream(cql, qb.bindings())
+        cassandra.stream(cql, qb.bindings(), _options)
           .on("readable", onReadable)
           .on("end", onEnd)
           .on("error", onError);
@@ -98,7 +98,15 @@ CassanKnex.initialize = function (config) {
     };
 
     // create the eachRow function for a pass through to the datastax driver
-    qb.eachRow = function (rowCb, errorCb) {
+    qb.eachRow = function (options, rowCb, errorCb) {
+
+      // options is really rowCB
+      if (_.isFunction(options)) {
+        errorCb = rowCb;
+        rowCb = options;
+      }
+
+      var _options = _.isObject(options) ? options : {};
 
       if (!_.isFunction(rowCb)) {
         rowCb = _.noop;
@@ -109,7 +117,7 @@ CassanKnex.initialize = function (config) {
 
       if (cassandra !== null && cassandra.connected) {
         var cql = qb.cql();
-        cassandra.eachRow(cql, qb.bindings(), rowCb, errorCb);
+        cassandra.eachRow(cql, qb.bindings(), _options, rowCb, errorCb);
       }
       else {
         errorCb(new Error("Cassandra client is not initialized."));
