@@ -150,6 +150,29 @@ describe("yolo", function () {
         // Invoke the eachRow method
         qb.eachRow(rowCallback, errorCb);
       },
+      // test the eachRow method w/ options
+      function (next) {
+
+        var fetchSize = 25;
+
+        var rowCallback = function (n, row) {
+            // Readable is emitted as soon a row is received and parsed
+            assert(n < fetchSize, "The number of rows should stay w/i options fetchSize bounds.");
+            assert(_.has(row, "id"), "Response must contain the id.");
+          }
+          , errorCb = function (err) {
+            // Something went wrong: err is a response error from Cassandra
+            assert(!err, "query error", err);
+            next(err);
+          };
+
+        var qb = cassanKnex(keyspace)
+          .select()
+          .from(columnFamily);
+
+        // Invoke the eachRow method
+        qb.eachRow({fetchSize: fetchSize}, rowCallback, errorCb);
+      },
       // test the delete method
       function (next) {
 

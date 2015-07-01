@@ -242,6 +242,9 @@ qb.insert(values)
 > While fuller documentation for all methods is in the works, **the [test files](./tests) provide thorough examples as to method usage**.
 
 #### <a name="QueryExecutors"></a>Query Executors
+
+> All methods take an optional `options` object as the first argument in the call signature; if provided, the options will be passed through to the corresponding `cassandra-driver` call.
+
 - exec - *execute a query and return the response via a callback*:
 
   ```js
@@ -255,6 +258,11 @@ qb.insert(values)
     .exec(function(err, result) {
       // do something w/ your err/result
     });
+
+    // w/ options
+    qb.exec({ prepare: false }, function(err, result) {
+       // do something w/ your err/result
+     });
   ```
 - eachRow - *execute a query and invoke a callback as each row is received*:
 
@@ -483,6 +491,8 @@ qb.insert(values)
 
 #### <a name="ChangeLog"></a>ChangeLog
 
+- 1.6.0
+  - Add `options` support for `eachRow` per issue #8.
 - 1.5.1, 1.5.2
   - OMG DOCS!
 - 1.5.0
