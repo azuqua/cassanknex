@@ -6,6 +6,7 @@ module.exports = {
   "columnFamily": {
     "primary": {"name": "primary", "grouping": "column", jsType: "PRIMARY_KEY"},
 
+    "frozen": {"name": "frozen", "grouping": "column", jsType: "frozen"},
     "list": {"name": "list", "grouping": "column", jsType: "array"},
     "set": {"name": "set", "grouping": "column", jsType: "array"},
     "decimal": {"name": "decimal", "grouping": "column", jsType: "bigDecimal"},
