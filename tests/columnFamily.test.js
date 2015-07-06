@@ -77,9 +77,10 @@ describe("ColumnFamilyMethods", function () {
   });
   it("should compile a create column family statement w/ all column types", function () {
 
-    var cql = "CREATE COLUMNFAMILY cassanKnexy.columnFamily ( listType LIST <text>, setType SET <timestamp>, decimalType DECIMAL, booleanType BOOLEAN, blobType BLOB, timestampType TIMESTAMP, inetType INET, bigintType BIGINT, counterType COUNTER, doubleType DOUBLE, intType INT, floatType FLOAT, mapType MAP <uuid,text>, asciiType ASCII, textType TEXT, timeuuidType TIMEUUID, uuidType UUID, varcharType VARCHAR, PRIMARY KEY (uuidType) ) ;"
+    var cql = "CREATE COLUMNFAMILY cassanKnexy.columnFamily ( frozenList LIST <list<text>>, listType LIST <text>, setType SET <timestamp>, decimalType DECIMAL, booleanType BOOLEAN, blobType BLOB, timestampType TIMESTAMP, inetType INET, bigintType BIGINT, counterType COUNTER, doubleType DOUBLE, intType INT, floatType FLOAT, mapType MAP <uuid,text>, asciiType ASCII, textType TEXT, timeuuidType TIMEUUID, uuidType UUID, varcharType VARCHAR, PRIMARY KEY (uuidType) ) ;"
       , qb = cassanKnex("cassanKnexy");
     qb.createColumnFamily("columnFamily")
+      .list("frozenList", "list<text>")
       .list("listType", "text")
       .set("setType", "timestamp")
       .decimal("decimalType")
@@ -192,4 +193,56 @@ describe("ColumnFamilyMethods", function () {
     var _cql = qb.cql();
     assert(_cql === cql, "Expected compilation: '" + cql + "' but compiled: " + _cql);
   });
+
+  // CREATE TYPE
+
+  it("should compile a create type statement", function () {
+
+    var cql = "CREATE TYPE cassanKnexy.type ( textType TEXT ) ;"
+        , qb = cassanKnex("cassanKnexy")
+            .createType("type")
+            .text("textType");
+
+    var _cql = qb.cql();
+    assert(_cql === cql, "Expected compilation: '" + cql + "' but compiled: " + _cql);
+  });
+  it("should compile a create type if not exists statement", function () {
+
+    var cql = "CREATE TYPE IF NOT EXISTS cassanKnexy.type ( textType TEXT ) ;"
+        , qb = cassanKnex("cassanKnexy");
+    qb.createTypeIfNotExists("type")
+        .text("textType");
+
+    var _cql = qb.cql();
+    assert(_cql === cql, "Expected compilation: '" + cql + "' but compiled: " + _cql);
+  });
+  it("should compile a create type statement w/ all column types", function () {
+
+    var cql = "CREATE TYPE cassanKnexy.type ( frozenList LIST <list<text>>, listType LIST <text>, setType SET <timestamp>, decimalType DECIMAL, booleanType BOOLEAN, blobType BLOB, timestampType TIMESTAMP, inetType INET, bigintType BIGINT, counterType COUNTER, doubleType DOUBLE, intType INT, floatType FLOAT, mapType MAP <uuid,text>, asciiType ASCII, textType TEXT, timeuuidType TIMEUUID, uuidType UUID, varcharType VARCHAR ) ;"
+        , qb = cassanKnex("cassanKnexy");
+    qb.createType("type")
+        .list("frozenList", "list<text>")
+        .list("listType", "text")
+        .set("setType", "timestamp")
+        .decimal("decimalType")
+        .boolean("booleanType")
+        .blob("blobType")
+        .timestamp("timestampType")
+        .inet("inetType")
+        .bigint("bigintType")
+        .counter("counterType")
+        .double("doubleType")
+        .int("intType")
+        .float("floatType")
+        .map("mapType", "uuid", "text")
+        .ascii("asciiType")
+        .text("textType")
+        .timeuuid("timeuuidType")
+        .uuid("uuidType")
+        .varchar("varcharType");
+
+    var _cql = qb.cql();
+    assert(_cql === cql, "Expected compilation: '" + cql + "' but compiled: " + _cql);
+  });
+
 });
