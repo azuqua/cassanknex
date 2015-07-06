@@ -195,7 +195,6 @@ function _compileColumns(client, deliminator, wrap) {
           columns.push([column.name, column.type.toUpperCase()].join(" "));
           break;
 
-        case "frozen":
         case "array":
         case "object":
           columns.push([column.name, column.type.toUpperCase(), "<" + column.options.join(",") + ">"].join(" "));

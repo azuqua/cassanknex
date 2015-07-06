@@ -77,9 +77,10 @@ describe("ColumnFamilyMethods", function () {
   });
   it("should compile a create column family statement w/ all column types", function () {
 
-    var cql = "CREATE COLUMNFAMILY cassanKnexy.columnFamily ( listType LIST <text>, setType SET <timestamp>, decimalType DECIMAL, booleanType BOOLEAN, blobType BLOB, timestampType TIMESTAMP, inetType INET, bigintType BIGINT, counterType COUNTER, doubleType DOUBLE, intType INT, floatType FLOAT, mapType MAP <uuid,text>, asciiType ASCII, textType TEXT, timeuuidType TIMEUUID, uuidType UUID, varcharType VARCHAR, PRIMARY KEY (uuidType) ) ;"
+    var cql = "CREATE COLUMNFAMILY cassanKnexy.columnFamily ( frozenList LIST <list<text>>, listType LIST <text>, setType SET <timestamp>, decimalType DECIMAL, booleanType BOOLEAN, blobType BLOB, timestampType TIMESTAMP, inetType INET, bigintType BIGINT, counterType COUNTER, doubleType DOUBLE, intType INT, floatType FLOAT, mapType MAP <uuid,text>, asciiType ASCII, textType TEXT, timeuuidType TIMEUUID, uuidType UUID, varcharType VARCHAR, PRIMARY KEY (uuidType) ) ;"
       , qb = cassanKnex("cassanKnexy");
     qb.createColumnFamily("columnFamily")
+      .list("frozenList", "list<text>")
       .list("listType", "text")
       .set("setType", "timestamp")
       .decimal("decimalType")
