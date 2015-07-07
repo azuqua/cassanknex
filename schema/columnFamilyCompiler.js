@@ -250,7 +250,7 @@ function _getCreateIndex() {
   };
 }
 
-function _getDropColumnFamily(what) {
+function _getDropColumnFamily() {
 
   return function (columnFamily, keyspace, ifNot) {
 
@@ -278,7 +278,7 @@ function _getDropColumnFamily(what) {
 
 }
 
-function _getDropType(what) {
+function _getDropType() {
 
   return function (columnFamily, keyspace, ifNot) {
 
