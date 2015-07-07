@@ -16,7 +16,15 @@ module.exports = {
     "createColumnFamilyIfNotExists": "createColumnFamilyIfNotExists",
     "dropColumnFamily": "dropColumnFamily",
     "dropColumnFamilyIfExists": "dropColumnFamilyIfExists",
-    "createIndex": "createIndex"
+
+    "createIndex": "createIndex",
+
+    "alterType": "alterType",
+    "createType": "createType",
+    "createTypeIfNotExists": "createTypeIfNotExists",
+    "dropType": "dropType",
+    "dropTypeIfExists": "dropTypeIfExists"
+
   },
   "query": {
     "delete": "delete",
