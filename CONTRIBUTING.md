@@ -1,5 +1,7 @@
 
-# Contributors Welcome!
+# Onward, Minio... Contributors!
+
+![Minions](http://i.giflike.com/zzljJpp.gif)
 
 ## Pull Requests
 
