@@ -9,7 +9,7 @@ An Apache Cassandra CQL query builder with support for the DataStax NodeJS drive
 
 ## Index
 
-- [Why Cassanknex](#WhyCassanknex)
+- [Why CassanKnex](#WhyCassanknex)
 - [Usage](#Usage)
   - [Generating Queries](#GeneratingQueries)
   - [Executing Queries](#ExecutingQueries)
@@ -26,7 +26,7 @@ An Apache Cassandra CQL query builder with support for the DataStax NodeJS drive
     - [Keyspaces](#QueryModifiers-Keyspaces)
 - [ChangeLog](#ChangeLog)
 
-## <a name="WhyCassanknex"></a>Why
+## <a name="WhyCassanknex"></a>Why (what's in a name)
 
 CQL was purposefully designed to be SQL-esq to enhance ease of access for those familiar w/ relational databases
 while Knex is the canonical NodeJS query builder for SQL dialects; however, even given the lexical similarities, the difference
@@ -432,6 +432,10 @@ qb.insert(values)
 - dropColumnFamily
 - dropColumnFamilyIfExists
 - createIndex
+- createType
+- createTypeIfNotExists
+- dropType
+- dropTypeIfExists
 
 ##### <a name="QueryCommands-Keyspaces"></a>*For keyspace queries*:
 - alterKeyspace
@@ -479,6 +483,9 @@ qb.insert(values)
 - timeuuid
 - uuid
 - varchar
+- frozen
+- frozenSet
+- frozenMap
 - withCaching
 - withCompression
 - withCompaction
@@ -491,8 +498,12 @@ qb.insert(values)
 
 #### <a name="ChangeLog"></a>ChangeLog
 
+- 1.7.0
+  - Add QueryCommands `createType`/`IfNotExists` and `dropType`/`IfExists`.
+  - Add QueryModifiers `frozen`/`Set`/`Map`/`List`.
+  - 1.7.0 features added per issue [#10](https://github.com/azuqua/cassanknex/issues/10).
 - 1.6.0
-  - Add `options` support for `eachRow` per issue #8.
+  - Add `options` support for `eachRow` per issue [#8](https://github.com/azuqua/cassanknex/issues/8).
 - 1.5.1, 1.5.2
   - OMG DOCS!
 - 1.5.0

@@ -8,7 +8,8 @@ var _ = require("lodash")
 
   , formatter = require("../formatter")
   , components = require("../componentDeclarations/components")
-  , methods = require("../componentDeclarations/componentCompilerMethods")[components.columnFamily];
+  , methods = require("../componentDeclarations/componentCompilerMethods")[components.columnFamily]
+  , builderMethods = require("../componentDeclarations/componentBuilderMethods")[components.columnFamily];
 
 var component = components.columnFamily;
 
@@ -21,6 +22,14 @@ module.exports = {
     arguments.length = 3;
     return this._wrapMethod(component, "createColumnFamily", _getCreateColumnFamily(), arguments);
   },
+  createType: function () {
+    if (arguments.length === 1) {
+      arguments[1] = null; // set stand in keyspace value
+    }
+    arguments[2] = false;
+    arguments.length = 3;
+    return this._wrapMethod(component, "createType", _getCreateType(), arguments);
+  },
   createColumnFamilyIfNotExists: function () {
     if (arguments.length === 1) {
       arguments[1] = null; // set stand in keyspace value
@@ -29,6 +38,14 @@ module.exports = {
     arguments.length = 3;
     return this._wrapMethod(component, "createColumnFamily", _getCreateColumnFamily(), arguments);
   },
+  createTypeIfNotExists: function () {
+    if (arguments.length === 1) {
+      arguments[1] = null; // set stand in keyspace value
+    }
+    arguments[2] = true;
+    arguments.length = 3;
+    return this._wrapMethod(component, "createType", _getCreateType(), arguments);
+  },
   alterColumnFamily: function () {
     if (arguments.length === 1) {
       arguments[1] = null; // set stand in keyspace value
@@ -36,6 +53,14 @@ module.exports = {
     arguments.length = 2;
     return this._wrapMethod(component, "alterColumnFamily", _getAlterColumnFamily(), arguments);
   },
+  alterType: function () {
+    if (arguments.length === 1) {
+      arguments[1] = null; // set stand in keyspace value
+    }
+    arguments.length = 2;
+    return this._wrapMethod(component, "alterType", _getAlterType(), arguments);
+  },
+
   createIndex: function () {
     return this._wrapMethod(component, "createIndex", _getCreateIndex(), arguments);
   },
@@ -47,6 +72,14 @@ module.exports = {
     arguments.length = 3;
     return this._wrapMethod(component, "dropColumnFamily", _getDropColumnFamily(), arguments);
   },
+  dropType: function () {
+    if (arguments.length === 1) {
+      arguments[1] = null; // set stand in keyspace value
+    }
+    arguments[2] = false;
+    arguments.length = 3;
+    return this._wrapMethod(component, "dropType", _getDropType(), arguments);
+  },
   dropColumnFamilyIfExists: function () {
     if (arguments.length === 1) {
       arguments[1] = null; // set stand in keyspace value
@@ -54,6 +87,14 @@ module.exports = {
     arguments[2] = true;
     arguments.length = 3;
     return this._wrapMethod(component, "dropColumnFamilyIfExists", _getDropColumnFamily(), arguments);
+  },
+  dropTypeIfExists: function () {
+    if (arguments.length === 1) {
+      arguments[1] = null; // set stand in keyspace value
+    }
+    arguments[2] = true;
+    arguments.length = 3;
+    return this._wrapMethod(component, "dropTypeIfExists", _getDropType(), arguments);
   }
 };
 
@@ -85,6 +126,38 @@ function _getCreateColumnFamily() {
 
     return this;
   };
+
+}
+
+function _getCreateType() {
+
+  return function (columnFamily, keyspace, ifNot) {
+
+    var compiling = this.getCompiling("createType", {
+      keyspace: keyspace,
+      columnFamily: columnFamily,
+      ifNot: ifNot
+    });
+
+    if (compiling.value.columnFamily)
+      this._setColumnFamily(compiling.value.columnFamily);
+    if (compiling.value.keyspace)
+      this._setKeyspace(compiling.value.keyspace);
+
+    var createStatement = compiling.value.ifNot ? "CREATE TYPE IF NOT EXISTS " : "CREATE TYPE "
+      , cql = createStatement + [this.keyspace(), this.columnFamily()].join(".") + " ";
+
+    cql += _compileColumns(this);
+    cql += _compileWith(this);
+
+    cql += ";";
+    this.query({
+      cql: cql
+    });
+
+    return this;
+  };
+
 }
 
 function _getAlterColumnFamily() {
@@ -102,6 +175,38 @@ function _getAlterColumnFamily() {
       this._setKeyspace(compiling.value.keyspace);
 
     var alterStatement = "ALTER TABLE "
+      , cql = alterStatement + [this.keyspace(), this.columnFamily()].join(".") + " ";
+
+    if (_.has(this._grouped, "column")) {
+      cql += "ADD " + _compileColumns(this, " ADD ", false);
+    }
+    cql += _compileWith(this);
+    cql += _compileAlter(this);
+
+    cql += ";";
+    this.query({
+      cql: cql
+    });
+
+    return this;
+  };
+}
+
+function _getAlterType() {
+
+  return function (columnFamily, keyspace) {
+
+    var compiling = this.getCompiling("alterType", {
+      keyspace: keyspace,
+      columnFamily: columnFamily
+    });
+
+    if (compiling.value.columnFamily)
+      this._setColumnFamily(compiling.value.columnFamily);
+    if (compiling.value.keyspace)
+      this._setKeyspace(compiling.value.keyspace);
+
+    var alterStatement = "ALTER TYPE "
       , cql = alterStatement + [this.keyspace(), this.columnFamily()].join(".") + " ";
 
     if (_.has(this._grouped, "column")) {
@@ -171,6 +276,35 @@ function _getDropColumnFamily() {
 
     return this;
   };
+
+}
+
+function _getDropType() {
+
+  return function (columnFamily, keyspace, ifNot) {
+
+    var compiling = this.getCompiling("dropType", {
+      keyspace: keyspace,
+      columnFamily: columnFamily,
+      ifNot: ifNot
+    });
+
+    if (compiling.value.columnFamily)
+      this._setColumnFamily(compiling.value.columnFamily);
+    if (compiling.value.keyspace)
+      this._setKeyspace(compiling.value.keyspace);
+
+    var dropStatement = compiling.value.ifNot ? "DROP TYPE IF EXISTS " : "DROP TYPE "
+      , cql = dropStatement + [this.keyspace(), this.columnFamily()].join(".") + " ";
+
+    cql += ";";
+    this.query({
+      cql: cql
+    });
+
+    return this;
+  };
+
 }
 
 function _compileColumns(client, deliminator, wrap) {
@@ -197,7 +331,20 @@ function _compileColumns(client, deliminator, wrap) {
 
         case "array":
         case "object":
-          columns.push([column.name, column.type.toUpperCase(), "<" + column.options.join(",") + ">"].join(" "));
+          // handle the frozen set, map and list columns
+          if (column.type === builderMethods.frozenSet.name) {
+            columns.push([column.name, "SET", "<" + "FROZEN", column.options.join(",") + ">"].join(" "));
+          }
+          else if (column.type === builderMethods.frozenMap.name) {
+            columns.push([column.name, "MAP", "<" + column.options[0] + ", FROZEN <" + column.options[1] + ">>"].join(" "));
+          }
+          else if (column.type === builderMethods.frozenList.name) {
+            columns.push([column.name, "FROZEN", "<LIST", "<" + column.options[0] + ">>"].join(" "));
+          }
+          // general (non UUDT or frozen) case
+          else {
+            columns.push([column.name, column.type.toUpperCase(), "<" + column.options.join(",") + ">"].join(" "));
+          }
           break;
 
         case "PRIMARY_KEY":

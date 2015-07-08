@@ -61,6 +61,15 @@ describe("yolo", function () {
           .withSimpleStrategy(1)
           .exec(next);
       },
+      // test create uudt
+      function (next) {
+        var qb = cassanKnex(keyspace)
+          .createTypeIfNotExists("typy")
+          .list("keys", "text")
+          .uuid("rando")
+          .int("dec")
+          .exec(next);
+      },
       // test create column family
       function (next) {
 
@@ -69,6 +78,7 @@ describe("yolo", function () {
           .uuid("id")
           .timestamp("timestamp")
           .text("data")
+          .frozen("written", "typy")
           .primary("id", "timestamp")
           .exec(next);
       },
@@ -76,7 +86,8 @@ describe("yolo", function () {
       function (next) {
 
         var items = _.map(Array(rows), function () {
-          return {id: uuid.v4(), timestamp: new Date(), data: ""};
+          var id = uuid.v4();
+          return {id: id, timestamp: new Date(), data: "", written: {keys: ["foo", "bar"], rando: id, dec: 42}};
         });
 
         async.each(items, function (item, done) {
@@ -84,7 +95,7 @@ describe("yolo", function () {
           var qb = cassanKnex(keyspace)
             .insert(item)
             .into(columnFamily)
-            .exec(done);
+            .exec({prepare: true}, done);
         }, next);
       },
       // test the execution method
