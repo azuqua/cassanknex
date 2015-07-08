@@ -9,6 +9,7 @@ module.exports = {
     "frozen": {"name": "frozen", "grouping": "column", jsType: "object"},
     "frozenSet": {"name": "frozenSet", "grouping": "column", jsType: "object"},
     "frozenMap": {"name": "frozenMap", "grouping": "column", jsType: "object"},
+    "frozenList": {"name": "frozenList", "grouping": "column", jsType: "object"},
     "list": {"name": "list", "grouping": "column", jsType: "array"},
     "set": {"name": "set", "grouping": "column", jsType: "array"},
     "decimal": {"name": "decimal", "grouping": "column", jsType: "bigDecimal"},

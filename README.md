@@ -500,7 +500,7 @@ qb.insert(values)
 
 - 1.7.0
   - Add QueryCommands `createType`/`IfNotExists` and `dropType`/`IfExists`.
-  - Add QueryModifiers `frozen`/`Set`/`Map`.
+  - Add QueryModifiers `frozen`/`Set`/`Map`/`List`.
   - 1.7.0 features added per issue [#10](https://github.com/azuqua/cassanknex/issues/10).
 - 1.6.0
   - Add `options` support for `eachRow` per issue [#8](https://github.com/azuqua/cassanknex/issues/8).

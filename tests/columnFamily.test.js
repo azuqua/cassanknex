@@ -104,14 +104,15 @@ describe("ColumnFamilyMethods", function () {
     var _cql = qb.cql();
     assert(_cql === cql, "Expected compilation: '" + cql + "' but compiled: " + _cql);
   });
-  it("should compile a create column family statement w/ all user defined types", function () {
+  it.only("should compile a create column family statement w/ all frozen (or user defined) types", function () {
 
-    var cql = "CREATE COLUMNFAMILY cassanKnexy.columnFamily ( uudtTypeColumn FROZEN <myUUDT>, uudtTypeSetColumn SET <FROZEN myUUDT>, uudtTypeMapColumn MAP <text, FROZEN <myUUDT>> ) ;"
+    var cql = "CREATE COLUMNFAMILY cassanKnexy.columnFamily ( uudtTypeColumn FROZEN <myUUDT>, uudtTypeSetColumn SET <FROZEN myUUDT>, uudtTypeMapColumn MAP <text, FROZEN <myUUDT>>, anyTypeListColumn FROZEN <LIST <anyType>> ) ;"
       , qb = cassanKnex("cassanKnexy");
     qb.createColumnFamily("columnFamily")
       .frozen("uudtTypeColumn", "myUUDT")
       .frozenSet("uudtTypeSetColumn", "myUUDT")
-      .frozenMap("uudtTypeMapColumn", "text", "myUUDT");
+      .frozenMap("uudtTypeMapColumn", "text", "myUUDT")
+      .frozenList("anyTypeListColumn", "anyType");
 
     var _cql = qb.cql();
     assert(_cql === cql, "Expected compilation: '" + cql + "' but compiled: " + _cql);

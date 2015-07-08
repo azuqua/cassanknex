@@ -331,14 +331,17 @@ function _compileColumns(client, deliminator, wrap) {
 
         case "array":
         case "object":
-          // handle the UUDT set and map columns
+          // handle the frozen set, map and list columns
           if (column.type === builderMethods.frozenSet.name) {
             columns.push([column.name, "SET", "<" + "FROZEN", column.options.join(",") + ">"].join(" "));
           }
           else if (column.type === builderMethods.frozenMap.name) {
             columns.push([column.name, "MAP", "<" + column.options[0] + ", FROZEN <" + column.options[1] + ">>"].join(" "));
           }
-          // general (non UUDT) case
+          else if (column.type === builderMethods.frozenList.name) {
+            columns.push([column.name, "FROZEN", "<LIST", "<" + column.options[0] + ">>"].join(" "));
+          }
+          // general (non UUDT or frozen) case
           else {
             columns.push([column.name, column.type.toUpperCase(), "<" + column.options.join(",") + ">"].join(" "));
           }
