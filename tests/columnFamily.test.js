@@ -104,6 +104,18 @@ describe("ColumnFamilyMethods", function () {
     var _cql = qb.cql();
     assert(_cql === cql, "Expected compilation: '" + cql + "' but compiled: " + _cql);
   });
+  it("should compile a create column family statement w/ all user defined types", function () {
+
+    var cql = "CREATE COLUMNFAMILY cassanKnexy.columnFamily ( uudtTypeColumn FROZEN <myUUDT>, uudtTypeSetColumn SET <FROZEN myUUDT>, uudtTypeMapColumn MAP <text, FROZEN <myUUDT>> ) ;"
+      , qb = cassanKnex("cassanKnexy");
+    qb.createColumnFamily("columnFamily")
+      .frozen("uudtTypeColumn", "myUUDT")
+      .frozenSet("uudtTypeSetColumn", "myUUDT")
+      .frozenMap("uudtTypeMapColumn", "text", "myUUDT");
+
+    var _cql = qb.cql();
+    assert(_cql === cql, "Expected compilation: '" + cql + "' but compiled: " + _cql);
+  });
   it("should compile a create statement w/ compression, compaction and caching options", function () {
 
     var cql = "CREATE COLUMNFAMILY cassanKnexy.columnFamily WITH compression = { 'sstable_compression ' : 'DeflateCompressor' , 'chunk_length_kb' : '64' } AND compaction = { 'class' : 'SizeTieredCompactionStrategy' , 'cold_reads_to_omit' : '0.05' } AND caching = { 'rows_per_partition' : '25' };"
@@ -244,5 +256,4 @@ describe("ColumnFamilyMethods", function () {
     var _cql = qb.cql();
     assert(_cql === cql, "Expected compilation: '" + cql + "' but compiled: " + _cql);
   });
-
 });

@@ -8,7 +8,8 @@ var _ = require("lodash")
 
   , formatter = require("../formatter")
   , components = require("../componentDeclarations/components")
-  , methods = require("../componentDeclarations/componentCompilerMethods")[components.columnFamily];
+  , methods = require("../componentDeclarations/componentCompilerMethods")[components.columnFamily]
+  , builderMethods = require("../componentDeclarations/componentBuilderMethods")[components.columnFamily];
 
 var component = components.columnFamily;
 
@@ -330,7 +331,17 @@ function _compileColumns(client, deliminator, wrap) {
 
         case "array":
         case "object":
-          columns.push([column.name, column.type.toUpperCase(), "<" + column.options.join(",") + ">"].join(" "));
+          // handle the UUDT set and map columns
+          if (column.type === builderMethods.frozenSet.name) {
+            columns.push([column.name, "SET", "<" + "FROZEN", column.options.join(",") + ">"].join(" "));
+          }
+          else if (column.type === builderMethods.frozenMap.name) {
+            columns.push([column.name, "MAP", "<" + column.options[0] + ", FROZEN <" + column.options[1] + ">>"].join(" "));
+          }
+          // general (non UUDT) case
+          else {
+            columns.push([column.name, column.type.toUpperCase(), "<" + column.options.join(",") + ">"].join(" "));
+          }
           break;
 
         case "PRIMARY_KEY":
