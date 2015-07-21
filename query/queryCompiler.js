@@ -80,7 +80,7 @@ function _getSelect() {
           return formatter.wrapQuotes(key) + " AS " + formatter.wrapQuotes(column[key]);
         }
         else {
-          if (column !== column) {
+          if (column !== "*") {
             return formatter.wrapQuotes(column);
           }
           else {
