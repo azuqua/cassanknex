@@ -70,3 +70,23 @@ module.exports.parameterizeArray = function (value, client) {
 module.exports.parameter = function () {
   return "?";
 };
+
+/**
+ * Wrap a string w/ quotes
+ *
+ * @param string
+ * @returns {string}
+ */
+module.exports.wrapQuotes = function (string) {
+  return "\"" + string + "\"";
+};
+
+/**
+ * Wrap a string w/ square brackets
+ *
+ * @param string
+ * @returns {string}
+ */
+module.exports.wrapSquareBrackets = function (string) {
+  return "[" + string + "]";
+};

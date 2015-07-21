@@ -7,7 +7,7 @@
 
 For most PR's (read: additive feature requests), please submit against the `develop` branch;
 this is to ensure that we may quickly merge the changes in and allow the community to critique/modify
-w/o the need to
+the proposed changes from a common source.
 
 ## Code Format
 

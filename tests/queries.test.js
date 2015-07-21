@@ -15,7 +15,7 @@ describe("QueryMethods", function () {
 
   it("should compile an insert query string", function () {
 
-    var cql = "INSERT INTO cassanKnexy.columnFamily (id,bar,baz) VALUES (?, ?, ?) USING TIMESTAMP ? AND USING TTL ?;"
+    var cql = 'INSERT INTO "cassanKnexy"."columnFamily" ("id","bar","baz") VALUES (?, ?, ?) USING TIMESTAMP ? AND USING TTL ?;'
       , qb = cassanKnex("cassanKnexy")
       , values = {
         "id": "foo"
@@ -35,7 +35,7 @@ describe("QueryMethods", function () {
 
   it("should compile a simple 'select' query string", function () {
 
-    var cql = "SELECT id FROM cassanKnexy.columnFamily;"
+    var cql = 'SELECT "id" FROM "cassanKnexy"."columnFamily";'
       , qb = cassanKnex("cassanKnexy");
     qb.select("id")
       .from("columnFamily");
@@ -45,7 +45,7 @@ describe("QueryMethods", function () {
   });
   it("should compile a simple 'select as' w/ object input format query string", function () {
 
-    var cql = "SELECT id AS foo FROM cassanKnexy.columnFamily;"
+    var cql = 'SELECT "id" AS "foo" FROM "cassanKnexy"."columnFamily";'
       , qb = cassanKnex("cassanKnexy");
     qb.select({"id": "foo"})
       .from("columnFamily");
@@ -55,7 +55,7 @@ describe("QueryMethods", function () {
   });
   it("should compile a simple 'select' w/ array input format query string", function () {
 
-    var cql = "SELECT id FROM cassanKnexy.columnFamily;"
+    var cql = 'SELECT "id" FROM "cassanKnexy"."columnFamily";'
       , qb = cassanKnex("cassanKnexy");
     qb.select(["id"])
       .from("columnFamily");
@@ -65,7 +65,7 @@ describe("QueryMethods", function () {
   });
   it("should compile a simple 'select as' w/ array input format query string", function () {
 
-    var cql = "SELECT id AS foo FROM cassanKnexy.columnFamily;"
+    var cql = 'SELECT "id" AS "foo" FROM "cassanKnexy"."columnFamily";'
       , qb = cassanKnex("cassanKnexy");
     qb.select([{"id": "foo"}])
       .from("columnFamily");
@@ -75,7 +75,7 @@ describe("QueryMethods", function () {
   });
   it("should compile an 'allow filtering' simple 'select' query string", function () {
 
-    var cql = "SELECT id FROM cassanKnexy.columnFamily ALLOW FILTERING;"
+    var cql = 'SELECT "id" FROM "cassanKnexy"."columnFamily" ALLOW FILTERING;'
       , qb = cassanKnex("cassanKnexy");
     qb.select("id")
       .allowFiltering()
@@ -86,7 +86,7 @@ describe("QueryMethods", function () {
   });
   it("should compile a select query string", function () {
 
-    var cql = "SELECT id,foo,bar,baz FROM cassanKnexy.columnFamily WHERE id = ? OR id in (?, ?) OR baz = ? AND foo IN (?, ?) LIMIT ?;"
+    var cql = 'SELECT "id","foo","bar","baz" FROM "cassanKnexy"."columnFamily" WHERE "id" = ? OR "id" in (?, ?) OR "baz" = ? AND "foo" IN (?, ?) LIMIT ?;'
       , qb = cassanKnex("cassanKnexy");
     qb.select("id", "foo", "bar", "baz")
       .where("id", "=", "1")
@@ -101,7 +101,7 @@ describe("QueryMethods", function () {
   });
   it("should compile a 'select as' query string", function () {
 
-    var cql = "SELECT id,foo AS bar,bar,baz FROM cassanKnexy.columnFamily WHERE id = ? OR id in (?, ?) OR baz = ? AND foo IN (?, ?) LIMIT ?;"
+    var cql = 'SELECT "id","foo" AS "bar","bar","baz" FROM "cassanKnexy"."columnFamily" WHERE "id" = ? OR "id" in (?, ?) OR "baz" = ? AND "foo" IN (?, ?) LIMIT ?;'
       , qb = cassanKnex("cassanKnexy");
     qb.select("id", {"foo": "bar"}, "bar", "baz")
       .where("id", "=", "1")
@@ -119,7 +119,7 @@ describe("QueryMethods", function () {
 
   it("should compile an update query string", function () {
 
-    var cql = "UPDATE cassanKnexy.columnFamily SET bar = ? WHERE foo[bar] = ? AND id in (?, ?, ?, ?, ?);"
+    var cql = 'UPDATE "cassanKnexy"."columnFamily" SET "bar" = ? WHERE "foo"[bar] = ? AND "id" in (?, ?, ?, ?, ?);'
       , qb = cassanKnex("cassanKnexy");
     qb.update("columnFamily")
       .set("bar", "baz")
@@ -131,7 +131,7 @@ describe("QueryMethods", function () {
   });
   it("should compile an update list query string", function () {
 
-    var cql = "UPDATE cassanKnexy.columnFamily SET foo = ? WHERE foo[bar] = ? AND id in (?, ?, ?, ?, ?);"
+    var cql = 'UPDATE "cassanKnexy"."columnFamily" SET "foo" = ? WHERE "foo"[bar] = ? AND "id" in (?, ?, ?, ?, ?);'
       , qb = cassanKnex("cassanKnexy");
     qb.update("columnFamily")
       .set("foo", ["bar", "baz"])
@@ -143,7 +143,7 @@ describe("QueryMethods", function () {
   });
   it("should compile an update query string using an object param", function () {
 
-    var cql = "UPDATE cassanKnexy.columnFamily SET bar = ?,foo = ? WHERE foo[bar] = ? AND id in (?, ?, ?, ?, ?);"
+    var cql = 'UPDATE "cassanKnexy"."columnFamily" SET "bar" = ?,"foo" = ? WHERE "foo"[bar] = ? AND "id" in (?, ?, ?, ?, ?);'
       , qb = cassanKnex("cassanKnexy");
     qb.update("columnFamily")
       .set({
@@ -161,7 +161,7 @@ describe("QueryMethods", function () {
 
   it("should compile a simple delete query string", function () {
 
-    var cql = "DELETE  FROM cassanKnexy.columnFamily WHERE foo[bar] = ? AND id in (?, ?, ?, ?, ?);"
+    var cql = 'DELETE  FROM "cassanKnexy"."columnFamily" WHERE "foo"[bar] = ? AND "id" in (?, ?, ?, ?, ?);'
       , qb = cassanKnex("cassanKnexy");
     qb.delete()
       .from("columnFamily")
@@ -171,9 +171,21 @@ describe("QueryMethods", function () {
     var _cql = qb.cql();
     assert(_cql === cql, "Expected compilation: '" + cql + "' but compiled: " + _cql);
   });
+  it("should compile a simple delete single column query string", function () {
+
+    var cql = 'DELETE "foo" FROM "cassanKnexy"."columnFamily" WHERE "foo"[bar] = ? AND "id" in (?, ?, ?, ?, ?);'
+      , qb = cassanKnex("cassanKnexy");
+    qb.delete("foo")
+      .from("columnFamily")
+      .where("foo[bar]", "=", "baz")
+      .where("id", "in", ["1", "1", "2", "3", "5"]);
+
+    var _cql = qb.cql();
+    assert(_cql === cql, "Expected compilation: '" + cql + "' but compiled: " + _cql);
+  });
   it("should compile a delete columns query string", function () {
 
-    var cql = "DELETE foo,bar FROM cassanKnexy.columnFamily WHERE foo[bar] = ? AND id in (?, ?, ?, ?, ?);"
+    var cql = 'DELETE "foo","bar" FROM "cassanKnexy"."columnFamily" WHERE "foo"[bar] = ? AND "id" in (?, ?, ?, ?, ?);'
       , qb = cassanKnex("cassanKnexy");
     qb.delete("foo", "bar")
       .from("columnFamily")
@@ -185,7 +197,7 @@ describe("QueryMethods", function () {
   });
   it("should compile a delete columns query string using an array as input", function () {
 
-    var cql = "DELETE foo,bar FROM cassanKnexy.columnFamily WHERE foo[bar] = ? AND id in (?, ?, ?, ?, ?);"
+    var cql = 'DELETE "foo","bar" FROM "cassanKnexy"."columnFamily" WHERE "foo"[bar] = ? AND "id" in (?, ?, ?, ?, ?);'
       , qb = cassanKnex("cassanKnexy");
     qb.delete(["foo", "bar"])
       .from("columnFamily")

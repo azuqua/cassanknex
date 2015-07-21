@@ -16,7 +16,7 @@ describe("KeyspaceMethods", function () {
 
   it("should complile a create keyspace statement", function () {
 
-    var cql = 'CREATE KEYSPACE cassanKnexy;'
+    var cql = 'CREATE KEYSPACE "cassanKnexy";'
       , qb = cassanKnex();
     qb.createKeyspace("cassanKnexy");
 
@@ -25,7 +25,7 @@ describe("KeyspaceMethods", function () {
   });
   it("should complile a create keyspace if not exists statement", function () {
 
-    var cql = 'CREATE KEYSPACE IF NOT EXISTS cassanKnexy;'
+    var cql = 'CREATE KEYSPACE IF NOT EXISTS "cassanKnexy";'
       , qb = cassanKnex();
     qb.createKeyspaceIfNotExists("cassanKnexy");
 
@@ -34,7 +34,7 @@ describe("KeyspaceMethods", function () {
   });
   it("should compile a create keyspace statement w/ replication simple strategy", function () {
 
-    var cql = "CREATE KEYSPACE cassanKnexy WITH REPLICATION = { 'class' : 'SimpleStrategy' , 'replication_factor' : '1' };"
+    var cql = "CREATE KEYSPACE \"cassanKnexy\" WITH REPLICATION = { 'class' : 'SimpleStrategy' , 'replication_factor' : '1' };"
       , qb = cassanKnex();
     qb.createKeyspace("cassanKnexy")
       .withSimpleStrategy(1);
@@ -44,7 +44,7 @@ describe("KeyspaceMethods", function () {
   });
   it("should compile a create keyspace statement w/ network topology strategy using single object param", function () {
 
-    var cql = "CREATE KEYSPACE cassanKnexy WITH REPLICATION = { 'class' : 'NetworkTopologyStrategy' , 'dataCenter1' : '1' , 'dataCenter2' : '2' };"
+    var cql = "CREATE KEYSPACE \"cassanKnexy\" WITH REPLICATION = { 'class' : 'NetworkTopologyStrategy' , 'dataCenter1' : '1' , 'dataCenter2' : '2' };"
       , qb = cassanKnex();
     qb.createKeyspace("cassanKnexy")
       .withNetworkTopologyStrategy({"dataCenter1": 1, "dataCenter2": 2});
@@ -54,7 +54,7 @@ describe("KeyspaceMethods", function () {
   });
   it("should compile a create keyspace statement w/ network topology strategy using mult object params", function () {
 
-    var cql = "CREATE KEYSPACE cassanKnexy WITH REPLICATION = { 'class' : 'NetworkTopologyStrategy' , 'dataCenter1' : '1' , 'dataCenter2' : '2' };"
+    var cql = "CREATE KEYSPACE \"cassanKnexy\" WITH REPLICATION = { 'class' : 'NetworkTopologyStrategy' , 'dataCenter1' : '1' , 'dataCenter2' : '2' };"
       , qb = cassanKnex();
     qb.createKeyspace("cassanKnexy")
       .withNetworkTopologyStrategy({"dataCenter1": 1}, {"dataCenter2": 2});
@@ -64,7 +64,7 @@ describe("KeyspaceMethods", function () {
   });
   it("should compile a create keyspace statement w/ durable writes false and network topology strategy using single object param", function () {
 
-    var cql = "CREATE KEYSPACE cassanKnexy WITH REPLICATION = { 'class' : 'NetworkTopologyStrategy' , 'dataCenter1' : '1' , 'dataCenter2' : '2' } AND DURABLE_WRITES = false;"
+    var cql = "CREATE KEYSPACE \"cassanKnexy\" WITH REPLICATION = { 'class' : 'NetworkTopologyStrategy' , 'dataCenter1' : '1' , 'dataCenter2' : '2' } AND DURABLE_WRITES = false;"
       , qb = cassanKnex();
     qb.createKeyspace("cassanKnexy")
       .withNetworkTopologyStrategy({"dataCenter1": 1, "dataCenter2": 2})
@@ -78,7 +78,7 @@ describe("KeyspaceMethods", function () {
 
   it("should compile an alter keyspace statement w/ network topology strategy using single object param", function () {
 
-    var cql = "ALTER KEYSPACE cassanKnexy WITH REPLICATION = { 'class' : 'NetworkTopologyStrategy' , 'dataCenter1' : '1' , 'dataCenter2' : '2' };"
+    var cql = "ALTER KEYSPACE \"cassanKnexy\" WITH REPLICATION = { 'class' : 'NetworkTopologyStrategy' , 'dataCenter1' : '1' , 'dataCenter2' : '2' };"
       , qb = cassanKnex();
     qb.alterKeyspace("cassanKnexy")
       .withNetworkTopologyStrategy({"dataCenter1": 1, "dataCenter2": 2});
@@ -88,7 +88,7 @@ describe("KeyspaceMethods", function () {
   });
   it("should compile an alter keyspace if exists statement w/ network topology strategy using single object param", function () {
 
-    var cql = "ALTER KEYSPACE IF EXISTS cassanKnexy WITH REPLICATION = { 'class' : 'NetworkTopologyStrategy' , 'dataCenter1' : '1' , 'dataCenter2' : '2' };"
+    var cql = "ALTER KEYSPACE IF EXISTS \"cassanKnexy\" WITH REPLICATION = { 'class' : 'NetworkTopologyStrategy' , 'dataCenter1' : '1' , 'dataCenter2' : '2' };"
       , qb = cassanKnex();
     qb.alterKeyspaceIfExists("cassanKnexy")
       .withNetworkTopologyStrategy({"dataCenter1": 1, "dataCenter2": 2});
@@ -101,7 +101,7 @@ describe("KeyspaceMethods", function () {
 
   it("should complile a drop keyspace statement", function () {
 
-    var cql = 'DROP KEYSPACE cassanKnexy;'
+    var cql = 'DROP KEYSPACE "cassanKnexy";'
       , qb = cassanKnex();
     qb.dropKeyspace("cassanKnexy");
 
@@ -110,7 +110,7 @@ describe("KeyspaceMethods", function () {
   });
   it("should complile a drop keyspace if exists statement", function () {
 
-    var cql = 'DROP KEYSPACE IF EXISTS cassanKnexy;'
+    var cql = 'DROP KEYSPACE IF EXISTS "cassanKnexy";'
       , qb = cassanKnex();
     qb.dropKeyspaceIfExists("cassanKnexy");
 

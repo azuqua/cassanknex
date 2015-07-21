@@ -57,7 +57,7 @@ function _getCreateKeyspace() {
       this.use(compiling.value.keyspace);
 
     var createStatement = compiling.value.ifNot ? "CREATE KEYSPACE IF NOT EXISTS " : "CREATE KEYSPACE "
-      , cql = createStatement + this.keyspaceName();
+      , cql = createStatement + formatter.wrapQuotes(this.keyspaceName());
 
     cql += _compileStrategy(this);
     cql += _compileAnd(this);
@@ -80,7 +80,7 @@ function _getAlterKeyspace() {
       this.use(compiling.value.keyspace);
 
     var createStatement = compiling.value.if ? "ALTER KEYSPACE IF EXISTS " : "ALTER KEYSPACE "
-      , cql = createStatement + this.keyspaceName();
+      , cql = createStatement + formatter.wrapQuotes(this.keyspaceName());
 
     cql += _compileStrategy(this);
     cql += _compileAnd(this);
@@ -102,7 +102,7 @@ function _getDropKeyspace() {
       this.use(compiling.value.keyspace);
 
     var dropStatement = compiling.value.if ? "DROP KEYSPACE IF EXISTS " : "DROP KEYSPACE "
-      , cql = dropStatement + this.keyspaceName();
+      , cql = dropStatement + formatter.wrapQuotes(this.keyspaceName());
 
     cql += ";";
     this.query({

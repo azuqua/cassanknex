@@ -114,7 +114,7 @@ function _getCreateColumnFamily() {
       this._setKeyspace(compiling.value.keyspace);
 
     var createStatement = compiling.value.ifNot ? "CREATE COLUMNFAMILY IF NOT EXISTS " : "CREATE COLUMNFAMILY "
-      , cql = createStatement + [this.keyspace(), this.columnFamily()].join(".") + " ";
+      , cql = createStatement + [formatter.wrapQuotes(this.keyspace()), formatter.wrapQuotes(this.columnFamily())].join(".") + " ";
 
     cql += _compileColumns(this);
     cql += _compileWith(this);
@@ -145,7 +145,7 @@ function _getCreateType() {
       this._setKeyspace(compiling.value.keyspace);
 
     var createStatement = compiling.value.ifNot ? "CREATE TYPE IF NOT EXISTS " : "CREATE TYPE "
-      , cql = createStatement + [this.keyspace(), this.columnFamily()].join(".") + " ";
+      , cql = createStatement + [formatter.wrapQuotes(this.keyspace()), this.columnFamily()].join(".") + " ";
 
     cql += _compileColumns(this);
     cql += _compileWith(this);
@@ -175,7 +175,7 @@ function _getAlterColumnFamily() {
       this._setKeyspace(compiling.value.keyspace);
 
     var alterStatement = "ALTER TABLE "
-      , cql = alterStatement + [this.keyspace(), this.columnFamily()].join(".") + " ";
+      , cql = alterStatement + [formatter.wrapQuotes(this.keyspace()), formatter.wrapQuotes(this.columnFamily())].join(".") + " ";
 
     if (_.has(this._grouped, "column")) {
       cql += "ADD " + _compileColumns(this, " ADD ", false);
@@ -207,7 +207,7 @@ function _getAlterType() {
       this._setKeyspace(compiling.value.keyspace);
 
     var alterStatement = "ALTER TYPE "
-      , cql = alterStatement + [this.keyspace(), this.columnFamily()].join(".") + " ";
+      , cql = alterStatement + [formatter.wrapQuotes(this.keyspace()), this.columnFamily()].join(".") + " ";
 
     if (_.has(this._grouped, "column")) {
       cql += "ADD " + _compileColumns(this, " ADD ", false);
@@ -239,8 +239,8 @@ function _getCreateIndex() {
 
     var createStatement = "CREATE INDEX"
       , cql = [createStatement, compiling.value.indexName, "ON"].join(" ") +
-        " " + [this.keyspace(), this.columnFamily()].join(".") +
-        " " + ["(", compiling.value.onColumn, ")"].join(" ");
+        " " + [formatter.wrapQuotes(this.keyspace()), formatter.wrapQuotes(this.columnFamily())].join(".") +
+        " " + ["(", formatter.wrapQuotes(compiling.value.onColumn), ")"].join(" ");
 
     cql += ";";
     this.query({
@@ -267,7 +267,7 @@ function _getDropColumnFamily() {
       this._setKeyspace(compiling.value.keyspace);
 
     var dropStatement = compiling.value.ifNot ? "DROP COLUMNFAMILY IF EXISTS " : "DROP COLUMNFAMILY "
-      , cql = dropStatement + [this.keyspace(), this.columnFamily()].join(".") + " ";
+      , cql = dropStatement + [formatter.wrapQuotes(this.keyspace()), formatter.wrapQuotes(this.columnFamily())].join(".") + " ";
 
     cql += ";";
     this.query({
@@ -295,7 +295,7 @@ function _getDropType() {
       this._setKeyspace(compiling.value.keyspace);
 
     var dropStatement = compiling.value.ifNot ? "DROP TYPE IF EXISTS " : "DROP TYPE "
-      , cql = dropStatement + [this.keyspace(), this.columnFamily()].join(".") + " ";
+      , cql = dropStatement + [formatter.wrapQuotes(this.keyspace()), this.columnFamily()].join(".") + " ";
 
     cql += ";";
     this.query({
@@ -326,30 +326,32 @@ function _compileColumns(client, deliminator, wrap) {
         case "long":
         case "number":
         case "string":
-          columns.push([column.name, column.type.toUpperCase()].join(" "));
+          columns.push([formatter.wrapQuotes(column.name), column.type.toUpperCase()].join(" "));
           break;
 
         case "array":
         case "object":
           // handle the frozen set, map and list columns
           if (column.type === builderMethods.frozenSet.name) {
-            columns.push([column.name, "SET", "<" + "FROZEN", column.options.join(",") + ">"].join(" "));
+            columns.push([formatter.wrapQuotes(column.name), "SET", "<" + "FROZEN", column.options.join(",") + ">"].join(" "));
           }
           else if (column.type === builderMethods.frozenMap.name) {
-            columns.push([column.name, "MAP", "<" + column.options[0] + ", FROZEN <" + column.options[1] + ">>"].join(" "));
+            columns.push([formatter.wrapQuotes(column.name), "MAP", "<" + column.options[0] + ", FROZEN <" + column.options[1] + ">>"].join(" "));
           }
           else if (column.type === builderMethods.frozenList.name) {
-            columns.push([column.name, "FROZEN", "<LIST", "<" + column.options[0] + ">>"].join(" "));
+            columns.push([formatter.wrapQuotes(column.name), "FROZEN", "<LIST", "<" + column.options[0] + ">>"].join(" "));
           }
           // general (non UUDT or frozen) case
           else {
-            columns.push([column.name, column.type.toUpperCase(), "<" + column.options.join(",") + ">"].join(" "));
+            columns.push([formatter.wrapQuotes(column.name), column.type.toUpperCase(), "<" + column.options.join(",") + ">"].join(" "));
           }
           break;
 
         case "PRIMARY_KEY":
           var keyStatements = _.map(column.options, function (option) {
-            return (_.isArray(option) ? "(" + option.join(", ") + ")" : option);
+            return (_.isArray(option) ? "(" + _.map(option, function (op) {
+              return formatter.wrapQuotes(op);
+            }).join(", ") + ")" : formatter.wrapQuotes(option));
           });
           columns.push("PRIMARY KEY (" + keyStatements.join(", ") + ")");
           break;
@@ -381,7 +383,7 @@ function _compileWith(client) {
           withStatement.type.toUpperCase(),
           "ORDER BY",
           "(",
-          withStatement.args[0],
+          formatter.wrapQuotes(withStatement.args[0]),
           String(withStatement.args[1]).toUpperCase(),
           ")",
           ""
@@ -404,13 +406,15 @@ function _compileAlter(client) {
       var options = alterStatement.options;
       switch (alterStatement.type) {
         case "alter":
-          statements.push("ALTER " + options[0] + " TYPE " + options[1]);
+          statements.push("ALTER " + formatter.wrapQuotes(options[0]) + " TYPE " + options[1]);
           break;
         case "drop":
-          statements.push("DROP " + options.join(" DROP "));
+          statements.push("DROP " + _.map(options, function (op) {
+              return formatter.wrapQuotes(op);
+            }).join(" DROP "));
           break;
         case "rename":
-          statements.push("RENAME " + options[0] + " TO " + options[1]);
+          statements.push("RENAME " + formatter.wrapQuotes(options[0]) + " TO " + formatter.wrapQuotes(options[1]));
           break;
       }
     });
