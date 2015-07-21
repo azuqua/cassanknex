@@ -10,7 +10,7 @@ var assert = require("chai").assert
   });
 
 
-describe.only("ColumnFamilyMethods", function () {
+describe("ColumnFamilyMethods", function () {
 
   // CREATE COLUMN FAMILY
 

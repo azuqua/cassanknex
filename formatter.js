@@ -80,3 +80,13 @@ module.exports.parameter = function () {
 module.exports.wrapQuotes = function (string) {
   return "\"" + string + "\"";
 };
+
+/**
+ * Wrap a string w/ square brackets
+ *
+ * @param string
+ * @returns {string}
+ */
+module.exports.wrapSquareBrackets = function (string) {
+  return "[" + string + "]";
+};

@@ -20,6 +20,7 @@ describe("yolo", function () {
   var cassanKnex
     , keyspace = "cassanKnexy"
     , columnFamily = "iSiS"
+    , type = "typy"
     , rows = 50;
 
   before(function (done) {
@@ -27,7 +28,8 @@ describe("yolo", function () {
     this.timeout(0);
     cassanKnex = require("../../index")({
       connection: {
-        contactPoints: ["10.0.0.2"]
+        //contactPoints: ["10.0.0.2"]
+        contactPoints: ["be-css.azuqua.com"]
       },
       debug: false
     });
@@ -64,7 +66,7 @@ describe("yolo", function () {
       // test create uudt
       function (next) {
         var qb = cassanKnex(keyspace)
-          .createTypeIfNotExists("typy")
+          .createTypeIfNotExists(type)
           .list("keys", "text")
           .uuid("rando")
           .int("dec")
@@ -78,10 +80,10 @@ describe("yolo", function () {
           .uuid("id")
           .timestamp("timestamp")
           .text("data")
-          .frozen("written", "typy")
+          .frozen("written", type)
           .primary("id", "timestamp")
           .exec(next);
-      },/*
+      },
       // test simple insert
       function (next) {
 
@@ -226,7 +228,7 @@ describe("yolo", function () {
             assert(resp.rowLength === 0, "All rows must be deleted!");
             next(err);
           });
-      }*/
+      }
     ], function (err) {
 
       if (err) {
