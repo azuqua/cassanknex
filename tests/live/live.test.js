@@ -18,8 +18,8 @@ var assert = require("chai").assert
 describe("yolo", function () {
 
   var cassanKnex
-    , keyspace = "cassanknexy"
-    , columnFamily = "isis"
+    , keyspace = "cassanKnexy"
+    , columnFamily = "iSiS"
     , rows = 50;
 
   before(function (done) {
@@ -38,7 +38,7 @@ describe("yolo", function () {
     });
   });
 
-  it("should drop the keyspace (if exists) 'cassanknexy' recreate it, " +
+  it("should drop the keyspace (if exists) 'cassanKnexy' recreate it, " +
     "build a sample table and execute several insertions into that table, " +
     "and read records inserted using both the 'exec' and 'stream' and 'eachRow' methods" +
     " - then delete all rows from the test table.", function (done) {
@@ -81,7 +81,7 @@ describe("yolo", function () {
           .frozen("written", "typy")
           .primary("id", "timestamp")
           .exec(next);
-      },
+      },/*
       // test simple insert
       function (next) {
 
@@ -226,7 +226,7 @@ describe("yolo", function () {
             assert(resp.rowLength === 0, "All rows must be deleted!");
             next(err);
           });
-      }
+      }*/
     ], function (err) {
 
       if (err) {
