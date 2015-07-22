@@ -18,8 +18,9 @@ var assert = require("chai").assert
 describe("yolo", function () {
 
   var cassanKnex
-    , keyspace = "cassanknexy"
-    , columnFamily = "isis"
+    , keyspace = "cassanKnexy"
+    , columnFamily = "iSiS"
+    , type = "typy"
     , rows = 50;
 
   before(function (done) {
@@ -38,7 +39,7 @@ describe("yolo", function () {
     });
   });
 
-  it("should drop the keyspace (if exists) 'cassanknexy' recreate it, " +
+  it("should drop the keyspace (if exists) 'cassanKnexy' recreate it, " +
     "build a sample table and execute several insertions into that table, " +
     "and read records inserted using both the 'exec' and 'stream' and 'eachRow' methods" +
     " - then delete all rows from the test table.", function (done) {
@@ -64,7 +65,7 @@ describe("yolo", function () {
       // test create uudt
       function (next) {
         var qb = cassanKnex(keyspace)
-          .createTypeIfNotExists("typy")
+          .createTypeIfNotExists(type)
           .list("keys", "text")
           .uuid("rando")
           .int("dec")
@@ -78,7 +79,7 @@ describe("yolo", function () {
           .uuid("id")
           .timestamp("timestamp")
           .text("data")
-          .frozen("written", "typy")
+          .frozen("written", type)
           .primary("id", "timestamp")
           .exec(next);
       },

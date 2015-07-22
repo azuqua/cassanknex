@@ -35,13 +35,13 @@ function _getInsert() {
       compileOptions.identifiers = [];
       compileOptions.values = [];
       _.each(values, function (v, k) {
-        compileOptions.identifiers.push(k);
+        compileOptions.identifiers.push(formatter.wrapQuotes(k));
         compileOptions.values.push(v);
       });
     }
     var compiling = this.getCompiling("insert", compileOptions);
 
-    var source = (this._keyspace && this._columnFamily ? [this._keyspace, this._columnFamily].join(".") : (this._columnFamily ? this._columnFamily : ""))
+    var source = _getSource(this)
       , insertStatement = "INSERT INTO " + source + " (" + _.toArray(compiling.value.identifiers).join(",") + ") VALUES "
       , cql = insertStatement;
 
@@ -77,14 +77,19 @@ function _getSelect() {
       , columnStatements = _.map(compiling.value.columns, function (column) {
         if (_.isObject(column)) {
           var key = Object.keys(column)[0];
-          return key + " AS " + column[key];
+          return formatter.wrapQuotes(key) + " AS " + formatter.wrapQuotes(column[key]);
         }
         else {
-          return column;
+          if (column !== "*") {
+            return formatter.wrapQuotes(column);
+          }
+          else {
+            return column;
+          }
         }
       })
       , selectStatement = "SELECT " + columnStatements.join(",") + " "
-      , source = (this._keyspace && this._columnFamily ? [this._keyspace, this._columnFamily].join(".") : (this._columnFamily ? this._columnFamily : ""))
+      , source = _getSource(this)
       , cql = selectStatement + "FROM " + source;
 
     if (_.has(this._grouped, "where")) {
@@ -112,10 +117,11 @@ function _getUpdate() {
       columnFamily: columnFamily
     });
 
-    if (compiling.value.columnFamily)
+    if (compiling.value.columnFamily) {
       this._setColumnFamily(compiling.value.columnFamily);
+    }
 
-    var source = (this._keyspace && this._columnFamily ? [this._keyspace, this._columnFamily].join(".") : (this._columnFamily ? this._columnFamily : ""))
+    var source = _getSource(this)
       , insertStatement = "UPDATE " + source
       , cql = insertStatement;
 
@@ -138,11 +144,13 @@ function _getDelete() {
   return function () {
 
     var compiling = this.getCompiling("delete", {
-      columns: _.toArray(arguments)
+      columns: _.flatten(_.toArray(arguments))
     });
 
-    var source = (this._keyspace && this._columnFamily ? [this._keyspace, this._columnFamily].join(".") : (this._columnFamily ? this._columnFamily : ""))
-      , deleteStatement = "DELETE " + compiling.value.columns.join(",") + " FROM " + source
+    var source = _getSource(this)
+      , deleteStatement = "DELETE " + _.map(compiling.value.columns, function (col) {
+          return formatter.wrapQuotes(col);
+        }).join(",") + " FROM " + source
       , cql = deleteStatement;
 
     if (_.has(this._grouped, "where")) {
@@ -157,6 +165,13 @@ function _getDelete() {
   };
 }
 
+function _getSource(client) {
+  return (
+    client._keyspace && client._columnFamily ? [formatter.wrapQuotes(client._keyspace), formatter.wrapQuotes(client._columnFamily)].join(".") :
+      (client._columnFamily ? formatter.wrapQuotes(client._columnFamily) : "")
+  )
+}
+
 // helper compilers
 
 function _compileWhere(client, whereStatements) {
@@ -168,12 +183,20 @@ function _compileWhere(client, whereStatements) {
     var relations = [];
     relations.length = 0;
     _.each(groupedWhere[type], function (statement) {
+      var key = statement.key;
+      // test for nested columns
+      if ((/\[.*\]$/).test(key)) {
+        key = formatter.wrapQuotes(key.replace(/\[.*/g, "")) + key.replace(/.+?(?=\[)/, "");
+      }
+      else {
+        key = formatter.wrapQuotes(key);
+      }
       switch (statement.op.toLowerCase()) {
         case "in":
-          relations.push([statement.key, statement.op, "(" + formatter.parameterize(statement.val, client) + ")"].join(" "));
+          relations.push([key, statement.op, "(" + formatter.parameterize(statement.val, client) + ")"].join(" "));
           break;
         default:
-          relations.push([statement.key, statement.op, formatter.parameterize(statement.val, client)].join(" "));
+          relations.push([key, statement.op, formatter.parameterize(statement.val, client)].join(" "));
       }
     });
 
@@ -196,11 +219,12 @@ function _compileSet(client, setStatements) {
     , assignments = [];
 
   _.each(setStatements, function (statement) {
+    var key = formatter.wrapQuotes(statement.key);
     if (!_.isArray(statement.val)) {
-      assignments.push(statement.key + " = " + formatter.parameterize(statement.val, client));
+      assignments.push(key + " = " + formatter.parameterize(statement.val, client));
     }
     else {
-      assignments.push(statement.key + " = " + formatter.parameterizeArray(statement.val, client));
+      assignments.push(key + " = " + formatter.parameterizeArray(statement.val, client));
     }
   });
   cql += assignments.join(",");

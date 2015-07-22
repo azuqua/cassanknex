@@ -159,10 +159,10 @@ cassanKnex.on("ready", function (err) {
     .exec(function(err, res) {
 
       // executes query :
-      //  "SELECT id,foo,bar,baz FROM keyspace.table
-      //    WHERE id = ? OR id in (?, ?)
-      //    OR baz = ? AND foo IN (?, ?)
-      //    LIMIT 10;"
+      //  'SELECT "id","foo","bar","baz" FROM "keyspace"."table"
+      //    WHERE "id" = ? OR "id" in (?, ?)
+      //    OR "baz" = ? AND "foo" IN (?, ?)
+      //    LIMIT 10;'
       // with bindings array  : [ '1', '2', '3', 'bar', 'baz', 'bar' ]
 
       if (err)
@@ -214,23 +214,26 @@ qb.insert(values)
 // =>
 { _debug: true,
   _dialect: 'cql',
+  _exec: {},
+  _execPrepare: true,
   _keyspace: 'cassanKnexy',
   _columnFamily: 'columnFamily',
-  _component: 'query',
   _methodStack:
    [ 'insert',
      'usingTimestamp',
      'insert',
      'usingTTL',
      'insert',
-     'table',
+     'into',
+     'insert',
      'insert' ],
   _queryPhases:
-   [ 'INSERT INTO  (id,bar,baz) VALUES (?, ?, ?);',
-     'INSERT INTO  (id,bar,baz) VALUES (?, ?, ?) USING TIMESTAMP ?;',
-     'INSERT INTO  (id,bar,baz) VALUES (?, ?, ?) USING TIMESTAMP ? AND USING TTL ?;',
-     'INSERT INTO cassanKnexy.columnFamily (id,bar,baz) VALUES (?, ?, ?) USING TIMESTAMP ? AND USING TTL ?;' ],
-  _cql: 'INSERT INTO cassanKnexy.columnFamily (id,bar,baz) VALUES (?, ?, ?) USING TIMESTAMP ? AND USING TTL ?;',
+   [ 'INSERT INTO  ("id","bar","baz") VALUES (?, ?, ?);',
+     'INSERT INTO  ("id","bar","baz") VALUES (?, ?, ?) USING TIMESTAMP ?;',
+     'INSERT INTO  ("id","bar","baz") VALUES (?, ?, ?) USING TIMESTAMP ? AND USING TTL ?;',
+     'INSERT INTO "cassanKnexy"."columnFamily" ("id","bar","baz") VALUES (?, ?, ?) USING TIMESTAMP ? AND USING TTL ?;',
+     'INSERT INTO "cassanKnexy"."columnFamily" ("id","bar","baz") VALUES (?, ?, ?) USING TIMESTAMP ? AND USING TTL ?;' ],
+  _cql: 'INSERT INTO "cassanKnexy"."columnFamily" ("id","bar","baz") VALUES (?, ?, ?) USING TIMESTAMP ? AND USING TTL ?;',
   _bindings: [ 'foo', 'baz', [ 'foo', 'bar' ], 250000, 50000 ],
   _statements:
    [ { grouping: 'compiling', type: 'insert', value: [Object] },
@@ -498,6 +501,10 @@ qb.insert(values)
 
 #### <a name="ChangeLog"></a>ChangeLog
 
+- 1.7.1
+  - Wrap all keyspace, column family, and column names in double quotes to preserve case per issue [#14](https://github.com/azuqua/cassanknex/issues/14).
+  - Fix `frozen set` statement compilation per issue [#16](https://github.com/azuqua/cassanknex/issues/16).
+  - Fix `frozen list` statement compilation per issue [#17](https://github.com/azuqua/cassanknex/issues/17).
 - 1.7.0
   - Add QueryCommands `createType`/`IfNotExists` and `dropType`/`IfExists`.
   - Add QueryModifiers `frozen`/`Set`/`Map`/`List`.

@@ -16,7 +16,7 @@ describe("ColumnFamilyMethods", function () {
 
   it("should compile a create column family statement", function () {
 
-    var cql = "CREATE COLUMNFAMILY cassanKnexy.columnFamily ( textType TEXT, PRIMARY KEY (textType) ) ;"
+    var cql = 'CREATE COLUMNFAMILY "cassanKnexy"."columnFamily" ( "textType" TEXT, PRIMARY KEY ("textType") ) ;'
       , qb = cassanKnex("cassanKnexy")
         .createColumnFamily("columnFamily")
         .text("textType")
@@ -27,7 +27,7 @@ describe("ColumnFamilyMethods", function () {
   });
   it("should compile a create column family if not exists statement", function () {
 
-    var cql = "CREATE COLUMNFAMILY IF NOT EXISTS cassanKnexy.columnFamily ( textType TEXT, PRIMARY KEY (textType) ) ;"
+    var cql = 'CREATE COLUMNFAMILY IF NOT EXISTS "cassanKnexy"."columnFamily" ( "textType" TEXT, PRIMARY KEY ("textType") ) ;'
       , qb = cassanKnex("cassanKnexy");
     qb.createColumnFamilyIfNotExists("columnFamily")
       .text("textType")
@@ -38,7 +38,7 @@ describe("ColumnFamilyMethods", function () {
   });
   it("should compile a create column family statement w/ a composite partition key.", function () {
 
-    var cql = "CREATE COLUMNFAMILY cassanKnexy.columnFamily ( textType TEXT, uuidType UUID, timestamp TIMESTAMP, PRIMARY KEY ((textType, uuidType), timestamp) ) ;"
+    var cql = 'CREATE COLUMNFAMILY "cassanKnexy"."columnFamily" ( "textType" TEXT, "uuidType" UUID, "timestamp" TIMESTAMP, PRIMARY KEY (("textType", "uuidType"), "timestamp") ) ;'
       , qb = cassanKnex("cassanKnexy")
         .createColumnFamily("columnFamily")
         .text("textType")
@@ -51,7 +51,7 @@ describe("ColumnFamilyMethods", function () {
   });
   it("should compile a create column family statement w/ a composite partition key and clustering.", function () {
 
-    var cql = "CREATE COLUMNFAMILY cassanKnexy.columnFamily ( textType TEXT, uuidType UUID, timestamp TIMESTAMP, PRIMARY KEY ((textType, uuidType), timestamp) ) WITH CLUSTERING ORDER BY ( timestamp DESC ) ;"
+    var cql = 'CREATE COLUMNFAMILY "cassanKnexy"."columnFamily" ( "textType" TEXT, "uuidType" UUID, "timestamp" TIMESTAMP, PRIMARY KEY (("textType", "uuidType"), "timestamp") ) WITH CLUSTERING ORDER BY ( "timestamp" DESC ) ;'
       , qb = cassanKnex("cassanKnexy")
         .createColumnFamily("columnFamily")
         .text("textType")
@@ -65,7 +65,7 @@ describe("ColumnFamilyMethods", function () {
   });
   it("should compile a create column family statement w/ a compound index", function () {
 
-    var cql = "CREATE COLUMNFAMILY cassanKnexy.columnFamily ( uuidType UUID, timestampType TIMESTAMP, PRIMARY KEY (uuidType, timestampType) ) ;"
+    var cql = 'CREATE COLUMNFAMILY "cassanKnexy"."columnFamily" ( "uuidType" UUID, "timestampType" TIMESTAMP, PRIMARY KEY ("uuidType", "timestampType") ) ;'
       , qb = cassanKnex("cassanKnexy");
     qb.createColumnFamily("columnFamily")
       .uuid("uuidType")
@@ -77,7 +77,7 @@ describe("ColumnFamilyMethods", function () {
   });
   it("should compile a create column family statement w/ all column types", function () {
 
-    var cql = "CREATE COLUMNFAMILY cassanKnexy.columnFamily ( frozenList LIST <list<text>>, listType LIST <text>, setType SET <timestamp>, decimalType DECIMAL, booleanType BOOLEAN, blobType BLOB, timestampType TIMESTAMP, inetType INET, bigintType BIGINT, counterType COUNTER, doubleType DOUBLE, intType INT, floatType FLOAT, mapType MAP <uuid,text>, asciiType ASCII, textType TEXT, timeuuidType TIMEUUID, uuidType UUID, varcharType VARCHAR, PRIMARY KEY (uuidType) ) ;"
+    var cql = 'CREATE COLUMNFAMILY "cassanKnexy"."columnFamily" ( "frozenList" LIST <list<text>>, "listType" LIST <text>, "setType" SET <timestamp>, "decimalType" DECIMAL, "booleanType" BOOLEAN, "blobType" BLOB, "timestampType" TIMESTAMP, "inetType" INET, "bigintType" BIGINT, "counterType" COUNTER, "doubleType" DOUBLE, "intType" INT, "floatType" FLOAT, "mapType" MAP <uuid,text>, "asciiType" ASCII, "textType" TEXT, "timeuuidType" TIMEUUID, "uuidType" UUID, "varcharType" VARCHAR, PRIMARY KEY ("uuidType") ) ;'
       , qb = cassanKnex("cassanKnexy");
     qb.createColumnFamily("columnFamily")
       .list("frozenList", "list<text>")
@@ -106,7 +106,7 @@ describe("ColumnFamilyMethods", function () {
   });
   it("should compile a create column family statement w/ all frozen (or user defined) types", function () {
 
-    var cql = "CREATE COLUMNFAMILY cassanKnexy.columnFamily ( uudtTypeColumn FROZEN <myUUDT>, uudtTypeSetColumn SET <FROZEN myUUDT>, uudtTypeMapColumn MAP <text, FROZEN <myUUDT>>, anyTypeListColumn FROZEN <LIST <anyType>> ) ;"
+    var cql = 'CREATE COLUMNFAMILY "cassanKnexy"."columnFamily" ( "uudtTypeColumn" FROZEN <myUUDT>, "uudtTypeSetColumn" SET <FROZEN <myUUDT>>, "uudtTypeMapColumn" MAP <text, FROZEN <myUUDT>>, "anyTypeListColumn" LIST <FROZEN <anyType>> ) ;'
       , qb = cassanKnex("cassanKnexy");
     qb.createColumnFamily("columnFamily")
       .frozen("uudtTypeColumn", "myUUDT")
@@ -119,7 +119,7 @@ describe("ColumnFamilyMethods", function () {
   });
   it("should compile a create statement w/ compression, compaction and caching options", function () {
 
-    var cql = "CREATE COLUMNFAMILY cassanKnexy.columnFamily WITH compression = { 'sstable_compression ' : 'DeflateCompressor' , 'chunk_length_kb' : '64' } AND compaction = { 'class' : 'SizeTieredCompactionStrategy' , 'cold_reads_to_omit' : '0.05' } AND caching = { 'rows_per_partition' : '25' };"
+    var cql = "CREATE COLUMNFAMILY \"cassanKnexy\".\"columnFamily\" WITH compression = { 'sstable_compression ' : 'DeflateCompressor' , 'chunk_length_kb' : '64' } AND compaction = { 'class' : 'SizeTieredCompactionStrategy' , 'cold_reads_to_omit' : '0.05' } AND caching = { 'rows_per_partition' : '25' };"
       , qb = cassanKnex("cassanKnexy");
     qb.createColumnFamily("columnFamily")
       .withCompression({"sstable_compression ": "DeflateCompressor", "chunk_length_kb": 64})
@@ -134,7 +134,7 @@ describe("ColumnFamilyMethods", function () {
 
   it("should compile an alter column alter column family statement", function () {
 
-    var cql = "ALTER TABLE cassanKnexy.columnFamily ALTER columnName TYPE columnType;"
+    var cql = 'ALTER TABLE "cassanKnexy"."columnFamily" ALTER "columnName" TYPE columnType;'
       , qb = cassanKnex("cassanKnexy")
         .alterColumnFamily("columnFamily")
         .alter("columnName", "columnType");
@@ -144,7 +144,7 @@ describe("ColumnFamilyMethods", function () {
   });
   it("should compile a rename column alter column family statement", function () {
 
-    var cql = "ALTER TABLE cassanKnexy.columnFamily RENAME old TO new;"
+    var cql = 'ALTER TABLE "cassanKnexy"."columnFamily" RENAME "old" TO "new";'
       , qb = cassanKnex("cassanKnexy")
         .alterColumnFamily("columnFamily")
         .rename("old", "new");
@@ -154,7 +154,7 @@ describe("ColumnFamilyMethods", function () {
   });
   it("should compile a drop column alter column family statement", function () {
 
-    var cql = "ALTER TABLE cassanKnexy.columnFamily DROP columnName1 DROP columnName2;"
+    var cql = 'ALTER TABLE "cassanKnexy"."columnFamily" DROP "columnName1" DROP "columnName2";'
       , qb = cassanKnex("cassanKnexy")
         .alterColumnFamily("columnFamily")
         .drop("columnName1", "columnName2");
@@ -164,7 +164,7 @@ describe("ColumnFamilyMethods", function () {
   });
   it("should compile an add column alter column family statement", function () {
 
-    var cql = "ALTER TABLE cassanKnexy.columnFamily ADD uuidType UUID ADD varcharType VARCHAR;"
+    var cql = 'ALTER TABLE "cassanKnexy"."columnFamily" ADD "uuidType" UUID ADD "varcharType" VARCHAR;'
       , qb = cassanKnex("cassanKnexy")
         .alterColumnFamily("columnFamily")
         .uuid("uuidType")
@@ -178,7 +178,7 @@ describe("ColumnFamilyMethods", function () {
 
   it("should compile a create index statement", function () {
 
-    var cql = "CREATE INDEX foo_key ON cassanKnexy.columnFamily ( foo );"
+    var cql = 'CREATE INDEX foo_key ON "cassanKnexy"."columnFamily" ( "foo" );'
       , qb = cassanKnex("cassanKnexy")
         .createIndex("columnFamily", "foo_key", "foo");
 
@@ -190,7 +190,7 @@ describe("ColumnFamilyMethods", function () {
 
   it("should compile a drop column family statement", function () {
 
-    var cql = "DROP COLUMNFAMILY cassanKnexy.columnFamily ;"
+    var cql = 'DROP COLUMNFAMILY "cassanKnexy"."columnFamily" ;'
       , qb = cassanKnex("cassanKnexy")
         .dropColumnFamily("columnFamily");
 
@@ -199,7 +199,7 @@ describe("ColumnFamilyMethods", function () {
   });
   it("should compile a drop column family if exists statement", function () {
 
-    var cql = "DROP COLUMNFAMILY IF EXISTS cassanKnexy.columnFamily ;"
+    var cql = 'DROP COLUMNFAMILY IF EXISTS "cassanKnexy"."columnFamily" ;'
       , qb = cassanKnex("cassanKnexy")
         .dropColumnFamilyIfExists("columnFamily");
 
@@ -211,7 +211,7 @@ describe("ColumnFamilyMethods", function () {
 
   it("should compile a create type statement", function () {
 
-    var cql = "CREATE TYPE cassanKnexy.type ( textType TEXT ) ;"
+    var cql = 'CREATE TYPE "cassanKnexy".type ( "textType" TEXT ) ;'
       , qb = cassanKnex("cassanKnexy")
         .createType("type")
         .text("textType");
@@ -221,7 +221,7 @@ describe("ColumnFamilyMethods", function () {
   });
   it("should compile a create type if not exists statement", function () {
 
-    var cql = "CREATE TYPE IF NOT EXISTS cassanKnexy.type ( textType TEXT ) ;"
+    var cql = 'CREATE TYPE IF NOT EXISTS "cassanKnexy".type ( "textType" TEXT ) ;'
       , qb = cassanKnex("cassanKnexy");
     qb.createTypeIfNotExists("type")
       .text("textType");
@@ -231,7 +231,7 @@ describe("ColumnFamilyMethods", function () {
   });
   it("should compile a create type statement w/ all column types", function () {
 
-    var cql = "CREATE TYPE cassanKnexy.type ( frozenList LIST <list<text>>, listType LIST <text>, setType SET <timestamp>, decimalType DECIMAL, booleanType BOOLEAN, blobType BLOB, timestampType TIMESTAMP, inetType INET, bigintType BIGINT, counterType COUNTER, doubleType DOUBLE, intType INT, floatType FLOAT, mapType MAP <uuid,text>, asciiType ASCII, textType TEXT, timeuuidType TIMEUUID, uuidType UUID, varcharType VARCHAR ) ;"
+    var cql = 'CREATE TYPE "cassanKnexy".type ( "frozenList" LIST <list<text>>, "listType" LIST <text>, "setType" SET <timestamp>, "decimalType" DECIMAL, "booleanType" BOOLEAN, "blobType" BLOB, "timestampType" TIMESTAMP, "inetType" INET, "bigintType" BIGINT, "counterType" COUNTER, "doubleType" DOUBLE, "intType" INT, "floatType" FLOAT, "mapType" MAP <uuid,text>, "asciiType" ASCII, "textType" TEXT, "timeuuidType" TIMEUUID, "uuidType" UUID, "varcharType" VARCHAR ) ;'
       , qb = cassanKnex("cassanKnexy");
     qb.createType("type")
       .list("frozenList", "list<text>")
