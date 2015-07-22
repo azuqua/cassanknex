@@ -333,13 +333,13 @@ function _compileColumns(client, deliminator, wrap) {
         case "object":
           // handle the frozen set, map and list columns
           if (column.type === builderMethods.frozenSet.name) {
-            columns.push([formatter.wrapQuotes(column.name), "SET", "<" + "FROZEN", column.options.join(",") + ">"].join(" "));
+            columns.push([formatter.wrapQuotes(column.name), "SET", "<" + "FROZEN", "<" + column.options.join(",") + ">>"].join(" "));
           }
           else if (column.type === builderMethods.frozenMap.name) {
             columns.push([formatter.wrapQuotes(column.name), "MAP", "<" + column.options[0] + ", FROZEN <" + column.options[1] + ">>"].join(" "));
           }
           else if (column.type === builderMethods.frozenList.name) {
-            columns.push([formatter.wrapQuotes(column.name), "FROZEN", "<LIST", "<" + column.options[0] + ">>"].join(" "));
+            columns.push([formatter.wrapQuotes(column.name), "LIST", "<FROZEN", "<" + column.options[0] + ">>"].join(" "));
           }
           // general (non UUDT or frozen) case
           else {

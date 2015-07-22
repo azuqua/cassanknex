@@ -106,7 +106,7 @@ describe("ColumnFamilyMethods", function () {
   });
   it("should compile a create column family statement w/ all frozen (or user defined) types", function () {
 
-    var cql = 'CREATE COLUMNFAMILY "cassanKnexy"."columnFamily" ( "uudtTypeColumn" FROZEN <myUUDT>, "uudtTypeSetColumn" SET <FROZEN myUUDT>, "uudtTypeMapColumn" MAP <text, FROZEN <myUUDT>>, "anyTypeListColumn" FROZEN <LIST <anyType>> ) ;'
+    var cql = 'CREATE COLUMNFAMILY "cassanKnexy"."columnFamily" ( "uudtTypeColumn" FROZEN <myUUDT>, "uudtTypeSetColumn" SET <FROZEN <myUUDT>>, "uudtTypeMapColumn" MAP <text, FROZEN <myUUDT>>, "anyTypeListColumn" LIST <FROZEN <anyType>> ) ;'
       , qb = cassanKnex("cassanKnexy");
     qb.createColumnFamily("columnFamily")
       .frozen("uudtTypeColumn", "myUUDT")
