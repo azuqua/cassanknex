@@ -16,6 +16,10 @@ A [fully tested][travis-url] Apache Cassandra CQL query builder with support for
   - [Quick Start](#Quickstart)
   - [Debugging Queries](#Debugging)
   - [Query Executors (Examples)](#QueryExecutors)
+    - [`exec`](#exec)
+    - [`eachRow`](#eachrow)
+    - [`stream`](#stream)
+    - [`batch`](#batch)
   - [Query Commands (Examples)](#QueryCommands)
     - [Rows](#QueryCommands-Rows)
     - [Column Families](#QueryCommands-ColumnFamilies)
@@ -275,6 +279,7 @@ qb.insert(values)
        // do something w/ your err/result
      });
   ```
+
 ##### eachRow
 
   - *execute a query and invoke a callback as each row is received*:
@@ -294,6 +299,7 @@ qb.insert(values)
   // Invoke the eachRow method
   qb.eachRow(rowCallback, errorCallback);
   ```
+
 ##### stream
 
   - *execute a query and stream each row as it is received*:
@@ -324,6 +330,7 @@ qb.insert(values)
     "error": onError
   });
   ```
+
 ##### batch
 
   - *execute a batch of cassanknex queries in a single batch statement*:
