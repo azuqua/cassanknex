@@ -22,8 +22,7 @@ module.exports = function (grunt) {
     jshint: {
       files: ["*.js", "queryBuilder/*.js", "schema/*.js"],
       options: {
-        node: true,
-        laxcomma: true
+        jshintrc: '.jshintrc'
       }
     }
 
