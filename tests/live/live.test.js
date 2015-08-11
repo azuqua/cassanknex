@@ -86,7 +86,7 @@ describe("yolo", function () {
       // test simple insert
       function (next) {
 
-        var items = _.map(Array(rows), function () {
+        var items = _.map(Array(rows).slice(25), function () {
           var id = uuid.v4();
           return {id: id, timestamp: new Date(), data: "", written: {keys: ["foo", "bar"], rando: id, dec: 42}};
         });
@@ -98,6 +98,22 @@ describe("yolo", function () {
             .into(columnFamily)
             .exec({prepare: true}, done);
         }, next);
+      },
+      // test batch method
+      function (next) {
+
+        var cassakni = _.map(Array(rows).slice(25), function () {
+
+          var id = uuid.v4()
+            , item = {id: id, timestamp: new Date(), data: "", written: {keys: ["foo", "bar"], rando: id, dec: 42}}
+            , qb = cassanKnex(keyspace)
+              .insert(item)
+              .into(columnFamily);
+
+          return qb;
+        });
+
+        cassanKnex().batch({prepare: true}, cassakni, next);
       },
       // test the execution method
       function (next) {

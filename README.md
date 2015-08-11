@@ -5,7 +5,7 @@
 
 # CassanKnex
 
-An Apache Cassandra CQL query builder with support for the DataStax NodeJS driver, written in the spirit of [Knex][knexjs-url] for [CQL 3.1.x][cassandra-cql-3_1-ref-url].
+A [fully tested][travis-url] Apache Cassandra CQL query builder with support for the DataStax NodeJS driver, written in the spirit of [Knex][knexjs-url] for [CQL 3.1.x][cassandra-cql-3_1-ref-url].
 
 ## Index
 
@@ -16,6 +16,10 @@ An Apache Cassandra CQL query builder with support for the DataStax NodeJS drive
   - [Quick Start](#Quickstart)
   - [Debugging Queries](#Debugging)
   - [Query Executors (Examples)](#QueryExecutors)
+    - [`exec`](#exec)
+    - [`eachRow`](#eachrow)
+    - [`stream`](#stream)
+    - [`batch`](#batch)
   - [Query Commands (Examples)](#QueryCommands)
     - [Rows](#QueryCommands-Rows)
     - [Column Families](#QueryCommands-ColumnFamilies)
@@ -58,7 +62,8 @@ Where `KEYSPACE` is the name of the relevant keyspace and
 ### <a name="ExecutingQueries"></a>As a query executor
 
 Execution of a given query is performed by invoking either the `exec`, `stream` or `eachRow` methods
-(which are straight pass throughs to the DataStax driver's `execute`, `stream` and `eachRow` [methods][cassandra-driver-docs-url], respectively).
+(which are straight pass throughs to the DataStax driver's `execute`, `stream` and `eachRow` [methods][cassandra-driver-docs-url], respectively);
+batch queries may be executed via the `batch` method (again, a pass through to the DataStax driver's own `batch` method).
 
 ```js
 var cassanKnex = require("cassanknex")({
@@ -126,6 +131,11 @@ cassanKnex.on("ready", function (err) {
 
   // Invoke the eachRow method
   qb.eachRow(rowCallback, errorCb);
+
+  // Invoke the batch method to process multiple requests
+  cassanKnex().batch([qb, qb], function(err, res) {
+    // do something w/ your response
+  });
 });
 ```
 
@@ -248,7 +258,9 @@ qb.insert(values)
 
 > All methods take an optional `options` object as the first argument in the call signature; if provided, the options will be passed through to the corresponding `cassandra-driver` call.
 
-- exec - *execute a query and return the response via a callback*:
+##### exec
+
+  - *execute a query and return the response via a callback*:
 
   ```js
   var item = {
@@ -267,7 +279,10 @@ qb.insert(values)
        // do something w/ your err/result
      });
   ```
-- eachRow - *execute a query and invoke a callback as each row is received*:
+
+##### eachRow
+
+  - *execute a query and invoke a callback as each row is received*:
 
   ```js
   var rowCallback = function (n, row) {
@@ -284,7 +299,10 @@ qb.insert(values)
   // Invoke the eachRow method
   qb.eachRow(rowCallback, errorCallback);
   ```
-- stream - *execute a query and stream each row as it is received*:
+
+##### stream
+
+  - *execute a query and stream each row as it is received*:
 
   ```js
   var onReadable = function () {
@@ -310,6 +328,34 @@ qb.insert(values)
     "readable": onReadable,
     "end": onEnd,
     "error": onError
+  });
+  ```
+
+##### batch
+
+  - *execute a batch of cassanknex queries in a single batch statement*:
+
+  ```js
+  var qb1 = cassanKnex("cassanKnexy")
+    .insert({foo: "is bar"})
+    .usingTimestamp(250000)
+    .usingTTL(50000)
+    .from("columnFamily");
+
+  var qb2 = cassanKnex("cassanKnexy")
+    .insert({bar: "is foo"})
+    .usingTimestamp(250000)
+    .usingTTL(50000)
+    .from("columnFamily");
+
+  // w/o options
+  cassanKnex().batch([qb1, qb2], function(err, res) {
+      // do something w/ your err/result
+  });
+
+  // w/ options
+  cassanKnex().batch({prepare: true}, [qb1, qb2], function(err, res) {
+      // do something w/ your err/result
   });
   ```
 
@@ -501,6 +547,8 @@ qb.insert(values)
 
 #### <a name="ChangeLog"></a>ChangeLog
 
+- 1.8.0
+  - Add `batch` execution functionality per the specifications laid out in issue [#19](https://github.com/azuqua/cassanknex/issues/19).
 - 1.7.1
   - Wrap all keyspace, column family, and column names in double quotes to preserve case per issue [#14](https://github.com/azuqua/cassanknex/issues/14).
   - Fix `frozen set` statement compilation per issue [#16](https://github.com/azuqua/cassanknex/issues/16).

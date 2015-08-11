@@ -10,12 +10,19 @@ var _ = require("lodash")
   , _package = require("./package.json")
   , Client = require("./Client");
 
-var cassandra = null;
+var cassandra = null
+  , duckType = "[Object CassanKnex]";
 
 function CassanKnex() {
   return CassanKnex.initialize.apply(null, arguments);
 }
 
+/**
+ * Initializes a new CassanKnex object.
+ *
+ * @param config
+ * @returns {cassanKnex}
+ */
 CassanKnex.initialize = function (config) {
 
   var EventEmitter = require('events').EventEmitter;
@@ -40,7 +47,13 @@ CassanKnex.initialize = function (config) {
       qb.use(keyspace);
     }
 
-    // create the exec function for a pass through to the datastax driver
+    /**
+     * Create the exec function for a pass through to the datastax driver.
+     *
+     * @param `{Object} options` optional argument passed to datastax driver upon query execution
+     * @param `{Function} cb` => function(err, result) {}
+     * @returns {Client|exports|module.exports}
+     */
     qb.exec = function (options, cb) {
 
       var _options = _.isFunction(options) ? {} : options
@@ -72,7 +85,19 @@ CassanKnex.initialize = function (config) {
       return qb;
     };
 
-    // create the stream function for a pass through to the datastax driver
+    /**
+     * Create the stream function for a pass through to the datastax driver,
+     * all callbacks are defaulted to lodash#noop if not declared.
+     *
+     * @param `{Object} options` optional argument passed to datastax driver upon query execution
+     * @param `{Object} cbs` =>
+     * {
+     *  readable: function() {},
+     *  end: function() {},
+     *  error: function(err) {}
+     * }
+     * @returns {Client|exports|module.exports}
+     */
     qb.stream = function (options, cbs) {
 
       var _options = _.isObject(cbs) ? options : {}
@@ -97,7 +122,14 @@ CassanKnex.initialize = function (config) {
       return qb;
     };
 
-    // create the eachRow function for a pass through to the datastax driver
+    /**
+     * Create the eachRow function for a pass through to the datastax driver.
+     *
+     * @param `{Object} options` optional argument passed to datastax driver upon query execution
+     * @param `{Function} rowCb` => function(row) {}
+     * @param `{Function} errorCb` => function(err) {}
+     * @returns {Client|exports|module.exports}
+     */
     qb.eachRow = function (options, rowCb, errorCb) {
 
       // options is really rowCB
@@ -127,6 +159,68 @@ CassanKnex.initialize = function (config) {
       return qb;
     };
 
+    /**
+     *
+     * @param options
+     * @param cassakni
+     * @param cb
+     * @returns {Client|exports|module.exports}
+     */
+    qb.batch = function (options, cassakni, cb) {
+
+      var _options
+        , _cassakni
+        , _cb;
+
+      // options is really cassakni, cassakni is cb
+      if (_.isArray(options)) {
+        _options = {};
+        _cassakni = options;
+        _cb = cassakni;
+      }
+      // standard order
+      else {
+        _options = options;
+        _cassakni = cassakni;
+        _cb = cb;
+      }
+
+      if (!_.isFunction(_cb)) {
+        _cb = _.noop;
+      }
+
+      if (cassandra !== null && cassandra.connected) {
+
+        var error = null
+          , statements = _.map(_cassakni, function (qb) {
+
+            if (!qb.toString || qb.toString() !== duckType) {
+              error = new Error("Invalid input to CassanKnex#batch.");
+              return {};
+            }
+            else {
+              return {query: qb.cql(), params: qb.bindings()};
+            }
+          });
+
+        if (error) {
+          return _cb(error);
+        }
+
+        cassandra.batch(statements, _options, _cb);
+      }
+      else {
+        _cb(new Error("Cassandra client is not initialized."));
+      }
+
+      // maintain chain
+      return qb;
+    };
+
+    qb.toString = function () {
+      return duckType;
+    };
+
     return qb;
   }
 
@@ -140,7 +234,7 @@ CassanKnex.initialize = function (config) {
   }
 
   cassanKnex.toString = function () {
-    return "[Object CassanKnex]";
+    return duckType;
   };
 
   if (config && config.connection) {
