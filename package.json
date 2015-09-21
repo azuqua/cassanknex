@@ -20,9 +20,9 @@
   "author": "austin brown <austin@azuqua.com> (http://www.azuqua.com/)",
   "license": "MIT",
   "dependencies": {
-    "cassandra-driver": "^2.0.1",
+    "cassandra-driver": "^2.2.1",
     "inherits": "^2.0.1",
-    "lodash": "^3.7.0"
+    "lodash": "^3.10.1"
   },
   "devDependencies": {
     "async": "^0.9.0",

@@ -23,8 +23,9 @@ module.exports = {
     "createType": "createType",
     "createTypeIfNotExists": "createTypeIfNotExists",
     "dropType": "dropType",
-    "dropTypeIfExists": "dropTypeIfExists"
+    "dropTypeIfExists": "dropTypeIfExists",
 
+    "truncate": "truncate"
   },
   "query": {
     "delete": "delete",

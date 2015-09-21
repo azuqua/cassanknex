@@ -95,6 +95,9 @@ module.exports = {
     arguments[2] = true;
     arguments.length = 3;
     return this._wrapMethod(component, "dropTypeIfExists", _getDropType(), arguments);
+  },
+  truncate: function () {
+    return this._wrapMethod(component, "truncate", _getTruncate(), arguments);
   }
 };
 
@@ -289,10 +292,12 @@ function _getDropType() {
       ifNot: ifNot
     });
 
-    if (compiling.value.columnFamily)
+    if (compiling.value.columnFamily) {
       this._setColumnFamily(compiling.value.columnFamily);
-    if (compiling.value.keyspace)
+    }
+    if (compiling.value.keyspace) {
       this._setKeyspace(compiling.value.keyspace);
+    }
 
     var dropStatement = compiling.value.ifNot ? "DROP TYPE IF EXISTS " : "DROP TYPE "
       , cql = dropStatement + [formatter.wrapQuotes(this.keyspace()), this.columnFamily()].join(".") + " ";
@@ -305,6 +310,33 @@ function _getDropType() {
     return this;
   };
 
+}
+
+function _getTruncate() {
+
+  return function (columnFamily) {
+
+    var compiling = this.getCompiling("truncate", {
+      columnFamily: columnFamily
+    });
+
+    if (compiling.value.columnFamily) {
+      this._setColumnFamily(compiling.value.columnFamily);
+    }
+    if (compiling.value.keyspace) {
+      this._setKeyspace(compiling.value.keyspace);
+    }
+
+    var truncateStatement = "TRUNCATE " +
+      [formatter.wrapQuotes(this.keyspace()), formatter.wrapQuotes(this.columnFamily())].join(".") +
+      " ;";
+
+    this.query({
+      cql: truncateStatement
+    });
+
+    return this;
+  };
 }
 
 function _compileColumns(client, deliminator, wrap) {

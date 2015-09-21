@@ -243,6 +243,16 @@ describe("yolo", function () {
             assert(resp.rowLength === 0, "All rows must be deleted!");
             next(err);
           });
+      },
+      // test the truncate execution
+      function (next) {
+
+        var qb = cassanKnex(keyspace)
+          .truncate(columnFamily)
+          .exec(function (err, resp) {
+            assert(!err, err);
+            next(err);
+          });
       }
     ], function (err) {
 

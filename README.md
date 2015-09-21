@@ -7,6 +7,12 @@
 
 A [fully tested][travis-url] Apache Cassandra CQL query builder with support for the DataStax NodeJS driver, written in the spirit of [Knex][knexjs-url] for [CQL 3.1.x][cassandra-cql-3_1-ref-url].
 
+## Installation
+
+```
+npm install cassanknex
+```
+
 ## Index
 
 - [Why CassanKnex](#WhyCassanknex)
@@ -478,13 +484,14 @@ qb.insert(values)
 - alterColumnFamily
 - createColumnFamily
 - createColumnFamilyIfNotExists
-- dropColumnFamily
-- dropColumnFamilyIfExists
 - createIndex
 - createType
 - createTypeIfNotExists
+- dropColumnFamily
+- dropColumnFamilyIfExists
 - dropType
 - dropTypeIfExists
+- truncate
 
 ##### <a name="QueryCommands-Keyspaces"></a>*For keyspace queries*:
 - alterKeyspace
@@ -547,6 +554,8 @@ qb.insert(values)
 
 #### <a name="ChangeLog"></a>ChangeLog
 
+- 1.9.0
+  - Add `truncate` functionality.
 - 1.8.0
   - Add `batch` execution functionality per the specifications laid out in issue [#19](https://github.com/azuqua/cassanknex/issues/19).
 - 1.7.1
