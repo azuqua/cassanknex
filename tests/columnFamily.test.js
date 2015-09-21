@@ -257,4 +257,16 @@ describe("ColumnFamilyMethods", function () {
     var _cql = qb.cql();
     assert(_cql === cql, "Expected compilation: '" + cql + "' but compiled: " + _cql);
   });
+
+  // TRUNCATE
+
+  it("should compile a truncate column family statement", function () {
+
+    var cql = 'TRUNCATE "cassanKnexy"."columnFamily" ;'
+      , qb = cassanKnex("cassanKnexy")
+        .truncate("columnFamily");
+
+    var _cql = qb.cql();
+    assert(_cql === cql, "Expected compilation: '" + cql + "' but compiled: " + _cql);
+  });
 });
