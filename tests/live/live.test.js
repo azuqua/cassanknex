@@ -76,27 +76,39 @@ describe("yolo", function () {
 
         var qb = cassanKnex(keyspace)
           .createColumnFamilyIfNotExists(columnFamily)
-          .uuid("id")
+          .int("id")
+          .uuid("rando")
           .timestamp("timestamp")
           .text("data")
           .frozen("written", type)
-          .primary("id", "timestamp")
+          .primary("id", "timestamp", "rando")
+          .withClusteringOrderBy("timestamp", "asc")
+          .withClusteringOrderBy("rando", "asc")
           .exec(next);
       },
       // test simple insert
       function (next) {
 
         var items = _.map(Array(rows).slice(25), function () {
-          var id = uuid.v4();
-          return {id: id, timestamp: new Date(), data: "", written: {keys: ["foo", "bar"], rando: id, dec: 42}};
+          return {
+            id: 1,
+            rando: uuid.v4(),
+            timestamp: new Date(),
+            data: "",
+            written: {keys: ["foo", "bar"], rando: uuid.v4(), dec: 42}
+          };
         });
 
-        async.each(items, function (item, done) {
+        async.eachSeries(items, function (item, done) {
 
-          var qb = cassanKnex(keyspace)
-            .insert(item)
-            .into(columnFamily)
-            .exec({prepare: true}, done);
+          setTimeout(function () {
+
+            item.timestamp = new Date();
+            var qb = cassanKnex(keyspace)
+              .insert(item)
+              .into(columnFamily)
+              .exec({prepare: true}, done);
+          }, 500);
         }, next);
       },
       // test batch method
@@ -104,8 +116,13 @@ describe("yolo", function () {
 
         var cassakni = _.map(Array(rows).slice(25), function () {
 
-          var id = uuid.v4()
-            , item = {id: id, timestamp: new Date(), data: "", written: {keys: ["foo", "bar"], rando: id, dec: 42}}
+          var item = {
+              id: 2,
+              rando: uuid.v4(),
+              timestamp: new Date(),
+              data: "",
+              written: {keys: ["foo", "bar"], rando: uuid.v4(), dec: 42}
+            }
             , qb = cassanKnex(keyspace)
               .insert(item)
               .into(columnFamily);
@@ -121,9 +138,22 @@ describe("yolo", function () {
         var qb = cassanKnex(keyspace)
           .select()
           .from(columnFamily)
-          .exec(function (err, resp) {
+          .exec({prepare: true}, function (err, resp) {
             assert(!err, err);
             assert(resp.rowLength === rows, "Must have read as many rows as was inserted");
+            next(err);
+          });
+      },
+      // test the execution method w/ order by
+      function (next) {
+
+        var qb = cassanKnex(keyspace)
+          .select()
+          .from(columnFamily)
+          .where("id", "=", 1)
+          .orderBy("timestamp", "desc")
+          .exec({prepare: true}, function (err, resp) {
+            assert(!err, err);
             next(err);
           });
       },
@@ -223,8 +253,9 @@ describe("yolo", function () {
                 .delete()
                 .from(columnFamily)
                 .where("id", "=", row.id)
+                .andWhere("rando", "=", row.rando)
                 .andWhere("timestamp", "=", row.timestamp)
-                .exec(function (err, resp) {
+                .exec({prepare: true}, function (err, resp) {
                   assert(!err, err);
                   done(err);
                 });

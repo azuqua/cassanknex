@@ -43,6 +43,11 @@ _.each(Object.keys(methods), function (method) {
         return this._wrapMethod(null, methods[method].name, _getAllowFiltering(methods[method].name), arguments);
       };
       break;
+    case "orderBy":
+      queryBuilder[method] = function () {
+        return this._wrapMethod(null, methods[method].name, _getOrderBy(methods[method].name), arguments);
+      };
+      break;
   }
 });
 
@@ -129,4 +134,32 @@ function _getAllowFiltering() {
 
     return this;
   };
+}
+
+function _getOrderBy() {
+  return function () {
+
+    var order
+      , statements = [];
+
+    if (arguments.length === 2) {
+      order = {
+        column: arguments[0],
+        order: (typeof arguments[1] === "string" ? arguments[1].toUpperCase() : arguments[1])
+      };
+      statements.push({grouping: "orderBy", orderBy: order});
+    }
+    else {
+      statements = _.map(_.isObject(arguments[0]) ? arguments[0] : {}, function (v, k) {
+        order = {
+          column: k,
+          order: (typeof v === "string" ? v.toUpperCase() : v)
+        };
+        return {grouping: "orderBy", orderBy: order};
+      });
+    }
+
+    this._statements = this._statements.concat(statements);
+    return this;
+  }
 }
