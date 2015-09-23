@@ -95,6 +95,9 @@ function _getSelect() {
     if (_.has(this._grouped, "where")) {
       cql += " WHERE " + _compileWhere(this, this._grouped.where);
     }
+    if (_.has(this._grouped, "orderBy")) {
+      cql += " ORDER BY " + _compileOrder(this, this._grouped.orderBy);
+    }
     if (_.has(this._single, "limit")) {
       cql += " LIMIT " + formatter.parameterize(this._single.limit.limit, this);
     }
@@ -248,6 +251,20 @@ function _compileUsing(client, usingStatements) {
   });
 
   cql += using.join(" AND ");
+
+  return cql;
+}
+
+function _compileOrder(client, orderByStatements) {
+
+  var cql = ""
+    , orderBy = [];
+
+  _.each(_.pluck(orderByStatements, "orderBy"), function (statement) {
+    orderBy.push(formatter.wrapQuotes(statement.column) + " " + statement.order);
+  });
+
+  cql += orderBy.join(" ");
 
   return cql;
 }

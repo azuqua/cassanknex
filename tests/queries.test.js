@@ -114,6 +114,28 @@ describe("QueryMethods", function () {
     var _cql = qb.cql();
     assert(_cql === cql, "Expected compilation: '" + cql + "' but compiled: " + _cql);
   });
+  it("should compile a 'select' query string w/ simple orderBy", function () {
+
+    var cql = 'SELECT "id" FROM "cassanKnexy"."columnFamily" ORDER BY "created" ASC;'
+      , qb = cassanKnex("cassanKnexy");
+    qb.select("id")
+      .from("columnFamily")
+      .orderBy("created", "asc");
+
+    var _cql = qb.cql();
+    assert(_cql === cql, "Expected compilation: '" + cql + "' but compiled: " + _cql);
+  });
+  it("should compile a 'select' query string w/ complex orderBy", function () {
+
+    var cql = 'SELECT "id" FROM "cassanKnexy"."columnFamily" ORDER BY "created" ASC "updated" DESC;'
+      , qb = cassanKnex("cassanKnexy");
+    qb.select("id")
+      .from("columnFamily")
+      .orderBy({created: "asc", updated: "desc"});
+
+    var _cql = qb.cql();
+    assert(_cql === cql, "Expected compilation: '" + cql + "' but compiled: " + _cql);
+  });
 
   // UPDATE
 

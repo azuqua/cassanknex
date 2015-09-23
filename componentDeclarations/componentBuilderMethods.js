@@ -53,6 +53,8 @@ module.exports = {
     "andWhere": {"name": "andWhere", "grouping": "where"},
     "orWhere": {"name": "orWhere", "grouping": "where"},
 
+    "orderBy": {"name": "orderBy", "grouping": "orderBy"},
+
     "set": {"name": "set", "grouping": "set"},
 
     "if": {"name": "if", "grouping": "if"},
