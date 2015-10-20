@@ -28,7 +28,7 @@ describe("yolo", function () {
     this.timeout(0);
     cassanKnex = require("../../index")({
       connection: {
-        contactPoints: ["10.0.0.2"]
+        contactPoints: ["127.0.0.1"]
       },
       debug: false
     });

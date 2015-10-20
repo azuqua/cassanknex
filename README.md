@@ -555,6 +555,8 @@ qb.insert(values)
 
 #### <a name="ChangeLog"></a>ChangeLog
 
+- 1.10.1
+  - Patch invalid error response when executing commands via an uninitialized Cassandra client.
 - 1.10.0
   - Add QueryModifier `orderBy` for standard queries.
 - 1.9.0
