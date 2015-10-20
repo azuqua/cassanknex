@@ -78,7 +78,7 @@ CassanKnex.initialize = function (config) {
         cassandra.execute(cql, qb.bindings(), _options, _cb);
       }
       else {
-        cb(new Error("Cassandra client is not initialized."));
+        _cb(new Error("Cassandra client is not initialized."));
       }
 
       // maintain chain
