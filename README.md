@@ -555,6 +555,8 @@ qb.insert(values)
 
 #### <a name="ChangeLog"></a>ChangeLog
 
+- 1.11.0
+  - Add `getClient` method to allow retrieving the Cassandra Driver instance from cassanknex.
 - 1.10.1
   - Patch invalid error response when executing commands via an uninitialized Cassandra client.
 - 1.10.0

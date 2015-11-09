@@ -13,6 +13,12 @@ var _ = require("lodash")
 var cassandra = null
   , duckType = "[Object CassanKnex]";
 
+/**
+ * Constructor object, creates and returns a new cassanknex client
+ *
+ * @returns {cassanKnex}
+ * @constructor
+ */
 function CassanKnex() {
   return CassanKnex.initialize.apply(null, arguments);
 }
@@ -47,182 +53,21 @@ CassanKnex.initialize = function (config) {
       qb.use(keyspace);
     }
 
-    /**
-     * Create the exec function for a pass through to the datastax driver.
-     *
-     * @param `{Object} options` optional argument passed to datastax driver upon query execution
-     * @param `{Function} cb` => function(err, result) {}
-     * @returns {Client|exports|module.exports}
-     */
-    qb.exec = function (options, cb) {
-
-      var _options = _.isFunction(options) ? {} : options
-        , _cb;
-
-      if (!_.has(options, "prepare")) {
-        options.prepare = qb._execPrepare;
-      }
-
-      if (_.isFunction(options)) {
-        _cb = options;
-      }
-      else if (_.isFunction(cb)) {
-        _cb = cb;
-      }
-      else {
-        _cb = _.noop;
-      }
-
-      if (cassandra !== null && cassandra.connected) {
-        var cql = qb.cql();
-        cassandra.execute(cql, qb.bindings(), _options, _cb);
-      }
-      else {
-        _cb(new Error("Cassandra client is not initialized."));
-      }
-
-      // maintain chain
-      return qb;
-    };
-
-    /**
-     * Create the stream function for a pass through to the datastax driver,
-     * all callbacks are defaulted to lodash#noop if not declared.
-     *
-     * @param `{Object} options` optional argument passed to datastax driver upon query execution
-     * @param `{Object} cbs` =>
-     * {
-     *  readable: function() {},
-     *  end: function() {},
-     *  error: function(err) {}
-     * }
-     * @returns {Client|exports|module.exports}
-     */
-    qb.stream = function (options, cbs) {
-
-      var _options = _.isObject(cbs) ? options : {}
-        , _cbs = _.isObject(cbs) ? cbs : options
-        , onReadable = _cbs.readable || _.noop
-        , onEnd = _cbs.end || _.noop
-        , onError = _cbs.error || _.noop;
-
-      if (cassandra !== null && cassandra.connected) {
-        var cql = qb.cql();
-        cassandra.stream(cql, qb.bindings(), _options)
-          .on("readable", onReadable)
-          .on("end", onEnd)
-          .on("error", onError);
-      }
-      else {
-        console.error("Cassandra client is not initialized.");
-        onError(new Error("Cassandra client is not initialized."));
-      }
-
-      // maintain chain
-      return qb;
-    };
-
-    /**
-     * Create the eachRow function for a pass through to the datastax driver.
-     *
-     * @param `{Object} options` optional argument passed to datastax driver upon query execution
-     * @param `{Function} rowCb` => function(row) {}
-     * @param `{Function} errorCb` => function(err) {}
-     * @returns {Client|exports|module.exports}
-     */
-    qb.eachRow = function (options, rowCb, errorCb) {
-
-      // options is really rowCB
-      if (_.isFunction(options)) {
-        errorCb = rowCb;
-        rowCb = options;
-      }
-
-      var _options = _.isObject(options) ? options : {};
-
-      if (!_.isFunction(rowCb)) {
-        rowCb = _.noop;
-      }
-      if (!_.isFunction(errorCb)) {
-        errorCb = _.noop;
-      }
-
-      if (cassandra !== null && cassandra.connected) {
-        var cql = qb.cql();
-        cassandra.eachRow(cql, qb.bindings(), _options, rowCb, errorCb);
-      }
-      else {
-        errorCb(new Error("Cassandra client is not initialized."));
-      }
-
-      // maintain chain
-      return qb;
-    };
-
-    /**
-     *
-     * @param options
-     * @param cassakni
-     * @param cb
-     * @returns {Client|exports|module.exports}
-     */
-    qb.batch = function (options, cassakni, cb) {
-
-      var _options
-        , _cassakni
-        , _cb;
-
-      // options is really cassakni, cassakni is cb
-      if (_.isArray(options)) {
-        _options = {};
-        _cassakni = options;
-        _cb = cassakni;
-      }
-      // standard order
-      else {
-        _options = options;
-        _cassakni = cassakni;
-        _cb = cb;
-      }
-
-      if (!_.isFunction(_cb)) {
-        _cb = _.noop;
-      }
-
-      if (cassandra !== null && cassandra.connected) {
-
-        var error = null
-          , statements = _.map(_cassakni, function (qb) {
-
-            if (!qb.toString || qb.toString() !== duckType) {
-              error = new Error("Invalid input to CassanKnex#batch.");
-              return {};
-            }
-            else {
-              return {query: qb.cql(), params: qb.bindings()};
-            }
-          });
-
-        if (error) {
-          return _cb(error);
-        }
-
-        cassandra.batch(statements, _options, _cb);
-      }
-      else {
-        _cb(new Error("Cassandra client is not initialized."));
-      }
-
-      // maintain chain
-      return qb;
-    };
-
     qb.toString = function () {
       return duckType;
     };
 
+    _attachExecMethod(qb);
+    _attachStreamMethod(qb);
+    _attachEachRowMethod(qb);
+    _attachBatchMethod(qb);
+
     return qb;
   }
+
+  cassanKnex.getClient = function () {
+    return cassandra;
+  };
 
   // Set instance version
   cassanKnex.VERSION = cassanKnex.__cassanKnex__ = _package.version;
@@ -246,5 +91,203 @@ CassanKnex.initialize = function (config) {
 
   return cassanKnex;
 };
+
+/**
+ * hooks the 'exec' cassandra client method to our query builder object
+ * @param qb
+ * @private
+ */
+function _attachExecMethod(qb) {
+  /**
+   * Create the exec function for a pass through to the datastax driver.
+   *
+   * @param `{Object} options` optional argument passed to datastax driver upon query execution
+   * @param `{Function} cb` => function(err, result) {}
+   * @returns {Client|exports|module.exports}
+   */
+  qb.exec = function (options, cb) {
+
+    var _options = _.isFunction(options) ? {} : options
+      , _cb;
+
+    if (!_.has(options, "prepare")) {
+      options.prepare = qb._execPrepare;
+    }
+
+    if (_.isFunction(options)) {
+      _cb = options;
+    }
+    else if (_.isFunction(cb)) {
+      _cb = cb;
+    }
+    else {
+      _cb = _.noop;
+    }
+
+    if (cassandra !== null && cassandra.connected) {
+      var cql = qb.cql();
+      cassandra.execute(cql, qb.bindings(), _options, _cb);
+    }
+    else {
+      _cb(new Error("Cassandra client is not initialized."));
+    }
+
+    // maintain chain
+    return qb;
+  };
+}
+
+/**
+ * hooks the 'stream' cassandra client method to our query builder object
+ * @param qb
+ * @private
+ */
+function _attachStreamMethod(qb) {
+  /**
+   * Create the stream function for a pass through to the datastax driver,
+   * all callbacks are defaulted to lodash#noop if not declared.
+   *
+   * @param `{Object} options` optional argument passed to datastax driver upon query execution
+   * @param `{Object} cbs` =>
+   * {
+     *  readable: function() {},
+     *  end: function() {},
+     *  error: function(err) {}
+     * }
+   * @returns {Client|exports|module.exports}
+   */
+  qb.stream = function (options, cbs) {
+
+    var _options = _.isObject(cbs) ? options : {}
+      , _cbs = _.isObject(cbs) ? cbs : options
+      , onReadable = _cbs.readable || _.noop
+      , onEnd = _cbs.end || _.noop
+      , onError = _cbs.error || _.noop;
+
+    if (cassandra !== null && cassandra.connected) {
+      var cql = qb.cql();
+      cassandra.stream(cql, qb.bindings(), _options)
+        .on("readable", onReadable)
+        .on("end", onEnd)
+        .on("error", onError);
+    }
+    else {
+      console.error("Cassandra client is not initialized.");
+      onError(new Error("Cassandra client is not initialized."));
+    }
+
+    // maintain chain
+    return qb;
+  };
+}
+
+/**
+ * hooks the 'eachRow' cassandra client method to our query builder object
+ * @param qb
+ * @private
+ */
+function _attachEachRowMethod(qb) {
+  /**
+   * Create the eachRow function for a pass through to the datastax driver.
+   *
+   * @param `{Object} options` optional argument passed to datastax driver upon query execution
+   * @param `{Function} rowCb` => function(row) {}
+   * @param `{Function} errorCb` => function(err) {}
+   * @returns {Client|exports|module.exports}
+   */
+  qb.eachRow = function (options, rowCb, errorCb) {
+
+    // options is really rowCB
+    if (_.isFunction(options)) {
+      errorCb = rowCb;
+      rowCb = options;
+    }
+
+    var _options = _.isObject(options) ? options : {};
+
+    if (!_.isFunction(rowCb)) {
+      rowCb = _.noop;
+    }
+    if (!_.isFunction(errorCb)) {
+      errorCb = _.noop;
+    }
+
+    if (cassandra !== null && cassandra.connected) {
+      var cql = qb.cql();
+      cassandra.eachRow(cql, qb.bindings(), _options, rowCb, errorCb);
+    }
+    else {
+      errorCb(new Error("Cassandra client is not initialized."));
+    }
+
+    // maintain chain
+    return qb;
+  };
+}
+
+/**
+ * hooks the 'batch' cassandra client method to our query builder object
+ * @param qb
+ * @private
+ */
+function _attachBatchMethod(qb) {
+  /**
+   *
+   * @param options
+   * @param cassakni
+   * @param cb
+   * @returns {Client|exports|module.exports}
+   */
+  qb.batch = function (options, cassakni, cb) {
+
+    var _options
+      , _cassakni
+      , _cb;
+
+    // options is really cassakni, cassakni is cb
+    if (_.isArray(options)) {
+      _options = {};
+      _cassakni = options;
+      _cb = cassakni;
+    }
+    // standard order
+    else {
+      _options = options;
+      _cassakni = cassakni;
+      _cb = cb;
+    }
+
+    if (!_.isFunction(_cb)) {
+      _cb = _.noop;
+    }
+
+    if (cassandra !== null && cassandra.connected) {
+
+      var error = null
+        , statements = _.map(_cassakni, function (qb) {
+
+          if (!qb.toString || qb.toString() !== duckType) {
+            error = new Error("Invalid input to CassanKnex#batch.");
+            return {};
+          }
+          else {
+            return {query: qb.cql(), params: qb.bindings()};
+          }
+        });
+
+      if (error) {
+        return _cb(error);
+      }
+
+      cassandra.batch(statements, _options, _cb);
+    }
+    else {
+      _cb(new Error("Cassandra client is not initialized."));
+    }
+
+    // maintain chain
+    return qb;
+  };
+}
 
 module.exports = CassanKnex;
