@@ -34,6 +34,7 @@ npm install cassanknex
     - [Rows](#QueryModifiers-Rows)
     - [Column Families](#QueryModifiers-ColumnFamilies)
     - [Keyspaces](#QueryModifiers-Keyspaces)
+  - [Utility Methods](#UtilityMethods)
 - [ChangeLog](#ChangeLog)
 
 ## <a name="WhyCassanknex"></a>Why (what's in a name)
@@ -553,8 +554,34 @@ qb.insert(values)
 - withSimpleStrategy
 - withDurableWrites
 
+#### <a name="UtilityMethods"></a>Utility Methods
+
+- getClient, returns the Datastax Cassandra Driver in use.
+
+```js
+var cassanKnex = require("cassanknex")({
+  connection: {
+    contactPoints: ["10.0.0.2"]
+  }
+});
+
+cassanKnex.on("ready", function (err) {
+
+  if (err)
+    console.error("Error Connecting to Cassandra Cluster", err);
+  else {
+    console.log("Cassandra Connected");
+
+    // get the Cassandra Driver
+    var client = cassanKnex.getClient();
+  }
+});
+```
+
 #### <a name="ChangeLog"></a>ChangeLog
 
+- 1.11.0
+  - Add `getClient` method to allow retrieving the Cassandra Driver instance from cassanknex.
 - 1.10.1
   - Patch invalid error response when executing commands via an uninitialized Cassandra client.
 - 1.10.0
