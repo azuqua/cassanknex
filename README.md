@@ -578,8 +578,20 @@ cassanKnex.on("ready", function (err) {
 });
 ```
 
+- getDriver, returns the raw Datastax Cassandra Driver dependency module.
+
+```js
+var cassanKnex = require("cassanknex")();
+
+// get the Cassandra Driver
+var driver = cassanKnex.getDriver();
+```
+
 #### <a name="ChangeLog"></a>ChangeLog
 
+- 1.12.0
+  - Add `getDriver` method to allow retrieving the raw DataStax Driver module from cassanknex per issue [#25](https://github.com/azuqua/cassanknex/issues/25).
+  - Update DataStax Driver module from `2.2.1` to `2.2.2`.
 - 1.11.0
   - Add `getClient` method to allow retrieving the Cassandra Driver instance from cassanknex.
 - 1.10.1

@@ -65,8 +65,20 @@ CassanKnex.initialize = function (config) {
     return qb;
   }
 
+  /**
+   * Get the cassandra driver currently in use by cassanknex.
+   * @returns {cassandra-driver}
+   */
   cassanKnex.getClient = function () {
     return cassandra;
+  };
+
+  /**
+   * Get the raw datastax cassandra driver module.
+   * @returns {cassandra-driver}
+   */
+  cassanKnex.getDriver = function () {
+    return cassandraDriver;
   };
 
   // Set instance version
@@ -78,6 +90,10 @@ CassanKnex.initialize = function (config) {
     cassanKnex[key] = ee[key];
   }
 
+  /**
+   * Ducks Typing
+   * @returns {string}
+   */
   cassanKnex.toString = function () {
     return duckType;
   };

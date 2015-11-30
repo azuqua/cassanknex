@@ -31,4 +31,13 @@ describe("SmokeTest", function () {
       });
   });
 
+  it("should return the datastax cassandra driver module", function () {
+    var cassanKnex = require("../index")({
+      debug: false
+    });
+
+    var driver = cassanKnex.getDriver();
+    assert.ok(driver, "driver ought to be defined");
+  });
+
 });
