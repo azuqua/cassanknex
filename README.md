@@ -589,6 +589,8 @@ var driver = cassanKnex.getDriver();
 
 #### <a name="ChangeLog"></a>ChangeLog
 
+- 1.12.1
+  - Update DataStax Driver module from `2.2.2` to `3.1.1`.
 - 1.12.0
   - Add `getDriver` method to allow retrieving the raw DataStax Driver module from cassanknex per issue [#25](https://github.com/azuqua/cassanknex/issues/25).
   - Update DataStax Driver module from `2.2.1` to `2.2.2`.
