@@ -53,6 +53,11 @@ _.each(Object.keys(methods), function (method) {
         return this._wrapMethod(null, methods[method].name, _getIfNotExists(methods[method].name), arguments);
       };
       break;
+    case "ifExists":
+      queryBuilder[method] = function () {
+        return this._wrapMethod(null, methods[method].name, _getIfExists(methods[method].name), arguments);
+      };
+      break;
   }
 });
 
@@ -128,6 +133,14 @@ function _getUsing(type) {
 function _getIfNotExists() {
   return function () {
     this._single.ifNotExists = {grouping: "ifNotExists", ifNotExists: true};
+
+    return this;
+  };
+}
+
+function _getIfExists() {
+  return function () {
+    this._single.ifExists = {grouping: "ifExists", ifExists: true};
 
     return this;
   };

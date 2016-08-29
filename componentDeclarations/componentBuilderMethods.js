@@ -58,7 +58,7 @@ module.exports = {
     "set": {"name": "set", "grouping": "set"},
 
     "if": {"name": "if", "grouping": "if"},
-    "ifExists": {"name": "ifExists", "grouping": "if"},
+    "ifExists": {"name": "ifExists", "grouping": "ifExists"},
     "ifNotExists": {"name": "ifNotExists", "grouping": "ifNotExists"},
 
     "usingTTL": {"name": "usingTTL", "grouping": "using"},
