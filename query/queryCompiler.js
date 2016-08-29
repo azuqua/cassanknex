@@ -137,6 +137,9 @@ function _getUpdate() {
     if (_.has(this._grouped, "where")) {
       cql += " WHERE " + _compileWhere(this, this._grouped.where);
     }
+    if (_.has(this._grouped, "if")) {
+      cql += " IF " + _compileIf(this, this._grouped.if);
+    }
     if (_.has(this._single, "ifExists")) {
       cql += " IF EXISTS";
     }
@@ -215,6 +218,41 @@ function _compileWhere(client, whereStatements) {
     if (type === "whereRaw")
       joinClause = " ";
 
+    cql += (!relationsStart ? joinClause : "") + relations.join(joinClause);
+    relationsStart = false;
+  });
+
+  return cql;
+}
+
+function _compileIf(client, whereStatements) {
+
+  var groupedIf = _.groupBy(whereStatements, "type");
+  var cql = ""
+    , relationsStart = true;
+  _.each(Object.keys(groupedIf), function (type) {
+    var relations = [];
+    relations.length = 0;
+    _.each(groupedIf[type], function (statement) {
+      var key = statement.key;
+      // test for nested columns
+      if ((/\[.*\]$/).test(key)) {
+        key = formatter.wrapQuotes(key.replace(/\[.*/g, "")) + key.replace(/.+?(?=\[)/, "");
+      }
+      else {
+        key = formatter.wrapQuotes(key);
+      }
+      switch (statement.op.toLowerCase()) {
+        case "in":
+          relations.push([key, statement.op, "(" + formatter.parameterize(statement.val, client) + ")"].join(" "));
+          break;
+        default:
+          relations.push([key, statement.op, formatter.parameterize(statement.val, client)].join(" "));
+      }
+    });
+
+    var joinClause = " AND ";
+    
     cql += (!relationsStart ? joinClause : "") + relations.join(joinClause);
     relationsStart = false;
   });

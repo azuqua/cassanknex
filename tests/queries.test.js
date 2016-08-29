@@ -212,6 +212,21 @@ describe("QueryMethods", function () {
     var _cql = qb.cql();
     assert(_cql === cql, "Expected compilation: '" + cql + "' but compiled: " + _cql);
   });
+  it("should compile an update query string using an object param /w if conditions", function () {
+
+    var cql = 'UPDATE "cassanKnexy"."columnFamily" SET "bar" = ?,"foo" = ? IF "bar" = ? AND "foo" = ?;'
+      , qb = cassanKnex("cassanKnexy");
+    qb.update("columnFamily")
+      .set({
+        "bar": "baz",
+        "foo": "bar"
+      })
+      .if("bar", "=", "baz")
+      .if("foo", "=", "bar");
+
+    var _cql = qb.cql();
+    assert(_cql === cql, "Expected compilation: '" + cql + "' but compiled: " + _cql);
+  });
 
   // DELETE
 

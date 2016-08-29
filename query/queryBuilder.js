@@ -58,6 +58,11 @@ _.each(Object.keys(methods), function (method) {
         return this._wrapMethod(null, methods[method].name, _getIfExists(methods[method].name), arguments);
       };
       break;
+    case "if":
+      queryBuilder[method] = function () {
+        return this._wrapMethod(null, methods[method].name, _getIf(methods[method].name), arguments);
+      };
+      break;
   }
 });
 
@@ -188,4 +193,20 @@ function _getOrderBy() {
     this._statements = this._statements.concat(statements);
     return this;
   }
+}
+
+function _getIf(type) {
+  return function (identifier, op, value) {
+
+    var statement = {
+      grouping: "if",
+      type: type,
+      op: op,
+      key: identifier,
+      val: value
+    };
+    this._statements.push(statement);
+
+    return this;
+  };
 }
