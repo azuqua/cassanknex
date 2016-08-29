@@ -59,7 +59,7 @@ module.exports = {
 
     "if": {"name": "if", "grouping": "if"},
     "ifExists": {"name": "ifExists", "grouping": "if"},
-    "ifNotExists": {"name": "ifNotExists", "grouping": "if"},
+    "ifNotExists": {"name": "ifNotExists", "grouping": "ifNotExists"},
 
     "usingTTL": {"name": "usingTTL", "grouping": "using"},
     "usingTimestamp": {"name": "usingTimestamp", "grouping": "using"},

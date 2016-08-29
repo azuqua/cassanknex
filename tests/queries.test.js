@@ -30,7 +30,25 @@ describe("QueryMethods", function () {
     var _cql = qb.cql();
     assert(_cql === cql, "Expected compilation: '" + cql + "' but compiled: " + _cql);
   });
+  it("should compile an insert query string, w/ if not exists", function () {
 
+    var cql = 'INSERT INTO "cassanKnexy"."columnFamily" ("id","bar","baz") VALUES (?, ?, ?) IF NOT EXISTS USING TIMESTAMP ? AND USING TTL ?;'
+      , qb = cassanKnex("cassanKnexy")
+      , values = {
+        "id": "foo"
+        , "bar": "baz"
+        , "baz": ["foo", "bar"]
+      };
+    qb.insert(values)
+      .ifNotExists()
+      .usingTimestamp(250000)
+      .usingTTL(50000)
+      .into("columnFamily");
+
+    var _cql = qb.cql();
+    assert(_cql === cql, "Expected compilation: '" + cql + "' but compiled: " + _cql);
+  });
+  
   // SELECT
 
   it("should compile a simple 'select' query string", function () {

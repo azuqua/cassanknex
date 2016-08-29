@@ -46,10 +46,13 @@ function _getInsert() {
       , cql = insertStatement;
 
     cql += "(" + formatter.parameterize(compiling.value.values, this) + ")";
+    if (_.has(this._single, "ifNotExists")) {
+      cql += " IF NOT EXISTS";
+    }
     if (_.has(this._grouped, "using")) {
       cql += " " + _compileUsing(this, this._grouped.using);
     }
-
+    
     this.query({
       cql: cql + ";"
     });
