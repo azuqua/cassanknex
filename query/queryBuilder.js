@@ -48,6 +48,21 @@ _.each(Object.keys(methods), function (method) {
         return this._wrapMethod(null, methods[method].name, _getOrderBy(methods[method].name), arguments);
       };
       break;
+    case "ifNotExists":
+      queryBuilder[method] = function () {
+        return this._wrapMethod(null, methods[method].name, _getIfNotExists(methods[method].name), arguments);
+      };
+      break;
+    case "ifExists":
+      queryBuilder[method] = function () {
+        return this._wrapMethod(null, methods[method].name, _getIfExists(methods[method].name), arguments);
+      };
+      break;
+    case "if":
+      queryBuilder[method] = function () {
+        return this._wrapMethod(null, methods[method].name, _getIf(methods[method].name), arguments);
+      };
+      break;
   }
 });
 
@@ -120,6 +135,22 @@ function _getUsing(type) {
   };
 }
 
+function _getIfNotExists() {
+  return function () {
+    this._single.ifNotExists = {grouping: "ifNotExists", ifNotExists: true};
+
+    return this;
+  };
+}
+
+function _getIfExists() {
+  return function () {
+    this._single.ifExists = {grouping: "ifExists", ifExists: true};
+
+    return this;
+  };
+}
+
 function _getLimit() {
   return function (limit) {
     this._single.limit = {grouping: "limit", limit: limit};
@@ -162,4 +193,20 @@ function _getOrderBy() {
     this._statements = this._statements.concat(statements);
     return this;
   }
+}
+
+function _getIf(type) {
+  return function (identifier, op, value) {
+
+    var statement = {
+      grouping: "if",
+      type: type,
+      op: op,
+      key: identifier,
+      val: value
+    };
+    this._statements.push(statement);
+
+    return this;
+  };
 }

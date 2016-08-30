@@ -58,8 +58,8 @@ module.exports = {
     "set": {"name": "set", "grouping": "set"},
 
     "if": {"name": "if", "grouping": "if"},
-    "ifExists": {"name": "ifExists", "grouping": "if"},
-    "ifNotExists": {"name": "ifNotExists", "grouping": "if"},
+    "ifExists": {"name": "ifExists", "grouping": "ifExists"},
+    "ifNotExists": {"name": "ifNotExists", "grouping": "ifNotExists"},
 
     "usingTTL": {"name": "usingTTL", "grouping": "using"},
     "usingTimestamp": {"name": "usingTimestamp", "grouping": "using"},
