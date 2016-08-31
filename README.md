@@ -589,6 +589,8 @@ var driver = cassanKnex.getDriver();
 
 #### <a name="ChangeLog"></a>ChangeLog
 
+- 1.13.0
+  - Add `if` (for `update`), `ifExists` (for `update`), and `ifNotExists` (for `insert`) per PR [#28](https://github.com/azuqua/cassanknex/pull/28).
 - 1.12.1
   - Update DataStax Driver module from `2.2.2` to `3.1.1`.
 - 1.12.0
