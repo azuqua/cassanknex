@@ -123,11 +123,11 @@ function _attachExecMethod(qb) {
    */
   qb.exec = function (options, cb) {
 
-    var _options = _.isFunction(options) ? {} : options
+    var _options = typeof options !== "undefined" && _.isFunction(options) ? {} : options
       , _cb;
 
-    if (!_.has(options, "prepare")) {
-      options.prepare = qb._execPrepare;
+    if (!_.has(_options, "prepare")) {
+      _options.prepare = qb._execPrepare;
     }
 
     if (_.isFunction(options)) {
