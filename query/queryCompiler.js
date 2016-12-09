@@ -52,7 +52,7 @@ function _getInsert() {
     if (_.has(this._grouped, "using")) {
       cql += " " + _compileUsing(this, this._grouped.using);
     }
-    
+
     this.query({
       cql: cql + ";"
     });
@@ -91,9 +91,11 @@ function _getSelect() {
           }
         }
       })
-      , selectStatement = "SELECT " + columnStatements.join(",") + " "
-      , source = _getSource(this)
-      , cql = selectStatement + "FROM " + source;
+      , source = _getSource(this);
+
+    var cql = "SELECT " + columnStatements.join(",") + " ";
+    // TODO add aggregates
+    cql += "FROM " + source;
 
     if (_.has(this._grouped, "where")) {
       cql += " WHERE " + _compileWhere(this, this._grouped.where);
@@ -101,8 +103,11 @@ function _getSelect() {
     if (_.has(this._grouped, "orderBy")) {
       cql += " ORDER BY " + _compileOrder(this, this._grouped.orderBy);
     }
-    if (_.has(this._single, "limit")) {
+    if (_.has(this._single, "limit") && this._single.limit.type === "limit") {
       cql += " LIMIT " + formatter.parameterize(this._single.limit.limit, this);
+    }
+    if (_.has(this._single, "limit") && this._single.limit.type === "limitPerPartition") {
+      cql += " PER PARTITION LIMIT " + formatter.parameterize(this._single.limit.limit, this);
     }
     if (_.has(this._single, "allowFiltering") && this._single.allowFiltering.allow) {
       cql += " ALLOW FILTERING";
@@ -252,7 +257,7 @@ function _compileIf(client, whereStatements) {
     });
 
     var joinClause = " AND ";
-    
+
     cql += (!relationsStart ? joinClause : "") + relations.join(joinClause);
     relationsStart = false;
   });
@@ -267,11 +272,21 @@ function _compileSet(client, setStatements) {
 
   _.each(setStatements, function (statement) {
     var key = formatter.wrapQuotes(statement.key);
-    if (!_.isArray(statement.val)) {
-      assignments.push(key + " = " + formatter.parameterize(statement.val, client));
-    }
-    else {
-      assignments.push(key + " = " + formatter.parameterizeArray(statement.val, client));
+    switch (statement.type) {
+      case "set":
+        if (!_.isArray(statement.val)) {
+          assignments.push(key + " = " + formatter.parameterize(statement.val, client));
+        }
+        else {
+          assignments.push(key + " = " + formatter.parameterizeArray(statement.val, client));
+        }
+        break;
+      case "increment":
+        assignments.push(key + " = " + key + " + " + formatter.parameterize(statement.val, client));
+        break;
+      case "decrement":
+        assignments.push(key + " = " + key + " - " + formatter.parameterize(statement.val, client));
+        break;
     }
   });
   cql += assignments.join(",");

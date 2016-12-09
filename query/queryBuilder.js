@@ -18,6 +18,11 @@ _.each(Object.keys(methods), function (method) {
         return this._wrapMethod(null, methods[method].name, _getDest(methods[method].name), arguments);
       };
       break;
+    case "aggregate":
+      queryBuilder[method] = function () {
+        return this._wrapMethod(null, methods[method].name, _getAggregate(methods[method].name), arguments);
+      };
+      break;
     case "where":
       queryBuilder[method] = function () {
         return this._wrapMethod(null, methods[method].name, _getWhere(methods[method].name), arguments);
@@ -71,6 +76,21 @@ function _getDest() {
     this._setColumnFamily(columnFamily);
     return this;
   };
+}
+
+function _getAggregate(type) {
+  return function (identifier, value) {
+
+    var statement = {
+      grouping: "aggregate",
+      type: type,
+      key: identifier,
+      val: value
+    };
+    this._statements.push(statement);
+
+    return this;
+  }
 }
 
 function _getWhere(type) {
@@ -151,9 +171,9 @@ function _getIfExists() {
   };
 }
 
-function _getLimit() {
+function _getLimit(type) {
   return function (limit) {
-    this._single.limit = {grouping: "limit", limit: limit};
+    this._single.limit = {grouping: "limit", type: type, limit: limit};
 
     return this;
   };

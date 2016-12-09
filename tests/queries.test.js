@@ -48,7 +48,7 @@ describe("QueryMethods", function () {
     var _cql = qb.cql();
     assert(_cql === cql, "Expected compilation: '" + cql + "' but compiled: " + _cql);
   });
-  
+
   // SELECT
 
   it("should compile a simple 'select' query string", function () {
@@ -97,6 +97,28 @@ describe("QueryMethods", function () {
       , qb = cassanKnex("cassanKnexy");
     qb.select("id")
       .allowFiltering()
+      .from("columnFamily");
+
+    var _cql = qb.cql();
+    assert(_cql === cql, "Expected compilation: '" + cql + "' but compiled: " + _cql);
+  });
+  it("should compile a 'limit' simple 'select' query string", function () {
+
+    var cql = 'SELECT "id" FROM "cassanKnexy"."columnFamily" LIMIT ?;'
+      , qb = cassanKnex("cassanKnexy");
+    qb.select("id")
+      .limit(10)
+      .from("columnFamily");
+
+    var _cql = qb.cql();
+    assert(_cql === cql, "Expected compilation: '" + cql + "' but compiled: " + _cql);
+  });
+  it("should compile a 'limit per partition' simple 'select' query string", function () {
+
+    var cql = 'SELECT "id" FROM "cassanKnexy"."columnFamily" PER PARTITION LIMIT ?;'
+      , qb = cassanKnex("cassanKnexy");
+    qb.select("id")
+      .limitPerPartition(10)
       .from("columnFamily");
 
     var _cql = qb.cql();
@@ -227,6 +249,65 @@ describe("QueryMethods", function () {
     var _cql = qb.cql();
     assert(_cql === cql, "Expected compilation: '" + cql + "' but compiled: " + _cql);
   });
+  it("should compile an increment counter query string that increments a counter column", function () {
+
+    var cql = 'UPDATE "cassanKnexy"."columnFamily" SET "bar" = "bar" + ?,"foo" = "foo" + ?;'
+      , qb = cassanKnex("cassanKnexy");
+    qb.update("columnFamily")
+      .increment("bar", 7)
+      .increment("foo", 9);
+
+    var _cql = qb.cql();
+    assert(_cql === cql, "Expected compilation: '" + cql + "' but compiled: " + _cql);
+  });
+  it("should compile an increment counter query string using an object param", function () {
+
+    var cql = 'UPDATE "cassanKnexy"."columnFamily" SET "bar" = "bar" + ?,"foo" = "foo" + ?;'
+      , qb = cassanKnex("cassanKnexy");
+    qb.update("columnFamily")
+      .increment({
+        "bar": 7,
+        "foo": 9
+      });
+
+    var _cql = qb.cql();
+    assert(_cql === cql, "Expected compilation: '" + cql + "' but compiled: " + _cql);
+  });
+  it("should compile a decrement counter query string that increments a counter column", function () {
+
+    var cql = 'UPDATE "cassanKnexy"."columnFamily" SET "bar" = "bar" - ?,"foo" = "foo" - ?;'
+      , qb = cassanKnex("cassanKnexy");
+    qb.update("columnFamily")
+      .decrement("bar", 7)
+      .decrement("foo", 9);
+
+    var _cql = qb.cql();
+    assert(_cql === cql, "Expected compilation: '" + cql + "' but compiled: " + _cql);
+  });
+  it("should compile a decrement counter query string using an object param", function () {
+
+    var cql = 'UPDATE "cassanKnexy"."columnFamily" SET "bar" = "bar" - ?,"foo" = "foo" - ?;'
+      , qb = cassanKnex("cassanKnexy");
+    qb.update("columnFamily")
+      .decrement({
+        "bar": 7,
+        "foo": 9
+      });
+
+    var _cql = qb.cql();
+    assert(_cql === cql, "Expected compilation: '" + cql + "' but compiled: " + _cql);
+  });
+  it("should compile a mixed increment/decrement counter query string that increments a counter column", function () {
+
+    var cql = 'UPDATE "cassanKnexy"."columnFamily" SET "bar" = "bar" + ?,"foo" = "foo" - ?;'
+      , qb = cassanKnex("cassanKnexy");
+    qb.update("columnFamily")
+      .increment("bar", 7)
+      .decrement("foo", 9);
+
+    var _cql = qb.cql();
+    assert(_cql === cql, "Expected compilation: '" + cql + "' but compiled: " + _cql);
+  });
 
   // DELETE
 
@@ -274,6 +355,20 @@ describe("QueryMethods", function () {
       .from("columnFamily")
       .where("foo[bar]", "=", "baz")
       .where("id", "in", ["1", "1", "2", "3", "5"]);
+
+    var _cql = qb.cql();
+    assert(_cql === cql, "Expected compilation: '" + cql + "' but compiled: " + _cql);
+  });
+
+  // AGGREGATES, coming soon...
+
+  it.skip("should compile a simple 'count' query string", function () {
+
+    var cql = 'SELECT COUNT(*) FROM "cassanKnexy"."columnFamily";'
+      , qb = cassanKnex("cassanKnexy");
+    qb.select()
+      .count()
+      .from("columnFamily");
 
     var _cql = qb.cql();
     assert(_cql === cql, "Expected compilation: '" + cql + "' but compiled: " + _cql);

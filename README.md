@@ -5,7 +5,7 @@
 
 # CassanKnex
 
-A [fully tested][travis-url] Apache Cassandra CQL query builder with support for the DataStax NodeJS driver, written in the spirit of [Knex][knexjs-url] for [CQL 3.1.x][cassandra-cql-3_1-ref-url].
+A [fully tested][travis-url] Apache Cassandra CQL query builder with support for the DataStax NodeJS driver, written in the spirit of [Knex][knexjs-url] for [CQL 3.x][cassandra-cql-3_1-ref-url].
 
 ## Installation
 
@@ -398,7 +398,7 @@ qb.insert(values)
       .orWhere("id", "in", ["2", "3"])
       .orWhere("baz", "=", "bar")
       .andWhere("foo", "IN", ["baz", "bar"])
-      .limit(10)
+      .limitPerPartition(10)
       .from("columnFamily");
 
     // => SELECT id,foo,bar,baz FROM cassanKnexy.columnFamily
@@ -406,16 +406,17 @@ qb.insert(values)
     //      OR id in (?, ?)
     //      OR baz = ?
     //      AND foo IN (?, ?)
-    //      LIMIT ?;
+    //      PER PARTITION LIMIT ?;
     ```
   - 'select as' specified columns:
 
     ```js
     var qb = cassanKnex("cassanKnexy");
     qb.select({"id": "foo"})
+      .limit(10)
       .from("columnFamily");
 
-    // => SELECT id AS foo FROM cassanKnexy.columnFamily;
+    // => SELECT id AS foo FROM cassanKnexy.columnFamily LIMIT ?;
     ```
 - update - *compile an __update__ query string*
   - simple set column values:
@@ -433,7 +434,8 @@ qb.insert(values)
     //      WHERE foo[bar] = ?
     //      AND id in (?, ?, ?, ?, ?);
   ```
-  - set column values using object parameters:
+
+  set column values using object parameters:
 
   ```js
   var qb = cassanKnex("cassanKnexy");
@@ -450,6 +452,41 @@ qb.insert(values)
   //      WHERE foo[bar] = ?
   //      AND id in (?, ?, ?, ?, ?);
   ```
+
+  - increment or decrement counter columns:
+
+  ```js
+  var qb = cassanKnex("cassanKnexy");
+  qb.update("columnFamily")
+    .increment("bar", 5) // incr by 5
+    .increment("baz", 7) // incr by 7
+    .decrement("foo", 9) // decr by 9
+    .decrement("bop", 11) // decr by 11
+    .where("id", "=", 1);
+
+  // => UPDATE cassanKnexy.columnFamily
+  //      SET "bar" = "bar" + ?,
+  //          "baz" = "baz" + ?,
+  //          "foo" = "foo" - ?;
+  //      WHERE id = ?;
+  ```
+
+  or w/ object notation:
+
+  ```js
+  var qb = cassanKnex("cassanKnexy");
+  qb.update("columnFamily")
+    .increment({"bar": 5, "baz": 7})
+    .decrement({"foo": 9, "bop": 11})
+    .where("id", "=", 1);
+
+  // => UPDATE cassanKnexy.columnFamily
+  //      SET "bar" = "bar" + ?,
+  //          "baz" = "baz" + ?,
+  //          "foo" = "foo" - ?;
+  //      WHERE id = ?;
+  ```
+
 - delete - *compile a __delete__ query string*
   - delete all columns for a given row:
 
@@ -510,12 +547,15 @@ qb.insert(values)
 - andWhere
 - orWhere
 - set
+- increment
+- decrement
 - if
 - ifExists
 - ifNotExists
 - usingTTL
 - usingTimestamp
 - limit
+- limitPerPartition
 - orderBy
 
 ##### <a name="QueryModifiers-ColumnFamilies"></a>*For column family queries*:
@@ -589,8 +629,11 @@ var driver = cassanKnex.getDriver();
 
 #### <a name="ChangeLog"></a>ChangeLog
 
+- 1.14.0
+  - Add QueryModifiers `limitPerPartition`, `increment` and `decrement`.
+  - Update DataStax Driver module from `3.1.5` to `3.1.6`.
 - 1.13.1
-  -  Update DataStax Driver module from `3.1.1` to `3.1.5`.
+  - Update DataStax Driver module from `3.1.1` to `3.1.5`.
 - 1.13.0
   - Add `if` (for `update`), `ifExists` (for `update`), and `ifNotExists` (for `insert`) per PR [#28](https://github.com/azuqua/cassanknex/pull/28).
 - 1.12.1

@@ -56,6 +56,8 @@ module.exports = {
     "orderBy": {"name": "orderBy", "grouping": "orderBy"},
 
     "set": {"name": "set", "grouping": "set"},
+    "increment": {"name": "increment", "grouping": "set"},
+    "decrement": {"name": "decrement", "grouping": "set"},
 
     "if": {"name": "if", "grouping": "if"},
     "ifExists": {"name": "ifExists", "grouping": "ifExists"},
@@ -65,6 +67,9 @@ module.exports = {
     "usingTimestamp": {"name": "usingTimestamp", "grouping": "using"},
 
     "limit": {"name": "limit", "grouping": "limit"},
+    "limitPerPartition": {"name": "limitPerPartition", "grouping": "limit"},
+
+    "count": {"name": "count", "grouping": "aggregate"},
 
     "allowFiltering": {"name": "allowFiltering", "grouping": "allow"}
   }
