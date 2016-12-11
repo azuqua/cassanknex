@@ -18,6 +18,7 @@ module.exports = {
     "dropColumnFamilyIfExists": "dropColumnFamilyIfExists",
 
     "createIndex": "createIndex",
+    "createIndexCustom": "createIndexCustom",
 
     "alterType": "alterType",
     "createType": "createType",

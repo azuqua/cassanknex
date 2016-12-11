@@ -523,6 +523,7 @@ qb.insert(values)
 - createColumnFamily
 - createColumnFamilyIfNotExists
 - createIndex
+- createIndexCustom
 - createType
 - createTypeIfNotExists
 - dropColumnFamily
@@ -588,6 +589,7 @@ qb.insert(values)
 - withCompression
 - withCompaction
 - withClusteringOrderBy
+- withOptions
 
 ##### <a name="QueryModifiers-Keyspaces"></a>*For keyspace queries*:
 - withNetworkTopologyStrategy
@@ -630,7 +632,8 @@ var driver = cassanKnex.getDriver();
 #### <a name="ChangeLog"></a>ChangeLog
 
 - 1.14.0
-  - Add QueryModifiers `limitPerPartition`, `increment` and `decrement`.
+  - Add QueryModifiers `withOptions`, `limitPerPartition`, `increment` and `decrement`.
+  - Add QueryCommand `createIndexCustom`.
   - Update DataStax Driver module from `3.1.5` to `3.1.6`.
 - 1.13.1
   - Update DataStax Driver module from `3.1.1` to `3.1.5`.

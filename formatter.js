@@ -82,6 +82,16 @@ module.exports.wrapQuotes = function (string) {
 };
 
 /**
+ * Wrap a string w/ single quotes
+ *
+ * @param string
+ * @returns {string}
+ */
+module.exports.wrapSingleQuotes = function (string) {
+  return "'" + string + "'";
+};
+
+/**
  * Wrap a string w/ square brackets
  *
  * @param string

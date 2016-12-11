@@ -33,6 +33,7 @@ module.exports = {
     "withCompression": {"name": "compression", "grouping": "with"},
     "withCompaction": {"name": "compaction", "grouping": "with"},
     "withClusteringOrderBy": {"name": "clustering", "grouping": "with"},
+    "withOptions": {"name": "options", "grouping": "with"},
 
     "alter": {"name": "alter", "grouping": "alter"},
     "drop": {"name": "drop", "grouping": "alter"},

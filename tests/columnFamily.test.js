@@ -119,7 +119,7 @@ describe("ColumnFamilyMethods", function () {
   });
   it("should compile a create statement w/ compression, compaction and caching options", function () {
 
-    var cql = "CREATE COLUMNFAMILY \"cassanKnexy\".\"columnFamily\" WITH compression = { 'sstable_compression ' : 'DeflateCompressor' , 'chunk_length_kb' : '64' } AND compaction = { 'class' : 'SizeTieredCompactionStrategy' , 'cold_reads_to_omit' : '0.05' } AND caching = { 'rows_per_partition' : '25' };"
+    var cql = "CREATE COLUMNFAMILY \"cassanKnexy\".\"columnFamily\" WITH COMPRESSION = { 'sstable_compression ' : 'DeflateCompressor' , 'chunk_length_kb' : '64' } AND COMPACTION = { 'class' : 'SizeTieredCompactionStrategy' , 'cold_reads_to_omit' : '0.05' } AND CACHING = { 'rows_per_partition' : '25' };"
       , qb = cassanKnex("cassanKnexy");
     qb.createColumnFamily("columnFamily")
       .withCompression({"sstable_compression ": "DeflateCompressor", "chunk_length_kb": 64})
@@ -178,9 +178,39 @@ describe("ColumnFamilyMethods", function () {
 
   it("should compile a create index statement", function () {
 
-    var cql = 'CREATE INDEX foo_key ON "cassanKnexy"."columnFamily" ( "foo" );'
+    var cql = 'CREATE INDEX "indexName" ON "cassanKnexy"."columnFamily" ( "foo" );'
       , qb = cassanKnex("cassanKnexy")
-        .createIndex("columnFamily", "foo_key", "foo");
+        .createIndex("columnFamily", "indexName", "foo");
+
+    var _cql = qb.cql();
+    assert(_cql === cql, "Expected compilation: '" + cql + "' but compiled: " + _cql);
+  });
+
+  it("should compile a create custom index statement with options", function () {
+
+    var cql = 'CREATE CUSTOM INDEX "indexName" ON "cassanKnexy"."columnFamily" ( "onColumn" ) USING \'org.apache.cassandra.index.sasi.SASIIndex\''
+        + " WITH OPTIONS = { 'mode' : 'CONTAINS' , 'analyzer_class' : 'org.apache.cassandra.index.sasi.analyzer.StandardAnalyzer' , 'analyzed' : 'true' , 'tokenization_skip_stop_words' : 'and, the, or' , 'tokenization_enable_stemming' : 'true' , 'tokenization_normalize_lowercase' : 'true' , 'tokenization_locale' : 'en' };"
+      , qb = cassanKnex("cassanKnexy")
+        .createIndexCustom("columnFamily", "indexName", "onColumn")
+        .withOptions({
+          "mode": "CONTAINS",
+          "analyzer_class": "org.apache.cassandra.index.sasi.analyzer.StandardAnalyzer",
+          "analyzed": "true",
+          "tokenization_skip_stop_words": "and, the, or",
+          "tokenization_enable_stemming": "true",
+          "tokenization_normalize_lowercase": "true",
+          "tokenization_locale": "en"
+        });
+
+    var _cql = qb.cql();
+    assert(_cql === cql, "Expected compilation: '" + cql + "' but compiled: " + _cql);
+  });
+
+  it("should compile a create custom index statement with custom 'using' class", function () {
+
+    var cql = 'CREATE CUSTOM INDEX "indexName" ON "cassanKnexy"."columnFamily" ( "onColumn" ) USING \'org.custom.class.path\';'
+      , qb = cassanKnex("cassanKnexy")
+        .createIndexCustom("columnFamily", "indexName", "onColumn", "org.custom.class.path");
 
     var _cql = qb.cql();
     assert(_cql === cql, "Expected compilation: '" + cql + "' but compiled: " + _cql);
