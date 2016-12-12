@@ -57,6 +57,8 @@ module.exports = {
     "orderBy": {"name": "orderBy", "grouping": "orderBy"},
 
     "set": {"name": "set", "grouping": "set"},
+    "add": {"name": "add", "grouping": "set"},
+    "remove": {"name": "remove", "grouping": "set"},
     "increment": {"name": "increment", "grouping": "set"},
     "decrement": {"name": "decrement", "grouping": "set"},
 

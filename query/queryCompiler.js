@@ -281,11 +281,13 @@ function _compileSet(client, setStatements) {
           assignments.push(key + " = " + formatter.parameterizeArray(statement.val, client));
         }
         break;
-      case "increment":
-        assignments.push(key + " = " + key + " + " + formatter.parameterize(statement.val, client));
+      case "add":
+      case "remove":
+        assignments.push(key + " = " + key + (statement.type === "add" ? " + " : " - ") + formatter.parameterize(statement.val, client));
         break;
+      case "increment":
       case "decrement":
-        assignments.push(key + " = " + key + " - " + formatter.parameterize(statement.val, client));
+        assignments.push(key + " = " + key + (statement.type === "increment" ? " + " : " - ") + formatter.parameterize(statement.val, client));
         break;
     }
   });

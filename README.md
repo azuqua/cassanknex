@@ -453,6 +453,37 @@ qb.insert(values)
   //      AND id in (?, ?, ?, ?, ?);
   ```
 
+  - add or remove from map or list:
+
+  ```js
+  var qb = cassanKnex("cassanKnexy");
+  qb.update("columnFamily")
+    .add("bar", {"foo": "baz"}) // "bar" is a map
+    .remove("foo", ["bar"]) // "foo" is a set
+    .where("id", "=", 1);
+
+  // => UPDATE cassanKnexy.columnFamily
+  //      SET "bar" = "bar" + ?,
+  //          "foo" = "foo" - ?;
+  //      WHERE id = ?;
+  ```
+
+  or w/ object notation:
+
+  ```js
+  var qb = cassanKnex("cassanKnexy");
+  qb.update("columnFamily")
+    .add({
+      "bar": {"baz": "foo"}, // "bar" is a map
+      "foo": ["baz"] // "foo" is a set
+    })
+    .remove({
+      "bar": {"foo": "baz"}, // "bar" is a map
+      "foo": ["bar"] // "foo" is a set
+    })
+    .where("id", "=", 1);
+  ```
+
   - increment or decrement counter columns:
 
   ```js
@@ -479,12 +510,6 @@ qb.insert(values)
     .increment({"bar": 5, "baz": 7})
     .decrement({"foo": 9, "bop": 11})
     .where("id", "=", 1);
-
-  // => UPDATE cassanKnexy.columnFamily
-  //      SET "bar" = "bar" + ?,
-  //          "baz" = "baz" + ?,
-  //          "foo" = "foo" - ?;
-  //      WHERE id = ?;
   ```
 
 - delete - *compile a __delete__ query string*
@@ -548,6 +573,8 @@ qb.insert(values)
 - andWhere
 - orWhere
 - set
+- add
+- remove
 - increment
 - decrement
 - if
@@ -632,7 +659,7 @@ var driver = cassanKnex.getDriver();
 #### <a name="ChangeLog"></a>ChangeLog
 
 - 1.14.0
-  - Add QueryModifiers `withOptions`, `limitPerPartition`, `increment` and `decrement`.
+  - Add QueryModifiers `withOptions`, `limitPerPartition`, `add` and `remove`, `increment` and `decrement`.
   - Add QueryCommand `createIndexCustom`.
   - Update DataStax Driver module from `3.1.5` to `3.1.6`.
 - 1.13.1
