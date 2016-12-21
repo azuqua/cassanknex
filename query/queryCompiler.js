@@ -173,6 +173,12 @@ function _getDelete() {
     if (_.has(this._grouped, "where")) {
       cql += " WHERE " + _compileWhere(this, this._grouped.where);
     }
+    if (_.has(this._grouped, "if")) {
+      cql += " IF " + _compileIf(this, this._grouped.if);
+    }
+    if (_.has(this._single, "ifExists")) {
+      cql += " IF EXISTS";
+    }
 
     this.query({
       cql: cql + ";"

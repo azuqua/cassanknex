@@ -416,6 +416,31 @@ describe("QueryMethods", function () {
     var _cql = qb.cql();
     assert(_cql === cql, "Expected compilation: '" + cql + "' but compiled: " + _cql);
   });
+  it("should compile a delete query string w/ if exists", function () {
+
+    var cql = 'DELETE  FROM "cassanKnexy"."columnFamily" WHERE "foo"[bar] = ? IF EXISTS;'
+      , qb = cassanKnex("cassanKnexy");
+    qb.delete()
+      .from("columnFamily")
+      .where("foo[bar]", "=", "baz")
+      .ifExists();
+
+    var _cql = qb.cql();
+    assert(_cql === cql, "Expected compilation: '" + cql + "' but compiled: " + _cql);
+  });
+  it("should compile an delete query string w/ if conditions", function () {
+
+    var cql = 'DELETE  FROM "cassanKnexy"."columnFamily" WHERE "foo"[bar] = ? IF "bar" = ? AND "foo" = ?;'
+      , qb = cassanKnex("cassanKnexy");
+    qb.delete()
+      .from("columnFamily")
+      .where("foo[bar]", "=", "baz")
+      .if("bar", "=", "baz")
+      .if("foo", "=", "bar");
+
+    var _cql = qb.cql();
+    assert(_cql === cql, "Expected compilation: '" + cql + "' but compiled: " + _cql);
+  });
 
   // AGGREGATES, coming soon...
 
