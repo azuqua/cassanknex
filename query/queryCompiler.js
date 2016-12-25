@@ -136,6 +136,9 @@ function _getUpdate() {
       , insertStatement = "UPDATE " + source
       , cql = insertStatement;
 
+    if (_.has(this._grouped, "using")) {
+      cql += " " + _compileUsing(this, this._grouped.using);
+    }
     if (_.has(this._grouped, "set")) {
       cql += " SET " + _compileSet(this, this._grouped.set);
     }
