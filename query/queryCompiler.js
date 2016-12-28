@@ -52,7 +52,7 @@ function _getInsert() {
     if (_.has(this._grouped, "using")) {
       cql += " " + _compileUsing(this, this._grouped.using);
     }
-    
+
     this.query({
       cql: cql + ";"
     });
@@ -91,9 +91,31 @@ function _getSelect() {
           }
         }
       })
-      , selectStatement = "SELECT " + columnStatements.join(",") + " "
-      , source = _getSource(this)
-      , cql = selectStatement + "FROM " + source;
+      , source = _getSource(this);
+
+    var cql = "SELECT " + columnStatements.join(",");
+
+    if (_.has(this._grouped, "aggregate")) {
+      _.each(this._grouped.aggregate, function (aggregate) {
+        // TODO add.. more.. aggregates
+        switch (aggregate.type) {
+          case "ttl":
+            var key, val;
+            if (_.isObject(aggregate.key)) {
+              key = Object.keys(aggregate.key)[0];
+              val = aggregate.key[key];
+            }
+            else {
+              key = aggregate.key;
+            }
+            cql += (columnStatements.length ? ", " : "") +
+              "ttl(" + formatter.wrapQuotes(key) + ")" +
+              (val ? " AS " + formatter.wrapQuotes(val) : "");
+            break;
+        }
+      });
+    }
+    cql += " FROM " + source;
 
     if (_.has(this._grouped, "where")) {
       cql += " WHERE " + _compileWhere(this, this._grouped.where);
@@ -101,8 +123,11 @@ function _getSelect() {
     if (_.has(this._grouped, "orderBy")) {
       cql += " ORDER BY " + _compileOrder(this, this._grouped.orderBy);
     }
-    if (_.has(this._single, "limit")) {
+    if (_.has(this._single, "limit") && this._single.limit.type === "limit") {
       cql += " LIMIT " + formatter.parameterize(this._single.limit.limit, this);
+    }
+    if (_.has(this._single, "limit") && this._single.limit.type === "limitPerPartition") {
+      cql += " PER PARTITION LIMIT " + formatter.parameterize(this._single.limit.limit, this);
     }
     if (_.has(this._single, "allowFiltering") && this._single.allowFiltering.allow) {
       cql += " ALLOW FILTERING";
@@ -131,6 +156,9 @@ function _getUpdate() {
       , insertStatement = "UPDATE " + source
       , cql = insertStatement;
 
+    if (_.has(this._grouped, "using")) {
+      cql += " " + _compileUsing(this, this._grouped.using);
+    }
     if (_.has(this._grouped, "set")) {
       cql += " SET " + _compileSet(this, this._grouped.set);
     }
@@ -167,6 +195,12 @@ function _getDelete() {
 
     if (_.has(this._grouped, "where")) {
       cql += " WHERE " + _compileWhere(this, this._grouped.where);
+    }
+    if (_.has(this._grouped, "if")) {
+      cql += " IF " + _compileIf(this, this._grouped.if);
+    }
+    if (_.has(this._single, "ifExists")) {
+      cql += " IF EXISTS";
     }
 
     this.query({
@@ -252,7 +286,7 @@ function _compileIf(client, whereStatements) {
     });
 
     var joinClause = " AND ";
-    
+
     cql += (!relationsStart ? joinClause : "") + relations.join(joinClause);
     relationsStart = false;
   });
@@ -267,11 +301,25 @@ function _compileSet(client, setStatements) {
 
   _.each(setStatements, function (statement) {
     var key = formatter.wrapQuotes(statement.key);
-    if (!_.isArray(statement.val)) {
-      assignments.push(key + " = " + formatter.parameterize(statement.val, client));
-    }
-    else {
-      assignments.push(key + " = " + formatter.parameterizeArray(statement.val, client));
+    switch (statement.type) {
+      case "set":
+        if (!_.isArray(statement.val)) {
+          assignments.push(key + " = " + formatter.parameterize(statement.val, client));
+        }
+        else {
+          assignments.push(key + " = " + formatter.parameterizeArray(statement.val, client));
+        }
+        break;
+      case "add":
+        assignments.push(key + " = " + key + (statement.type === "add" ? " + " : " - ") + formatter.parameterize(statement.val, client));
+        break;
+      case "remove":
+        assignments.push(key + " = " + key + (statement.type === "add" ? " + " : " - ") + formatter.parameterizeArray(statement.val, client));
+        break;
+      case "increment":
+      case "decrement":
+        assignments.push(key + " = " + key + (statement.type === "increment" ? " + " : " - ") + formatter.parameterize(statement.val, client));
+        break;
     }
   });
   cql += assignments.join(",");

@@ -79,6 +79,7 @@ describe("yolo", function () {
           .int("id")
           .uuid("rando")
           .timestamp("timestamp")
+          .map("col", "text", "text")
           .text("data")
           .frozen("written", type)
           .primary("id", "timestamp", "rando")
@@ -94,21 +95,36 @@ describe("yolo", function () {
             id: 1,
             rando: uuid.v4(),
             timestamp: new Date(),
+            col: {"foo": "bar", "bar": "baz"},
             data: "",
             written: {keys: ["foo", "bar"], rando: uuid.v4(), dec: 42}
           };
         });
 
         async.eachSeries(items, function (item, done) {
-
-          setTimeout(function () {
-
-            item.timestamp = new Date();
-            var qb = cassanKnex(keyspace)
-              .insert(item)
-              .into(columnFamily)
-              .exec({prepare: true}, done);
-          }, 500);
+          var rowKeys = {id: item.id, rando: item.rando, timestamp: null};
+          async.series([
+            // test insert
+            function (next) {
+              item.timestamp = new Date();
+              rowKeys.timestamp = item.timestamp;
+              var qb = cassanKnex(keyspace)
+                .insert(item)
+                .into(columnFamily);
+              qb.exec({prepare: true}, next);
+            },
+            // test update
+            function (next) {
+              var qb = cassanKnex(keyspace)
+                .update(columnFamily)
+                .set({data: "new and improved"})
+                .remove("col", ["foo"])
+                .where("id", "=", rowKeys.id)
+                .where("rando", "=", rowKeys.rando)
+                .where("timestamp", "=", rowKeys.timestamp);
+              qb.exec({prepare: true}, next);
+            }
+          ], done);
         }, next);
       },
       // test batch method

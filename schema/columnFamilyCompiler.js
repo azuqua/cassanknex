@@ -64,6 +64,10 @@ module.exports = {
   createIndex: function () {
     return this._wrapMethod(component, "createIndex", _getCreateIndex(), arguments);
   },
+  createIndexCustom: function () {
+    return this._wrapMethod(component, "createIndex", _getCreateIndex(true), arguments);
+  },
+
   dropColumnFamily: function () {
     if (arguments.length === 1) {
       arguments[1] = null; // set stand in keyspace value
@@ -227,25 +231,35 @@ function _getAlterType() {
   };
 }
 
-function _getCreateIndex() {
+function _getCreateIndex(custom) {
 
-  return function (columnFamily, indexName, onColumn) {
+  return function (columnFamily, indexName, onColumn, using) {
 
     var compiling = this.getCompiling("createIndex", {
-      columnFamily: columnFamily,
-      indexName: indexName,
-      onColumn: onColumn
-    });
+        columnFamily: columnFamily,
+        indexName: indexName,
+        onColumn: onColumn,
+        custom: custom || false,
+        using: using || null
+      })
+      , _defaultUsing = "org.apache.cassandra.index.sasi.SASIIndex";
 
     if (compiling.value.columnFamily)
       this._setColumnFamily(compiling.value.columnFamily);
 
-    var createStatement = "CREATE INDEX"
-      , cql = [createStatement, compiling.value.indexName, "ON"].join(" ") +
+    var createStatement = compiling.value.custom ? "CREATE CUSTOM INDEX" : "CREATE INDEX"
+      , cql = [createStatement, formatter.wrapQuotes(compiling.value.indexName), "ON"].join(" ") +
         " " + [formatter.wrapQuotes(this.keyspace()), formatter.wrapQuotes(this.columnFamily())].join(".") +
         " " + ["(", formatter.wrapQuotes(compiling.value.onColumn), ")"].join(" ");
 
+    if (compiling.value.custom)
+      cql += " USING " + formatter.wrapSingleQuotes(compiling.value.using ? compiling.value.using : _defaultUsing);
+
+    var _with = _compileWith(this);
+    if (_.size(_with))
+      cql += " " + _with;
     cql += ";";
+
     this.query({
       cql: cql
     });
@@ -408,7 +422,7 @@ function _compileWith(client) {
     var statements = [];
     _.each(client._grouped.with, function (withStatement) {
       if (withStatement.type !== "clustering") {
-        statements.push(withStatement.type + " = " + formatter.toMapString(withStatement.value));
+        statements.push((withStatement.type || "").toUpperCase() + " = " + formatter.toMapString(withStatement.value));
       }
       else {
         statements.push([

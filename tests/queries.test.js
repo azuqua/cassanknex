@@ -48,7 +48,7 @@ describe("QueryMethods", function () {
     var _cql = qb.cql();
     assert(_cql === cql, "Expected compilation: '" + cql + "' but compiled: " + _cql);
   });
-  
+
   // SELECT
 
   it("should compile a simple 'select' query string", function () {
@@ -97,6 +97,28 @@ describe("QueryMethods", function () {
       , qb = cassanKnex("cassanKnexy");
     qb.select("id")
       .allowFiltering()
+      .from("columnFamily");
+
+    var _cql = qb.cql();
+    assert(_cql === cql, "Expected compilation: '" + cql + "' but compiled: " + _cql);
+  });
+  it("should compile a 'limit' simple 'select' query string", function () {
+
+    var cql = 'SELECT "id" FROM "cassanKnexy"."columnFamily" LIMIT ?;'
+      , qb = cassanKnex("cassanKnexy");
+    qb.select("id")
+      .limit(10)
+      .from("columnFamily");
+
+    var _cql = qb.cql();
+    assert(_cql === cql, "Expected compilation: '" + cql + "' but compiled: " + _cql);
+  });
+  it("should compile a 'limit per partition' simple 'select' query string", function () {
+
+    var cql = 'SELECT "id" FROM "cassanKnexy"."columnFamily" PER PARTITION LIMIT ?;'
+      , qb = cassanKnex("cassanKnexy");
+    qb.select("id")
+      .limitPerPartition(10)
       .from("columnFamily");
 
     var _cql = qb.cql();
@@ -196,7 +218,7 @@ describe("QueryMethods", function () {
     var _cql = qb.cql();
     assert(_cql === cql, "Expected compilation: '" + cql + "' but compiled: " + _cql);
   });
-  it("should compile an update query string using an object param /w if exists", function () {
+  it("should compile an update query string using an object param w/ if exists", function () {
 
     var cql = 'UPDATE "cassanKnexy"."columnFamily" SET "bar" = ?,"foo" = ? WHERE "foo"[bar] = ? AND "id" in (?, ?, ?, ?, ?) IF EXISTS;'
       , qb = cassanKnex("cassanKnexy");
@@ -212,7 +234,7 @@ describe("QueryMethods", function () {
     var _cql = qb.cql();
     assert(_cql === cql, "Expected compilation: '" + cql + "' but compiled: " + _cql);
   });
-  it("should compile an update query string using an object param /w if conditions", function () {
+  it("should compile an update query string using an object param w/ if conditions", function () {
 
     var cql = 'UPDATE "cassanKnexy"."columnFamily" SET "bar" = ?,"foo" = ? IF "bar" = ? AND "foo" = ?;'
       , qb = cassanKnex("cassanKnexy");
@@ -223,6 +245,122 @@ describe("QueryMethods", function () {
       })
       .if("bar", "=", "baz")
       .if("foo", "=", "bar");
+
+    var _cql = qb.cql();
+    assert(_cql === cql, "Expected compilation: '" + cql + "' but compiled: " + _cql);
+  });
+  it("should compile an 'add to map' update query string", function () {
+
+    var cql = 'UPDATE "cassanKnexy"."columnFamily" SET "bar" = "bar" + ?;'
+      , qb = cassanKnex("cassanKnexy");
+    qb.update("columnFamily")
+      .add("bar", {"foo": "baz"});
+
+    var _cql = qb.cql();
+    assert(_cql === cql, "Expected compilation: '" + cql + "' but compiled: " + _cql);
+  });
+  it("should compile a 'remove from map' update query string", function () {
+
+    var cql = 'UPDATE "cassanKnexy"."columnFamily" SET "bar" = "bar" - ?;'
+      , qb = cassanKnex("cassanKnexy");
+    qb.update("columnFamily")
+      .remove("bar", ["foo"]);
+
+    var _cql = qb.cql();
+    assert(_cql === cql, "Expected compilation: '" + cql + "' but compiled: " + _cql);
+  });
+  it("should compile an 'add to set' update query string", function () {
+
+    var cql = 'UPDATE "cassanKnexy"."columnFamily" SET "bar" = "bar" + ?;'
+      , qb = cassanKnex("cassanKnexy");
+    qb.update("columnFamily")
+      .add("bar", ["foo"]);
+
+    var _cql = qb.cql();
+    assert(_cql === cql, "Expected compilation: '" + cql + "' but compiled: " + _cql);
+  });
+  it("should compile a 'remove from set' update query string", function () {
+
+    var cql = 'UPDATE "cassanKnexy"."columnFamily" SET "bar" = "bar" - ?;'
+      , qb = cassanKnex("cassanKnexy");
+    qb.update("columnFamily")
+      .remove("bar", ["baz"]);
+
+    var _cql = qb.cql();
+    assert(_cql === cql, "Expected compilation: '" + cql + "' but compiled: " + _cql);
+  });
+  it("should compile a 'add to set and remove from set and add to map and remove from map' update query string using object notation", function () {
+
+    var cql = 'UPDATE "cassanKnexy"."columnFamily" SET "bar" = "bar" + ?,"foo" = "foo" + ?,"bar" = "bar" - ?,"foo" = "foo" - ?;'
+      , qb = cassanKnex("cassanKnexy");
+    qb.update("columnFamily")
+      .add({
+        "bar": ["foo"],
+        "foo": {"baz": "bar"}
+      })
+      .remove({
+        "bar": ["baz"],
+        "foo": {"bar": "baz"}
+      });
+
+    var _cql = qb.cql();
+    assert(_cql === cql, "Expected compilation: '" + cql + "' but compiled: " + _cql);
+  });
+  it("should compile an increment counter query string that increments a counter column", function () {
+
+    var cql = 'UPDATE "cassanKnexy"."columnFamily" SET "bar" = "bar" + ?,"foo" = "foo" + ?;'
+      , qb = cassanKnex("cassanKnexy");
+    qb.update("columnFamily")
+      .increment("bar", 7)
+      .increment("foo", 9);
+
+    var _cql = qb.cql();
+    assert(_cql === cql, "Expected compilation: '" + cql + "' but compiled: " + _cql);
+  });
+  it("should compile an increment counter query string using an object param", function () {
+
+    var cql = 'UPDATE "cassanKnexy"."columnFamily" SET "bar" = "bar" + ?,"foo" = "foo" + ?;'
+      , qb = cassanKnex("cassanKnexy");
+    qb.update("columnFamily")
+      .increment({
+        "bar": 7,
+        "foo": 9
+      });
+
+    var _cql = qb.cql();
+    assert(_cql === cql, "Expected compilation: '" + cql + "' but compiled: " + _cql);
+  });
+  it("should compile a decrement counter query string that increments a counter column", function () {
+
+    var cql = 'UPDATE "cassanKnexy"."columnFamily" SET "bar" = "bar" - ?,"foo" = "foo" - ?;'
+      , qb = cassanKnex("cassanKnexy");
+    qb.update("columnFamily")
+      .decrement("bar", 7)
+      .decrement("foo", 9);
+
+    var _cql = qb.cql();
+    assert(_cql === cql, "Expected compilation: '" + cql + "' but compiled: " + _cql);
+  });
+  it("should compile a decrement counter query string using an object param", function () {
+
+    var cql = 'UPDATE "cassanKnexy"."columnFamily" SET "bar" = "bar" - ?,"foo" = "foo" - ?;'
+      , qb = cassanKnex("cassanKnexy");
+    qb.update("columnFamily")
+      .decrement({
+        "bar": 7,
+        "foo": 9
+      });
+
+    var _cql = qb.cql();
+    assert(_cql === cql, "Expected compilation: '" + cql + "' but compiled: " + _cql);
+  });
+  it("should compile a mixed increment/decrement counter query string that increments a counter column", function () {
+
+    var cql = 'UPDATE "cassanKnexy"."columnFamily" SET "bar" = "bar" + ?,"foo" = "foo" - ?;'
+      , qb = cassanKnex("cassanKnexy");
+    qb.update("columnFamily")
+      .increment("bar", 7)
+      .decrement("foo", 9);
 
     var _cql = qb.cql();
     assert(_cql === cql, "Expected compilation: '" + cql + "' but compiled: " + _cql);
@@ -274,6 +412,69 @@ describe("QueryMethods", function () {
       .from("columnFamily")
       .where("foo[bar]", "=", "baz")
       .where("id", "in", ["1", "1", "2", "3", "5"]);
+
+    var _cql = qb.cql();
+    assert(_cql === cql, "Expected compilation: '" + cql + "' but compiled: " + _cql);
+  });
+  it("should compile a delete query string w/ if exists", function () {
+
+    var cql = 'DELETE  FROM "cassanKnexy"."columnFamily" WHERE "foo"[bar] = ? IF EXISTS;'
+      , qb = cassanKnex("cassanKnexy");
+    qb.delete()
+      .from("columnFamily")
+      .where("foo[bar]", "=", "baz")
+      .ifExists();
+
+    var _cql = qb.cql();
+    assert(_cql === cql, "Expected compilation: '" + cql + "' but compiled: " + _cql);
+  });
+  it("should compile an delete query string w/ if conditions", function () {
+
+    var cql = 'DELETE  FROM "cassanKnexy"."columnFamily" WHERE "foo"[bar] = ? IF "bar" = ? AND "foo" = ?;'
+      , qb = cassanKnex("cassanKnexy");
+    qb.delete()
+      .from("columnFamily")
+      .where("foo[bar]", "=", "baz")
+      .if("bar", "=", "baz")
+      .if("foo", "=", "bar");
+
+    var _cql = qb.cql();
+    assert(_cql === cql, "Expected compilation: '" + cql + "' but compiled: " + _cql);
+  });
+
+  // AGGREGATES, coming soon...
+
+  it("should compile a simple 'ttl' query string", function () {
+
+    var cql = 'SELECT "foo", ttl("foo") FROM "cassanKnexy"."columnFamily";'
+      , qb = cassanKnex("cassanKnexy");
+    qb.select("foo")
+      .ttl("foo")
+      .from("columnFamily");
+
+    var _cql = qb.cql();
+    assert(_cql === cql, "Expected compilation: '" + cql + "' but compiled: " + _cql);
+  });
+
+  it("should compile a 'select as' 'ttl' query string", function () {
+
+    var cql = 'SELECT "foo", ttl("foo") AS "fooTTL" FROM "cassanKnexy"."columnFamily";'
+      , qb = cassanKnex("cassanKnexy");
+    qb.select("foo")
+      .ttl({foo: "fooTTL"})
+      .from("columnFamily");
+
+    var _cql = qb.cql();
+    assert(_cql === cql, "Expected compilation: '" + cql + "' but compiled: " + _cql);
+  });
+
+  it.skip("should compile a simple 'count' query string", function () {
+
+    var cql = 'SELECT COUNT(*) FROM "cassanKnexy"."columnFamily";'
+      , qb = cassanKnex("cassanKnexy");
+    qb.select()
+      .count()
+      .from("columnFamily");
 
     var _cql = qb.cql();
     assert(_cql === cql, "Expected compilation: '" + cql + "' but compiled: " + _cql);

@@ -33,6 +33,7 @@ module.exports = {
     "withCompression": {"name": "compression", "grouping": "with"},
     "withCompaction": {"name": "compaction", "grouping": "with"},
     "withClusteringOrderBy": {"name": "clustering", "grouping": "with"},
+    "withOptions": {"name": "options", "grouping": "with"},
 
     "alter": {"name": "alter", "grouping": "alter"},
     "drop": {"name": "drop", "grouping": "alter"},
@@ -56,6 +57,10 @@ module.exports = {
     "orderBy": {"name": "orderBy", "grouping": "orderBy"},
 
     "set": {"name": "set", "grouping": "set"},
+    "add": {"name": "add", "grouping": "set"},
+    "remove": {"name": "remove", "grouping": "set"},
+    "increment": {"name": "increment", "grouping": "set"},
+    "decrement": {"name": "decrement", "grouping": "set"},
 
     "if": {"name": "if", "grouping": "if"},
     "ifExists": {"name": "ifExists", "grouping": "ifExists"},
@@ -65,6 +70,10 @@ module.exports = {
     "usingTimestamp": {"name": "usingTimestamp", "grouping": "using"},
 
     "limit": {"name": "limit", "grouping": "limit"},
+    "limitPerPartition": {"name": "limitPerPartition", "grouping": "limit"},
+
+    "count": {"name": "count", "grouping": "aggregate"},
+    "ttl": {"name": "ttl", "grouping": "aggregate"},
 
     "allowFiltering": {"name": "allowFiltering", "grouping": "allow"}
   }
