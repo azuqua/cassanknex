@@ -264,7 +264,7 @@ describe("QueryMethods", function () {
     var cql = 'UPDATE "cassanKnexy"."columnFamily" SET "bar" = "bar" - ?;'
       , qb = cassanKnex("cassanKnexy");
     qb.update("columnFamily")
-      .remove("bar", {"foo": "baz"});
+      .remove("bar", ["foo"]);
 
     var _cql = qb.cql();
     assert(_cql === cql, "Expected compilation: '" + cql + "' but compiled: " + _cql);

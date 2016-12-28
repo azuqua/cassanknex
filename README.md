@@ -481,7 +481,7 @@ qb.insert(values)
       "foo": ["baz"] // "foo" is a set
     })
     .remove({
-      "bar": {"foo": "baz"}, // "bar" is a map
+      "bar": ["foo"], // "bar" is a map
       "foo": ["bar"] // "foo" is a set
     })
     .where("id", "=", 1);

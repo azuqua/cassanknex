@@ -311,8 +311,10 @@ function _compileSet(client, setStatements) {
         }
         break;
       case "add":
-      case "remove":
         assignments.push(key + " = " + key + (statement.type === "add" ? " + " : " - ") + formatter.parameterize(statement.val, client));
+        break;
+      case "remove":
+        assignments.push(key + " = " + key + (statement.type === "add" ? " + " : " - ") + formatter.parameterizeArray(statement.val, client));
         break;
       case "increment":
       case "decrement":
