@@ -110,7 +110,7 @@ function _getSelect() {
             }
             cql += (columnStatements.length ? ", " : "") +
               "ttl(" + formatter.wrapQuotes(key) + ")" +
-              (val ? " as " + formatter.wrapQuotes(val) : "");
+              (val ? " AS " + formatter.wrapQuotes(val) : "");
             break;
         }
       });

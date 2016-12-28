@@ -167,6 +167,7 @@ cassanKnex.on("ready", function (err) {
     console.log("Cassandra Connected");
 
   var qb("keyspace").select("id", "foo", "bar", "baz")
+    .ttl("foo")
     .where("id", "=", "1")
     .orWhere("id", "in", ["2", "3"])
     .orWhere("baz", "=", "bar")
@@ -176,7 +177,7 @@ cassanKnex.on("ready", function (err) {
     .exec(function(err, res) {
 
       // executes query :
-      //  'SELECT "id","foo","bar","baz" FROM "keyspace"."table"
+      //  'SELECT "id","foo","bar","baz",ttl("foo") FROM "keyspace"."table"
       //    WHERE "id" = ? OR "id" in (?, ?)
       //    OR "baz" = ? AND "foo" IN (?, ?)
       //    LIMIT 10;'
@@ -394,6 +395,7 @@ qb.insert(values)
     ```js
     var qb = cassanKnex("cassanKnexy");
     qb.select("id", "foo", "bar", "baz")
+      .ttl("foo")
       .where("id", "=", "1")
       .orWhere("id", "in", ["2", "3"])
       .orWhere("baz", "=", "bar")
@@ -401,22 +403,23 @@ qb.insert(values)
       .limitPerPartition(10)
       .from("columnFamily");
 
-    // => SELECT id,foo,bar,baz FROM cassanKnexy.columnFamily
-    //      WHERE id = ?
-    //      OR id in (?, ?)
-    //      OR baz = ?
-    //      AND foo IN (?, ?)
+    // => SELECT "id","foo","bar","baz",ttl("foo") FROM "cassanKnexy"."columnFamily"
+    //      WHERE "id" = ?
+    //      OR "id" in (?, ?)
+    //      OR "baz" = ?
+    //      AND "foo" IN (?, ?)
     //      PER PARTITION LIMIT ?;
     ```
   - 'select as' specified columns:
 
     ```js
     var qb = cassanKnex("cassanKnexy");
-    qb.select({"id": "foo"})
+    qb.select({id: "foo"})
+      .ttl({id: "fooTTL"})
       .limit(10)
       .from("columnFamily");
 
-    // => SELECT id AS foo FROM cassanKnexy.columnFamily LIMIT ?;
+    // => SELECT "id" AS "foo",ttl("id") AS "fooTTL" FROM "cassanKnexy"."columnFamily" LIMIT ?;
     ```
 - update - *compile an __update__ query string*
   - simple set column values:
@@ -585,6 +588,7 @@ qb.insert(values)
 - limit
 - limitPerPartition
 - orderBy
+- ttl
 
 ##### <a name="QueryModifiers-ColumnFamilies"></a>*For column family queries*:
 - alter

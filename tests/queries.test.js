@@ -458,7 +458,7 @@ describe("QueryMethods", function () {
 
   it("should compile a 'select as' 'ttl' query string", function () {
 
-    var cql = 'SELECT "foo", ttl("foo") as "fooTTL" FROM "cassanKnexy"."columnFamily";'
+    var cql = 'SELECT "foo", ttl("foo") AS "fooTTL" FROM "cassanKnexy"."columnFamily";'
       , qb = cassanKnex("cassanKnexy");
     qb.select("foo")
       .ttl({foo: "fooTTL"})
