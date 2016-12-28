@@ -444,6 +444,30 @@ describe("QueryMethods", function () {
 
   // AGGREGATES, coming soon...
 
+  it("should compile a simple 'ttl' query string", function () {
+
+    var cql = 'SELECT "foo", ttl("foo") FROM "cassanKnexy"."columnFamily";'
+      , qb = cassanKnex("cassanKnexy");
+    qb.select("foo")
+      .ttl("foo")
+      .from("columnFamily");
+
+    var _cql = qb.cql();
+    assert(_cql === cql, "Expected compilation: '" + cql + "' but compiled: " + _cql);
+  });
+
+  it("should compile a 'select as' 'ttl' query string", function () {
+
+    var cql = 'SELECT "foo", ttl("foo") as "fooTTL" FROM "cassanKnexy"."columnFamily";'
+      , qb = cassanKnex("cassanKnexy");
+    qb.select("foo")
+      .ttl({foo: "fooTTL"})
+      .from("columnFamily");
+
+    var _cql = qb.cql();
+    assert(_cql === cql, "Expected compilation: '" + cql + "' but compiled: " + _cql);
+  });
+
   it.skip("should compile a simple 'count' query string", function () {
 
     var cql = 'SELECT COUNT(*) FROM "cassanKnexy"."columnFamily";'

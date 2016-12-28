@@ -659,7 +659,7 @@ var driver = cassanKnex.getDriver();
 #### <a name="ChangeLog"></a>ChangeLog
 
 - 1.14.0
-  - Add QueryModifiers `withOptions`, `limitPerPartition`, `add` and `remove`, `increment` and `decrement`.
+  - Add QueryModifiers `withOptions`, `limitPerPartition`, `ttl`, `add` and `remove`, `increment` and `decrement`.
   - Add QueryCommand `createIndexCustom`.
   - Update DataStax Driver module from `3.1.5` to `3.1.6`.
 - 1.13.1

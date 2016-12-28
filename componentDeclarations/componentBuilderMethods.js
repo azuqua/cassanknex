@@ -73,6 +73,7 @@ module.exports = {
     "limitPerPartition": {"name": "limitPerPartition", "grouping": "limit"},
 
     "count": {"name": "count", "grouping": "aggregate"},
+    "ttl": {"name": "ttl", "grouping": "aggregate"},
 
     "allowFiltering": {"name": "allowFiltering", "grouping": "allow"}
   }

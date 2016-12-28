@@ -93,9 +93,29 @@ function _getSelect() {
       })
       , source = _getSource(this);
 
-    var cql = "SELECT " + columnStatements.join(",") + " ";
-    // TODO add aggregates
-    cql += "FROM " + source;
+    var cql = "SELECT " + columnStatements.join(",");
+
+    if (_.has(this._grouped, "aggregate")) {
+      _.each(this._grouped.aggregate, function (aggregate) {
+        // TODO add.. more.. aggregates
+        switch (aggregate.type) {
+          case "ttl":
+            var key, val;
+            if (_.isObject(aggregate.key)) {
+              key = Object.keys(aggregate.key)[0];
+              val = aggregate.key[key];
+            }
+            else {
+              key = aggregate.key;
+            }
+            cql += (columnStatements.length ? ", " : "") +
+              "ttl(" + formatter.wrapQuotes(key) + ")" +
+              (val ? " as " + formatter.wrapQuotes(val) : "");
+            break;
+        }
+      });
+    }
+    cql += " FROM " + source;
 
     if (_.has(this._grouped, "where")) {
       cql += " WHERE " + _compileWhere(this, this._grouped.where);
