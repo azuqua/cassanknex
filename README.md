@@ -5,7 +5,7 @@
 
 # CassanKnex
 
-A [fully tested][travis-url] Apache Cassandra CQL query builder with support for the DataStax NodeJS driver, written in the spirit of [Knex][knexjs-url] for [CQL 3.x][cassandra-cql-3_1-ref-url].
+A [fully tested][travis-url] Apache Cassandra CQL query builder with support for the [DataStax NodeJS driver][cassandra-driver-url], written in the spirit of [Knex][knexjs-url] for [CQL 3.x][cassandra-cql-3_1-ref-url].
 
 ## Installation
 
@@ -53,7 +53,7 @@ CassanKnex can be used to execute queries against a Cassandra cluster via [`cass
 Compiled CQL statements can be retrieved at any time via the `cql` method.
 
 ```js
-var cassanKnex = require("cassanknex")();
+var cassanKnex = require("cassanknex")(<DRIVER_OPTIONS|undefined>);
 var qb = cassanKnex(KEYSPACE).QUERY_COMMAND()
           .QUERY_MODIFIER_1()
           .
@@ -66,11 +66,21 @@ var cql = qb.cql(); // get the cql statement
 Where `KEYSPACE` is the name of the relevant keyspace and
 `QUERY_COMMAND` and `QUERY_MODIFIER` are among the list of available [Query Commands](#QueryCommands)  and [Query Modifiers](#QueryModifiers).
 
+`<DRIVER_OPTIONS>` may be provided to configure the client, and is an object w/ the following optional fields:
+
+- `connection`: `<InitializedDatastaxDriverInstance>` or `<DatastaxConnectionArguments>`
+  The client will use an initialized datastax driver instance if provied (either the [Cassandra driver][cassandra-driver-url] or [DSE driver][dse-driver-url] will work).
+  Alternatively, you can provide arguments that will be forwarded to the underlying Cassandra driver instance.
+- `debug`: `boolean`
+  Toggle debug logs (see [debugging](#Debugging)).
+
 ### <a name="ExecutingQueries"></a>As a query executor
 
 Execution of a given query is performed by invoking either the `exec`, `stream` or `eachRow` methods
 (which are straight pass throughs to the DataStax driver's `execute`, `stream` and `eachRow` [methods][cassandra-driver-docs-url], respectively);
 batch queries may be executed via the `batch` method (again, a pass through to the DataStax driver's own `batch` method).
+
+You may provide your own driver or use the included DataStax driver.
 
 ```js
 var cassanKnex = require("cassanknex")({
@@ -662,6 +672,8 @@ var driver = cassanKnex.getDriver();
 
 #### <a name="ChangeLog"></a>ChangeLog
 
+- 1.15.0
+  - Add bring-your-own-driver support.
 - 1.14.0
   - Add QueryModifiers `withOptions`, `limitPerPartition`, `ttl`, `add` and `remove`, `increment` and `decrement`.
   - Add QueryCommand `createIndexCustom`.
@@ -718,5 +730,6 @@ var driver = cassanKnex.getDriver();
 
 [cassandra-cql-3_1-ref-url]: http://docs.datastax.com/en/cql/3.1/cql/cql_reference/cqlReferenceTOC.html
 [cassandra-driver-url]: https://github.com/datastax/nodejs-driver
+[dse-driver-url]: https://github.com/datastax/nodejs-driver-dse
 [cassandra-driver-docs-url]: http://docs.datastax.com/en/drivers/nodejs/2.1/Client.html
 [knexjs-url]: http://knexjs.org/
