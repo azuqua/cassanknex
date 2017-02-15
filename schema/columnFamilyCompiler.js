@@ -394,10 +394,20 @@ function _compileColumns(client, deliminator, wrap) {
           break;
 
         case "PRIMARY_KEY":
-          var keyStatements = _.map(column.options, function (option) {
-            return (_.isArray(option) ? "(" + _.map(option, function (op) {
-              return formatter.wrapQuotes(op);
-            }).join(", ") + ")" : formatter.wrapQuotes(option));
+          var keyStatements = _.map(column.options, function (option, idx) {
+            if (_.isArray(option) && idx === 0) {
+              return "(" + _.map(option, function (op) {
+                  return formatter.wrapQuotes(op);
+                }).join(", ") + ")";
+            }
+            else if (_.isArray(option)) {
+              return _.map(option, function (op) {
+                return formatter.wrapQuotes(op);
+              }).join(", ");
+            }
+            else {
+              return formatter.wrapQuotes(option);
+            }
           });
           columns.push("PRIMARY KEY (" + keyStatements.join(", ") + ")");
           break;

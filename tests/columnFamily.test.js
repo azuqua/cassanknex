@@ -49,6 +49,20 @@ describe("ColumnFamilyMethods", function () {
     var _cql = qb.cql();
     assert(_cql === cql, "Expected compilation: '" + cql + "' but compiled: " + _cql);
   });
+  it("should compile a create column family statement w/ a composite partition key, where clustered columns are declared in an array.", function () {
+
+    var cql = 'CREATE COLUMNFAMILY "cassanKnexy"."columnFamily" ( "textType" TEXT, "uuidType" UUID, "intType" INT, "timestamp" TIMESTAMP, PRIMARY KEY (("textType", "uuidType"), "intType", "timestamp") ) ;'
+      , qb = cassanKnex("cassanKnexy")
+        .createColumnFamily("columnFamily")
+        .text("textType")
+        .uuid("uuidType")
+        .int("intType")
+        .timestamp("timestamp")
+        .primary(["textType", "uuidType"], ["intType", "timestamp"]);
+
+    var _cql = qb.cql();
+    assert(_cql === cql, "Expected compilation: '" + cql + "' but compiled: " + _cql);
+  });
   it("should compile a create column family statement w/ a composite partition key and clustering.", function () {
 
     var cql = 'CREATE COLUMNFAMILY "cassanKnexy"."columnFamily" ( "textType" TEXT, "uuidType" UUID, "timestamp" TIMESTAMP, PRIMARY KEY (("textType", "uuidType"), "timestamp") ) WITH CLUSTERING ORDER BY ( "timestamp" DESC ) ;'
