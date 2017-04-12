@@ -731,6 +731,7 @@ var driver = cassanKnex.getDriver();
 
 - 1.15.0
   - Add bring-your-own-driver support.
+  - Allow supplying clustered columns via array input in the `createColumnFamily` `primary` annotation, per issue [#35](https://github.com/azuqua/cassanknex/issues/35).
 - 1.14.0
   - Add QueryModifiers `withOptions`, `limitPerPartition`, `ttl`, `add` and `remove`, `increment` and `decrement`.
   - Add QueryCommand `createIndexCustom`.
