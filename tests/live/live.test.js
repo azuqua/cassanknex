@@ -12,7 +12,8 @@
 var assert = require("chai").assert
   , _ = require("lodash")
   , async = require("async")
-  , uuid = require("uuid");
+  , uuid = require("uuid")
+  , cassandraDriver = require("cassandra-driver");
 
 
 describe("yolo", function () {
@@ -26,17 +27,37 @@ describe("yolo", function () {
   before(function (done) {
 
     this.timeout(0);
-    cassanKnex = require("../../index")({
-      connection: {
-        contactPoints: ["127.0.0.1"]
+    async.series([
+      function (next) {
+        // test connection using included cassandra-driver
+        var smoke = require("../../index")({
+          connection: {
+            contactPoints: ["127.0.0.1"]
+          },
+          debug: false
+        });
+        smoke.on("ready", function (err) {
+          assert(!err, err);
+          next(err);
+        });
       },
-      debug: false
-    });
-
-    cassanKnex.on("ready", function (err) {
-      assert(!err, "Error connecting to cassandra", err);
-      done();
-    });
+      function (next) {
+        var cassandra = new cassandraDriver.Client({
+          contactPoints: ["127.0.0.1"]
+        });
+        cassandra.connect(function (err) {
+          assert(!err, "Error connecting to cassandra", err);
+          cassanKnex = require("../../index")({
+            connection: cassandra,
+            debug: false
+          });
+          cassanKnex.on("ready", function (_err) {
+            assert(!_err, _err);
+            next();
+          });
+        });
+      }
+    ], done);
   });
 
   it("should drop the keyspace (if exists) 'cassanKnexy' recreate it, " +

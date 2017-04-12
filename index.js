@@ -99,10 +99,26 @@ CassanKnex.initialize = function (config) {
   };
 
   if (config && config.connection) {
-    cassandra = new cassandraDriver.Client(config.connection);
-    cassandra.connect(function (err) {
-      cassanKnex.emit("ready", err);
-    });
+    if (config.connection.contactPoints) {
+      // initialize a new driver using included lib
+      cassandra = new cassandraDriver.Client(config.connection);
+      cassandra.connect(function (err) {
+        cassanKnex.emit("ready", err);
+      });
+    }
+    else if (config.connection.connected) {
+      // assume it's an initialized driver
+      cassandra = config.connection;
+      process.nextTick(function () {
+        cassanKnex.emit("ready");
+      });
+    }
+    else {
+      // oops
+      process.nextTick(function () {
+        cassanKnex.emit("ready", new Error("Client initialization requires either connection arguments or an initialized cassandra driver."));
+      });
+    }
   }
 
   return cassanKnex;
