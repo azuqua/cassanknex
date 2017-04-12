@@ -19,6 +19,7 @@ npm install cassanknex
 - [Usage](#Usage)
   - [Generating Queries](#GeneratingQueries)
   - [Executing Queries](#ExecutingQueries)
+  - [Bring Your Own Driver](#BYOD)
   - [Quick Start](#Quickstart)
   - [Debugging Queries](#Debugging)
   - [Query Executors (Examples)](#QueryExecutors)
@@ -153,6 +154,62 @@ cassanKnex.on("ready", function (err) {
   cassanKnex().batch([qb, qb], function(err, res) {
     // do something w/ your response
   });
+});
+```
+
+#### <a name="BYOD"></a>Bring your own Driver
+
+While the package includes the vanilla [Cassandra driver][cassandra-driver-url] (supported by Datastax),
+and will use that driver to connect to your cluster if you provide a connection configuration, you may optionally provide your own initialized driver to the `cassaknex` constructor.
+This allows for using either the [DSE driver][dse-driver-url] or a different version of the Cassandra driver, per your applications needs.
+
+e.g., w/ the built in `cassandra-driver`:
+
+```js
+var cassanKnex = require("cassanknex")({
+  connection: { // default is 'undefined'
+    contactPoints: ["10.0.0.2"]
+  },
+  exec: { // default is '{}'
+    prepare: false // default is 'true'
+  }
+});
+
+cassanKnex.on("ready", function (err) {...});
+```
+
+or, using a custom `dse-driver` connection:
+
+```js
+// create a new dse-driver connection
+var dse = require("dse-driver");
+var dseClient = new dse.Client({
+  contactPoints: ["10.0.0.2"],
+  queryOptions: {
+    prepare: true
+  },
+  socketOptions: {
+    readTimeout: 0
+  },
+  profiles: []
+});
+
+// initialize dse-driver connection
+dseClient.connect(function (err) {
+  if (err) {
+    console.log("Error initializing dse-driver", err);
+  }
+  else {
+    // provide connection to cassanknex constructor
+    var cassanKnex = require("cassanknex")({
+      connection: dseClient,
+      debug: false
+    });
+
+    cassanKnex.on("ready", function (err) {
+      // ...
+    });
+  }
 });
 ```
 
