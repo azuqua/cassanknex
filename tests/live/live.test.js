@@ -62,8 +62,9 @@ describe("yolo", function () {
 
   it("should drop the keyspace (if exists) 'cassanKnexy' recreate it, " +
     "build a sample table and execute several insertions into that table, " +
-    "and read records inserted using both the 'exec' and 'stream' and 'eachRow' methods" +
-    " - then delete all rows from the test table.", function (done) {
+    "read records inserted using both the 'exec' and 'stream' and 'eachRow' methods " +
+    "and run a few aggregation queries on the records set " +
+    "- then delete all rows from the test table.", function (done) {
 
     this.timeout(0);
 
@@ -267,6 +268,19 @@ describe("yolo", function () {
 
         // Invoke the eachRow method
         qb.eachRow({fetchSize: fetchSize}, rowCallback, errorCb);
+      },
+      // test aggregates
+      function (next) {
+
+        var qb = cassanKnex(keyspace)
+          .select()
+          .count({ "*": "theCount" })
+          .from(columnFamily)
+          .exec(function(err, resp) {
+            assert(!err, err);
+            assert.equal(rows, resp.first().theCount);
+            next(err);
+          });
       },
       // test the delete method
       function (next) {
