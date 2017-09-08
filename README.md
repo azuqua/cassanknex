@@ -656,6 +656,7 @@ qb.insert(values)
 - limitPerPartition
 - orderBy
 - ttl
+- count
 
 ##### <a name="QueryModifiers-ColumnFamilies"></a>*For column family queries*:
 - alter
@@ -729,6 +730,9 @@ var driver = cassanKnex.getDriver();
 
 #### <a name="ChangeLog"></a>ChangeLog
 
+- 1.16.0
+  - Add QueryModifier `count`, per issue [#30](https://github.com/azuqua/cassanknex/issues/30).
+  - Update DataStax Driver module from `3.1.6` to `3.2.2`.
 - 1.15.0
   - Add bring-your-own-driver support.
   - Allow supplying clustered columns via array input in the `createColumnFamily` `primary` annotation, per issue [#35](https://github.com/azuqua/cassanknex/issues/35).
