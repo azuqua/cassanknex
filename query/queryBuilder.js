@@ -79,12 +79,11 @@ function _getDest() {
 }
 
 function _getAggregate(type) {
-  return function (identifier, value) {
+  return function (value) {
 
     var statement = {
       grouping: "aggregate",
       type: type,
-      key: identifier,
       val: value
     };
     this._statements.push(statement);

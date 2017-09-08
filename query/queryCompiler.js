@@ -65,8 +65,9 @@ function _getSelect() {
   return function () {
 
     var columns = []
-      , argArray = _.toArray(arguments);
-    if (!argArray.length) {
+      , argArray = _.toArray(arguments)
+      , hasAggregates = _.has(this._grouped, "aggregate");
+    if (!argArray.length && !hasAggregates) {
       columns.push("*");
     }
     else if (_.isArray(argArray[0])) {
@@ -76,8 +77,12 @@ function _getSelect() {
       columns = argArray;
     }
 
-    var compiling = this.getCompiling("select", {columns: columns})
-      , columnStatements = _.map(compiling.value.columns, function (column) {
+    var compiling = this.getCompiling("select", {columns: columns});
+    if (hasAggregates && compiling.value.columns.length === 1 && compiling.value.columns[0] === "*") {
+      // retroactively remove "*"
+      compiling.value.columns.length = 0;
+    }
+    var columnStatements = _.map(compiling.value.columns, function (column) {
         if (_.isObject(column)) {
           var key = Object.keys(column)[0];
           return formatter.wrapQuotes(key) + " AS " + formatter.wrapQuotes(column[key]);
@@ -101,15 +106,28 @@ function _getSelect() {
         switch (aggregate.type) {
           case "ttl":
             var key, val;
-            if (_.isObject(aggregate.key)) {
-              key = Object.keys(aggregate.key)[0];
-              val = aggregate.key[key];
+            if (_.isObject(aggregate.val)) {
+              key = Object.keys(aggregate.val)[0];
+              val = aggregate.val[key];
             }
             else {
-              key = aggregate.key;
+              key = aggregate.val;
             }
             cql += (columnStatements.length ? ", " : "") +
               "ttl(" + formatter.wrapQuotes(key) + ")" +
+              (val ? " AS " + formatter.wrapQuotes(val) : "");
+            break;
+          case "count":
+            var key, val;
+            if (_.isObject(aggregate.val)) {
+              key = Object.keys(aggregate.val)[0];
+              val = aggregate.val[key];
+            }
+            else {
+              key = aggregate.val;
+            }
+            cql += (columnStatements.length ? ", " : "") +
+              "COUNT(" + (key === "*" ? "*" : formatter.wrapQuotes(key)) + ")" +
               (val ? " AS " + formatter.wrapQuotes(val) : "");
             break;
         }

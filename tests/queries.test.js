@@ -468,12 +468,24 @@ describe("QueryMethods", function () {
     assert(_cql === cql, "Expected compilation: '" + cql + "' but compiled: " + _cql);
   });
 
-  it.skip("should compile a simple 'count' query string", function () {
+  it("should compile a simple 'count' query string", function () {
 
     var cql = 'SELECT COUNT(*) FROM "cassanKnexy"."columnFamily";'
       , qb = cassanKnex("cassanKnexy");
     qb.select()
-      .count()
+      .count("*")
+      .from("columnFamily");
+
+    var _cql = qb.cql();
+    assert(_cql === cql, "Expected compilation: '" + cql + "' but compiled: " + _cql);
+  });
+
+  it("should compile a 'select count as' query string", function () {
+
+    var cql = 'SELECT COUNT(*) AS "theCount" FROM "cassanKnexy"."columnFamily";'
+      , qb = cassanKnex("cassanKnexy");
+    qb.select()
+      .count({"*": "theCount"})
       .from("columnFamily");
 
     var _cql = qb.cql();
