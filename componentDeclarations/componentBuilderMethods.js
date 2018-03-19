@@ -16,6 +16,7 @@ module.exports = {
     "boolean": {"name": "boolean", "grouping": "column", jsType: "boolean"},
     "blob": {"name": "blob", "grouping": "column", jsType: "buffer"},
     "timestamp": {"name": "timestamp", "grouping": "column", jsType: "date"},
+    "date": {"name": "date", "grouping": "column", jsType: "date"},
     "inet": {"name": "inet", "grouping": "column", jsType: "inetAddress"},
     "bigint": {"name": "bigint", "grouping": "column", jsType: "long"},
     "counter": {"name": "counter", "grouping": "column", jsType: "long"},
