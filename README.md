@@ -730,6 +730,8 @@ var driver = cassanKnex.getDriver();
 
 #### <a name="ChangeLog"></a>ChangeLog
 
+- 1.17.0
+  - Add `Date` type for column family compilation.
 - 1.16.0
   - Add QueryModifier `count`, per issue [#30](https://github.com/azuqua/cassanknex/issues/30).
   - Update DataStax Driver module from `3.1.6` to `3.2.2`.
