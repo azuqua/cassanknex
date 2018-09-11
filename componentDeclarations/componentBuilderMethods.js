@@ -54,6 +54,7 @@ module.exports = {
     //"whereRaw": {"name": "whereRaw", "grouping": "where"},
     "andWhere": {"name": "andWhere", "grouping": "where"},
     "orWhere": {"name": "orWhere", "grouping": "where"},
+    "tokenWhere": {"name": "tokenWhere", "grouping": "where"},
 
     "orderBy": {"name": "orderBy", "grouping": "orderBy"},
 

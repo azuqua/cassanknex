@@ -248,19 +248,39 @@ function _compileWhere(client, whereStatements) {
     relations.length = 0;
     _.each(groupedWhere[type], function (statement) {
       var key = statement.key;
-      // test for nested columns
-      if ((/\[.*\]$/).test(key)) {
-        key = formatter.wrapQuotes(key.replace(/\[.*/g, "")) + key.replace(/.+?(?=\[)/, "");
+      var value = statement.val;
+      var tokenizeKey = function (value) { return 'TOKEN("' + value + '")'; };
+      var tokenizeCompositeKey = function (values) { return 'TOKEN("' + values.join('", "') + '")'; };
+      var tokenizeParameters = function (values) { return 'TOKEN(' + values + ')'; };
+      if (type === "tokenWhere") {
+        if (Array.isArray(key)) {
+          key = tokenizeCompositeKey(key);
+          value = tokenizeParameters(formatter.parameterize(value, client));
+        } else {
+          key = tokenizeKey(key);
+          value = tokenizeParameters(formatter.parameterize(value, client));
+        }
       }
-      else {
+      else if ((/\[.*\]$/).test(key)) { // test for nested columns
+        var keyParts = [key.replace(/\[.*/g, ""), key.replace(/.+?(?=\[)/, "")];
+
+        if (type !== "tokenWhere") {
+            keyParts[0] = formatter.wrapQuotes(keyParts[0]);
+        }
+
+        key = keyParts.join('');
+        value = formatter.parameterize(value, client);
+      }
+      else if (type !== "tokenWhere") {
         key = formatter.wrapQuotes(key);
+        value = formatter.parameterize(value, client);
       }
       switch (statement.op.toLowerCase()) {
         case "in":
-          relations.push([key, statement.op, "(" + formatter.parameterize(statement.val, client) + ")"].join(" "));
+          relations.push([key, statement.op, "(" + value + ")"].join(" "));
           break;
         default:
-          relations.push([key, statement.op, formatter.parameterize(statement.val, client)].join(" "));
+          relations.push([key, statement.op, value].join(" "));
       }
     });
 
