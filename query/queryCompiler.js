@@ -117,6 +117,19 @@ function _getSelect() {
               "ttl(" + formatter.wrapQuotes(key) + ")" +
               (val ? " AS " + formatter.wrapQuotes(val) : "");
             break;
+          case "writetime":
+            var key, val;
+            if (_.isObject(aggregate.val)) {
+                key = Object.keys(aggregate.val)[0];
+                val = aggregate.val[key];
+            }
+            else {
+                key = aggregate.val;
+            }
+            cql += (columnStatements.length ? ", " : "") +
+                "writetime(" + formatter.wrapQuotes(key) + ")" +
+                (val ? " AS " + formatter.wrapQuotes(val) : "");
+            break;
           case "count":
             var key, val;
             if (_.isObject(aggregate.val)) {
