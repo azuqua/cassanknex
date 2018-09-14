@@ -104,6 +104,7 @@ function _getSelect() {
       _.each(this._grouped.aggregate, function (aggregate) {
         // TODO add.. more.. aggregates
         switch (aggregate.type) {
+          case "writetime":
           case "ttl":
             var key, val;
             if (_.isObject(aggregate.val)) {
@@ -114,21 +115,8 @@ function _getSelect() {
               key = aggregate.val;
             }
             cql += (columnStatements.length ? ", " : "") +
-              "ttl(" + formatter.wrapQuotes(key) + ")" +
+              aggregate.type + "(" + formatter.wrapQuotes(key) + ")" +
               (val ? " AS " + formatter.wrapQuotes(val) : "");
-            break;
-          case "writetime":
-            var key, val;
-            if (_.isObject(aggregate.val)) {
-                key = Object.keys(aggregate.val)[0];
-                val = aggregate.val[key];
-            }
-            else {
-                key = aggregate.val;
-            }
-            cql += (columnStatements.length ? ", " : "") +
-                "writetime(" + formatter.wrapQuotes(key) + ")" +
-                (val ? " AS " + formatter.wrapQuotes(val) : "");
             break;
           case "count":
             var key, val;
