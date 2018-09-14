@@ -248,32 +248,19 @@ function _compileWhere(client, whereStatements) {
     relations.length = 0;
     _.each(groupedWhere[type], function (statement) {
       var key = statement.key;
-      var value = statement.val;
-      var tokenizeKey = function (value) { return 'TOKEN("' + value + '")'; };
-      var tokenizeCompositeKey = function (values) { return 'TOKEN("' + values.join('", "') + '")'; };
-      var tokenizeParameters = function (values) { return 'TOKEN(' + values + ')'; };
-      if (type === "tokenWhere") {
-        if (Array.isArray(key)) {
-          key = tokenizeCompositeKey(key);
-          value = tokenizeParameters(formatter.parameterize(value, client));
-        } else {
-          key = tokenizeKey(key);
-          value = tokenizeParameters(formatter.parameterize(value, client));
-        }
+      var value = formatter.parameterize(statement.val, client);
+      if ((/\[.*\]$/).test(key)) { // test for nested columns
+        key = formatter.wrapQuotes(key.replace(/\[.*/g, "")) + key.replace(/.+?(?=\[)/, "");
       }
-      else if ((/\[.*\]$/).test(key)) { // test for nested columns
-        var keyParts = [key.replace(/\[.*/g, ""), key.replace(/.+?(?=\[)/, "")];
-
-        if (type !== "tokenWhere") {
-            keyParts[0] = formatter.wrapQuotes(keyParts[0]);
-        }
-
-        key = keyParts.join('');
-        value = formatter.parameterize(value, client);
+      else if (Array.isArray(key)) {
+        key = '"' + key.join('", "') + '"';
       }
-      else if (type !== "tokenWhere") {
+      else {
         key = formatter.wrapQuotes(key);
-        value = formatter.parameterize(value, client);
+      }
+      if (type === "tokenWhere") {
+        key = 'TOKEN(' + key + ')';
+        value = 'TOKEN(' + value + ')';
       }
       switch (statement.op.toLowerCase()) {
         case "in":
