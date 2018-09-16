@@ -15,7 +15,7 @@ describe("QueryMethods", function () {
 
   it("should compile an insert query string", function () {
 
-    var cql = 'INSERT INTO "cassanKnexy"."columnFamily" ("id","bar","baz") VALUES (?, ?, ?) USING TIMESTAMP ? AND USING TTL ?;'
+    var cql = 'INSERT INTO "cassanKnexy"."columnFamily" ("id","bar","baz") VALUES (?, ?, ?) USING TIMESTAMP ? AND TTL ?;'
       , qb = cassanKnex("cassanKnexy")
       , values = {
         "id": "foo"
@@ -32,7 +32,7 @@ describe("QueryMethods", function () {
   });
   it("should compile an insert query string, w/ if not exists", function () {
 
-    var cql = 'INSERT INTO "cassanKnexy"."columnFamily" ("id","bar","baz") VALUES (?, ?, ?) IF NOT EXISTS USING TIMESTAMP ? AND USING TTL ?;'
+    var cql = 'INSERT INTO "cassanKnexy"."columnFamily" ("id","bar","baz") VALUES (?, ?, ?) IF NOT EXISTS USING TIMESTAMP ? AND TTL ?;'
       , qb = cassanKnex("cassanKnexy")
       , values = {
         "id": "foo"

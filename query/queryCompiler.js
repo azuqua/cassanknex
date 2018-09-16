@@ -359,7 +359,7 @@ function _compileUsing(client, usingStatements) {
     , using = [];
 
   _.each(usingStatements, function (statement) {
-    var statementString = "USING ";
+    var statementString = using.length ? "" : "USING ";
     if (statement.type === "usingTTL")
       statementString += "TTL ";
     if (statement.type === "usingTimestamp")
