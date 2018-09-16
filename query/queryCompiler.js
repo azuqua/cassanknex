@@ -248,19 +248,26 @@ function _compileWhere(client, whereStatements) {
     relations.length = 0;
     _.each(groupedWhere[type], function (statement) {
       var key = statement.key;
-      // test for nested columns
-      if ((/\[.*\]$/).test(key)) {
+      var value = formatter.parameterize(statement.val, client);
+      if ((/\[.*\]$/).test(key)) { // test for nested columns
         key = formatter.wrapQuotes(key.replace(/\[.*/g, "")) + key.replace(/.+?(?=\[)/, "");
+      }
+      else if (Array.isArray(key)) {
+        key = '"' + key.join('", "') + '"';
       }
       else {
         key = formatter.wrapQuotes(key);
       }
+      if (type === "tokenWhere") {
+        key = 'TOKEN(' + key + ')';
+        value = 'TOKEN(' + value + ')';
+      }
       switch (statement.op.toLowerCase()) {
         case "in":
-          relations.push([key, statement.op, "(" + formatter.parameterize(statement.val, client) + ")"].join(" "));
+          relations.push([key, statement.op, "(" + value + ")"].join(" "));
           break;
         default:
-          relations.push([key, statement.op, formatter.parameterize(statement.val, client)].join(" "));
+          relations.push([key, statement.op, value].join(" "));
       }
     });
 

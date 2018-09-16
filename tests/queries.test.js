@@ -442,6 +442,30 @@ describe("QueryMethods", function () {
     assert(_cql === cql, "Expected compilation: '" + cql + "' but compiled: " + _cql);
   });
 
+  it("should compile a 'select' query string with token condition", function () {
+
+    var cql = 'SELECT "id" FROM "cassanKnexy"."columnFamily" WHERE TOKEN("id") > TOKEN(?);'
+      , qb = cassanKnex("cassanKnexy");
+    qb.select("id")
+      .from("columnFamily")
+      .tokenWhere("id", ">", 1);
+
+    var _cql = qb.cql();
+    assert(_cql === cql, "Expected compilation: '" + cql + "' but compiled: " + _cql);
+  });
+
+  it("should compile a 'select' query string with composite token condition", function () {
+
+    var cql = 'SELECT "id" FROM "cassanKnexy"."columnFamily" WHERE TOKEN("id", "name") > TOKEN(?, ?);'
+      , qb = cassanKnex("cassanKnexy");
+    qb.select("id")
+      .from("columnFamily")
+      .tokenWhere(["id", "name"], ">", [1, "John"]);
+
+    var _cql = qb.cql();
+    assert(_cql === cql, "Expected compilation: '" + cql + "' but compiled: " + _cql);
+  });
+
   // AGGREGATES, coming soon...
 
   it("should compile a simple 'ttl' query string", function () {
