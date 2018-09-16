@@ -104,6 +104,7 @@ function _getSelect() {
       _.each(this._grouped.aggregate, function (aggregate) {
         // TODO add.. more.. aggregates
         switch (aggregate.type) {
+          case "writetime":
           case "ttl":
             var key, val;
             if (_.isObject(aggregate.val)) {
@@ -114,7 +115,7 @@ function _getSelect() {
               key = aggregate.val;
             }
             cql += (columnStatements.length ? ", " : "") +
-              "ttl(" + formatter.wrapQuotes(key) + ")" +
+              aggregate.type + "(" + formatter.wrapQuotes(key) + ")" +
               (val ? " AS " + formatter.wrapQuotes(val) : "");
             break;
           case "count":
@@ -248,19 +249,26 @@ function _compileWhere(client, whereStatements) {
     relations.length = 0;
     _.each(groupedWhere[type], function (statement) {
       var key = statement.key;
-      // test for nested columns
-      if ((/\[.*\]$/).test(key)) {
+      var value = formatter.parameterize(statement.val, client);
+      if ((/\[.*\]$/).test(key)) { // test for nested columns
         key = formatter.wrapQuotes(key.replace(/\[.*/g, "")) + key.replace(/.+?(?=\[)/, "");
+      }
+      else if (Array.isArray(key)) {
+        key = '"' + key.join('", "') + '"';
       }
       else {
         key = formatter.wrapQuotes(key);
       }
+      if (type === "tokenWhere") {
+        key = 'TOKEN(' + key + ')';
+        value = 'TOKEN(' + value + ')';
+      }
       switch (statement.op.toLowerCase()) {
         case "in":
-          relations.push([key, statement.op, "(" + formatter.parameterize(statement.val, client) + ")"].join(" "));
+          relations.push([key, statement.op, "(" + value + ")"].join(" "));
           break;
         default:
-          relations.push([key, statement.op, formatter.parameterize(statement.val, client)].join(" "));
+          relations.push([key, statement.op, value].join(" "));
       }
     });
 
@@ -351,7 +359,7 @@ function _compileUsing(client, usingStatements) {
     , using = [];
 
   _.each(usingStatements, function (statement) {
-    var statementString = "USING ";
+    var statementString = using.length ? "" : "USING ";
     if (statement.type === "usingTTL")
       statementString += "TTL ";
     if (statement.type === "usingTimestamp")
@@ -370,7 +378,7 @@ function _compileOrder(client, orderByStatements) {
   var cql = ""
     , orderBy = [];
 
-  _.each(_.pluck(orderByStatements, "orderBy"), function (statement) {
+  _.each(_.map(orderByStatements, "orderBy"), function (statement) {
     orderBy.push(formatter.wrapQuotes(statement.column) + " " + statement.order);
   });
 

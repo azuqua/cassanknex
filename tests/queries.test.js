@@ -15,7 +15,7 @@ describe("QueryMethods", function () {
 
   it("should compile an insert query string", function () {
 
-    var cql = 'INSERT INTO "cassanKnexy"."columnFamily" ("id","bar","baz") VALUES (?, ?, ?) USING TIMESTAMP ? AND USING TTL ?;'
+    var cql = 'INSERT INTO "cassanKnexy"."columnFamily" ("id","bar","baz") VALUES (?, ?, ?) USING TIMESTAMP ? AND TTL ?;'
       , qb = cassanKnex("cassanKnexy")
       , values = {
         "id": "foo"
@@ -32,7 +32,7 @@ describe("QueryMethods", function () {
   });
   it("should compile an insert query string, w/ if not exists", function () {
 
-    var cql = 'INSERT INTO "cassanKnexy"."columnFamily" ("id","bar","baz") VALUES (?, ?, ?) IF NOT EXISTS USING TIMESTAMP ? AND USING TTL ?;'
+    var cql = 'INSERT INTO "cassanKnexy"."columnFamily" ("id","bar","baz") VALUES (?, ?, ?) IF NOT EXISTS USING TIMESTAMP ? AND TTL ?;'
       , qb = cassanKnex("cassanKnexy")
       , values = {
         "id": "foo"
@@ -442,6 +442,30 @@ describe("QueryMethods", function () {
     assert(_cql === cql, "Expected compilation: '" + cql + "' but compiled: " + _cql);
   });
 
+  it("should compile a 'select' query string with token condition", function () {
+
+    var cql = 'SELECT "id" FROM "cassanKnexy"."columnFamily" WHERE TOKEN("id") > TOKEN(?);'
+      , qb = cassanKnex("cassanKnexy");
+    qb.select("id")
+      .from("columnFamily")
+      .tokenWhere("id", ">", 1);
+
+    var _cql = qb.cql();
+    assert(_cql === cql, "Expected compilation: '" + cql + "' but compiled: " + _cql);
+  });
+
+  it("should compile a 'select' query string with composite token condition", function () {
+
+    var cql = 'SELECT "id" FROM "cassanKnexy"."columnFamily" WHERE TOKEN("id", "name") > TOKEN(?, ?);'
+      , qb = cassanKnex("cassanKnexy");
+    qb.select("id")
+      .from("columnFamily")
+      .tokenWhere(["id", "name"], ">", [1, "John"]);
+
+    var _cql = qb.cql();
+    assert(_cql === cql, "Expected compilation: '" + cql + "' but compiled: " + _cql);
+  });
+
   // AGGREGATES, coming soon...
 
   it("should compile a simple 'ttl' query string", function () {
@@ -463,6 +487,30 @@ describe("QueryMethods", function () {
     qb.select("foo")
       .ttl({foo: "fooTTL"})
       .from("columnFamily");
+
+    var _cql = qb.cql();
+    assert(_cql === cql, "Expected compilation: '" + cql + "' but compiled: " + _cql);
+  });
+
+  it("should compile a simple 'writetime' query string", function () {
+
+    var cql = 'SELECT "foo", writetime("foo") FROM "cassanKnexy"."columnFamily";'
+        , qb = cassanKnex("cassanKnexy");
+    qb.select("foo")
+        .writetime("foo")
+        .from("columnFamily");
+
+    var _cql = qb.cql();
+    assert(_cql === cql, "Expected compilation: '" + cql + "' but compiled: " + _cql);
+  });
+
+  it("should compile a 'select as' 'writetime' query string", function () {
+
+    var cql = 'SELECT "foo", writetime("foo") AS "fooWriteTime" FROM "cassanKnexy"."columnFamily";'
+        , qb = cassanKnex("cassanKnexy");
+    qb.select("foo")
+        .writetime({foo: "fooWriteTime"})
+        .from("columnFamily");
 
     var _cql = qb.cql();
     assert(_cql === cql, "Expected compilation: '" + cql + "' but compiled: " + _cql);
