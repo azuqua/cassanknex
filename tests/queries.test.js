@@ -492,6 +492,30 @@ describe("QueryMethods", function () {
     assert(_cql === cql, "Expected compilation: '" + cql + "' but compiled: " + _cql);
   });
 
+  it("should compile a simple 'writetime' query string", function () {
+
+    var cql = 'SELECT "foo", writetime("foo") FROM "cassanKnexy"."columnFamily";'
+        , qb = cassanKnex("cassanKnexy");
+    qb.select("foo")
+        .writetime("foo")
+        .from("columnFamily");
+
+    var _cql = qb.cql();
+    assert(_cql === cql, "Expected compilation: '" + cql + "' but compiled: " + _cql);
+  });
+
+  it("should compile a 'select as' 'writetime' query string", function () {
+
+    var cql = 'SELECT "foo", writetime("foo") AS "fooWriteTime" FROM "cassanKnexy"."columnFamily";'
+        , qb = cassanKnex("cassanKnexy");
+    qb.select("foo")
+        .writetime({foo: "fooWriteTime"})
+        .from("columnFamily");
+
+    var _cql = qb.cql();
+    assert(_cql === cql, "Expected compilation: '" + cql + "' but compiled: " + _cql);
+  });
+
   it("should compile a simple 'count' query string", function () {
 
     var cql = 'SELECT COUNT(*) FROM "cassanKnexy"."columnFamily";'
