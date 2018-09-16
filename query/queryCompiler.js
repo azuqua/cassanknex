@@ -370,7 +370,7 @@ function _compileOrder(client, orderByStatements) {
   var cql = ""
     , orderBy = [];
 
-  _.each(_.pluck(orderByStatements, "orderBy"), function (statement) {
+  _.each(_.map(orderByStatements, "orderBy"), function (statement) {
     orderBy.push(formatter.wrapQuotes(statement.column) + " " + statement.order);
   });
 
