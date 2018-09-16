@@ -642,6 +642,7 @@ qb.insert(values)
 - where
 - andWhere
 - orWhere
+- tokenWhere
 - set
 - add
 - remove
@@ -657,6 +658,7 @@ qb.insert(values)
 - orderBy
 - ttl
 - count
+- writetime
 
 ##### <a name="QueryModifiers-ColumnFamilies"></a>*For column family queries*:
 - alter
@@ -730,6 +732,11 @@ var driver = cassanKnex.getDriver();
 
 #### <a name="ChangeLog"></a>ChangeLog
 
+- 1.18.0 (Special thanks to @dekelev for these contributions)
+  - Update project library dependencies per [#42](https://github.com/azuqua/cassanknex/pull/42).
+  - Fix issue when using both the `usingTimestamp` & `usingTTL` query modifiers per [#43](https://github.com/azuqua/cassanknex/pull/43).
+  - Add `writetime` query modifier per [#44](https://github.com/azuqua/cassanknex/pull/44/files).
+  - Add `tokenWhere` query modifier per [#45](https://github.com/azuqua/cassanknex/pull/45/files).
 - 1.17.0
   - Add `Date` type for column family compilation.
 - 1.16.0
