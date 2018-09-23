@@ -454,6 +454,30 @@ describe("QueryMethods", function () {
     assert(_cql === cql, "Expected compilation: '" + cql + "' but compiled: " + _cql);
   });
 
+  it("should compile a 'select' query string with minTimeuuid condition", function () {
+
+    var cql = 'SELECT "id" FROM "cassanKnexy"."columnFamily" WHERE "id" > minTimeuuid(?);'
+      , qb = cassanKnex("cassanKnexy");
+    qb.select("id")
+      .from("columnFamily")
+      .minTimeuuidWhere("id", ">", 1);
+
+    var _cql = qb.cql();
+    assert(_cql === cql, "Expected compilation: '" + cql + "' but compiled: " + _cql);
+  });
+
+  it("should compile a 'select' query string with maxTimeuuid condition", function () {
+
+    var cql = 'SELECT "id" FROM "cassanKnexy"."columnFamily" WHERE "id" > maxTimeuuid(?);'
+      , qb = cassanKnex("cassanKnexy");
+    qb.select("id")
+      .from("columnFamily")
+      .maxTimeuuidWhere("id", ">", 1);
+
+    var _cql = qb.cql();
+    assert(_cql === cql, "Expected compilation: '" + cql + "' but compiled: " + _cql);
+  });
+
   it("should compile a 'select' query string with composite token condition", function () {
 
     var cql = 'SELECT "id" FROM "cassanKnexy"."columnFamily" WHERE TOKEN("id", "name") > TOKEN(?, ?);'
@@ -511,6 +535,126 @@ describe("QueryMethods", function () {
     qb.select("foo")
         .writetime({foo: "fooWriteTime"})
         .from("columnFamily");
+
+    var _cql = qb.cql();
+    assert(_cql === cql, "Expected compilation: '" + cql + "' but compiled: " + _cql);
+  });
+
+  it("should compile a simple 'dateOf' query string", function () {
+
+    var cql = 'SELECT "foo", dateOf("foo") FROM "cassanKnexy"."columnFamily";'
+      , qb = cassanKnex("cassanKnexy");
+    qb.select("foo")
+      .dateOf("foo")
+      .from("columnFamily");
+
+    var _cql = qb.cql();
+    assert(_cql === cql, "Expected compilation: '" + cql + "' but compiled: " + _cql);
+  });
+
+  it("should compile a 'select as' 'dateOf' query string", function () {
+
+    var cql = 'SELECT "foo", dateOf("foo") AS "fooDateOf" FROM "cassanKnexy"."columnFamily";'
+      , qb = cassanKnex("cassanKnexy");
+    qb.select("foo")
+      .dateOf({foo: "fooDateOf"})
+      .from("columnFamily");
+
+    var _cql = qb.cql();
+    assert(_cql === cql, "Expected compilation: '" + cql + "' but compiled: " + _cql);
+  });
+
+  it("should compile a simple 'unixTimestampOf' query string", function () {
+
+    var cql = 'SELECT "foo", unixTimestampOf("foo") FROM "cassanKnexy"."columnFamily";'
+      , qb = cassanKnex("cassanKnexy");
+    qb.select("foo")
+      .unixTimestampOf("foo")
+      .from("columnFamily");
+
+    var _cql = qb.cql();
+    assert(_cql === cql, "Expected compilation: '" + cql + "' but compiled: " + _cql);
+  });
+
+  it("should compile a 'select as' 'unixTimestampOf' query string", function () {
+
+    var cql = 'SELECT "foo", unixTimestampOf("foo") AS "fooUnixTimestampOf" FROM "cassanKnexy"."columnFamily";'
+      , qb = cassanKnex("cassanKnexy");
+    qb.select("foo")
+      .unixTimestampOf({foo: "fooUnixTimestampOf"})
+      .from("columnFamily");
+
+    var _cql = qb.cql();
+    assert(_cql === cql, "Expected compilation: '" + cql + "' but compiled: " + _cql);
+  });
+
+  it("should compile a simple 'toDate' query string", function () {
+
+    var cql = 'SELECT "foo", toDate("foo") FROM "cassanKnexy"."columnFamily";'
+      , qb = cassanKnex("cassanKnexy");
+    qb.select("foo")
+      .toDate("foo")
+      .from("columnFamily");
+
+    var _cql = qb.cql();
+    assert(_cql === cql, "Expected compilation: '" + cql + "' but compiled: " + _cql);
+  });
+
+  it("should compile a 'select as' 'toDate' query string", function () {
+
+    var cql = 'SELECT "foo", toDate("foo") AS "fooToDate" FROM "cassanKnexy"."columnFamily";'
+      , qb = cassanKnex("cassanKnexy");
+    qb.select("foo")
+      .toDate({foo: "fooToDate"})
+      .from("columnFamily");
+
+    var _cql = qb.cql();
+    assert(_cql === cql, "Expected compilation: '" + cql + "' but compiled: " + _cql);
+  });
+
+  it("should compile a simple 'toTimestamp' query string", function () {
+
+    var cql = 'SELECT "foo", toTimestamp("foo") FROM "cassanKnexy"."columnFamily";'
+      , qb = cassanKnex("cassanKnexy");
+    qb.select("foo")
+      .toTimestamp("foo")
+      .from("columnFamily");
+
+    var _cql = qb.cql();
+    assert(_cql === cql, "Expected compilation: '" + cql + "' but compiled: " + _cql);
+  });
+
+  it("should compile a 'select as' 'toTimestamp' query string", function () {
+
+    var cql = 'SELECT "foo", toTimestamp("foo") AS "fooToTimestamp" FROM "cassanKnexy"."columnFamily";'
+      , qb = cassanKnex("cassanKnexy");
+    qb.select("foo")
+      .toTimestamp({foo: "fooToTimestamp"})
+      .from("columnFamily");
+
+    var _cql = qb.cql();
+    assert(_cql === cql, "Expected compilation: '" + cql + "' but compiled: " + _cql);
+  });
+
+  it("should compile a simple 'toUnixTimestamp' query string", function () {
+
+    var cql = 'SELECT "foo", toUnixTimestamp("foo") FROM "cassanKnexy"."columnFamily";'
+      , qb = cassanKnex("cassanKnexy");
+    qb.select("foo")
+      .toUnixTimestamp("foo")
+      .from("columnFamily");
+
+    var _cql = qb.cql();
+    assert(_cql === cql, "Expected compilation: '" + cql + "' but compiled: " + _cql);
+  });
+
+  it("should compile a 'select as' 'toUnixTimestamp' query string", function () {
+
+    var cql = 'SELECT "foo", toUnixTimestamp("foo") AS "fooToUnixTimestamp" FROM "cassanKnexy"."columnFamily";'
+      , qb = cassanKnex("cassanKnexy");
+    qb.select("foo")
+      .toUnixTimestamp({foo: "fooToUnixTimestamp"})
+      .from("columnFamily");
 
     var _cql = qb.cql();
     assert(_cql === cql, "Expected compilation: '" + cql + "' but compiled: " + _cql);
