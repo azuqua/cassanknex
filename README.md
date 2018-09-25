@@ -643,6 +643,8 @@ qb.insert(values)
 - andWhere
 - orWhere
 - tokenWhere
+- minTimeuuidWhere
+- maxTimeuuidWhere
 - set
 - add
 - remove
@@ -659,6 +661,11 @@ qb.insert(values)
 - ttl
 - count
 - writetime
+- dateOf
+- unixTimestampOf
+- toDate
+- toTimestamp
+- toUnixTimestamp
 
 ##### <a name="QueryModifiers-ColumnFamilies"></a>*For column family queries*:
 - alter
@@ -732,6 +739,8 @@ var driver = cassanKnex.getDriver();
 
 #### <a name="ChangeLog"></a>ChangeLog
 
+- 1.19.0 (@dekelev is killing it w/ new features :thumbsup:)
+  - Add where clause QueryModifiers `minTimeuuidWhere` and `maxTimeuuidWhere`, and aggregation QueryModifiers `dateOf`, `unixTimestampOf`, `toDate`, `toTimestamp`, `toUnixTimestamp` per [#48](https://github.com/azuqua/cassanknex/pull/48).
 - 1.18.0 (Special thanks to @dekelev for these contributions)
   - Update project library dependencies per [#42](https://github.com/azuqua/cassanknex/pull/42).
   - Fix issue when using both the `usingTimestamp` & `usingTTL` query modifiers per [#43](https://github.com/azuqua/cassanknex/pull/43).
