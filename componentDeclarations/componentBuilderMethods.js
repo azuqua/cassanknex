@@ -55,6 +55,8 @@ module.exports = {
     "andWhere": {"name": "andWhere", "grouping": "where"},
     "orWhere": {"name": "orWhere", "grouping": "where"},
     "tokenWhere": {"name": "tokenWhere", "grouping": "where"},
+    "minTimeuuidWhere": {"name": "minTimeuuidWhere", "grouping": "where"},
+    "maxTimeuuidWhere": {"name": "maxTimeuuidWhere", "grouping": "where"},
 
     "orderBy": {"name": "orderBy", "grouping": "orderBy"},
 
@@ -77,6 +79,11 @@ module.exports = {
     "count": {"name": "count", "grouping": "aggregate"},
     "ttl": {"name": "ttl", "grouping": "aggregate"},
     "writetime": {"name": "writetime", "grouping": "aggregate"},
+    "dateOf": {"name": "dateOf", "grouping": "aggregate"},
+    "unixTimestampOf": {"name": "unixTimestampOf", "grouping": "aggregate"},
+    "toDate": {"name": "toDate", "grouping": "aggregate"},
+    "toTimestamp": {"name": "toTimestamp", "grouping": "aggregate"},
+    "toUnixTimestamp": {"name": "toUnixTimestamp", "grouping": "aggregate"},
 
     "allowFiltering": {"name": "allowFiltering", "grouping": "allow"}
   }

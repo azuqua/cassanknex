@@ -104,6 +104,11 @@ function _getSelect() {
       _.each(this._grouped.aggregate, function (aggregate) {
         // TODO add.. more.. aggregates
         switch (aggregate.type) {
+          case "dateOf":
+          case "unixTimestampOf":
+          case "toDate":
+          case "toTimestamp":
+          case "toUnixTimestamp":
           case "writetime":
           case "ttl":
             var key, val;
@@ -262,6 +267,10 @@ function _compileWhere(client, whereStatements) {
       if (type === "tokenWhere") {
         key = 'TOKEN(' + key + ')';
         value = 'TOKEN(' + value + ')';
+      } else if (type === "minTimeuuidWhere") {
+        value = 'minTimeuuid(' + value + ')';
+      } else if (type === "maxTimeuuidWhere") {
+        value = 'maxTimeuuid(' + value + ')';
       }
       switch (statement.op.toLowerCase()) {
         case "in":
