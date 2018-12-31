@@ -693,6 +693,7 @@ qb.insert(values)
 - frozen
 - frozenSet
 - frozenMap
+- with
 - withCaching
 - withCompression
 - withCompaction
@@ -739,6 +740,8 @@ var driver = cassanKnex.getDriver();
 
 #### <a name="ChangeLog"></a>ChangeLog
 
+- 1.20.0
+  - Add QueryModifier `with` for column family statements.
 - 1.19.0 (@dekelev is killing it w/ new features :thumbsup:)
   - Add where clause QueryModifiers `minTimeuuidWhere` and `maxTimeuuidWhere`, and aggregation QueryModifiers `dateOf`, `unixTimestampOf`, `toDate`, `toTimestamp`, `toUnixTimestamp` per [#48](https://github.com/azuqua/cassanknex/pull/48).
 - 1.18.0 (Special thanks to @dekelev for these contributions)

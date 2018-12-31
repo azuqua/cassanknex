@@ -14,7 +14,7 @@ describe("ColumnFamilyMethods", function () {
 
   // CREATE COLUMN FAMILY
 
-  it("should compile a create column family statement", function () {
+  it("should compile a create column family statement w/ comments", function () {
 
     var cql = 'CREATE COLUMNFAMILY "cassanKnexy"."columnFamily" ( "textType" TEXT, PRIMARY KEY ("textType") ) ;'
       , qb = cassanKnex("cassanKnexy")
@@ -132,14 +132,17 @@ describe("ColumnFamilyMethods", function () {
     var _cql = qb.cql();
     assert(_cql === cql, "Expected compilation: '" + cql + "' but compiled: " + _cql);
   });
-  it("should compile a create statement w/ compression, compaction and caching options", function () {
+  it("should compile a create statement w/ 'with', compression, compaction and caching options", function () {
 
-    var cql = "CREATE COLUMNFAMILY \"cassanKnexy\".\"columnFamily\" WITH COMPRESSION = { 'sstable_compression ' : 'DeflateCompressor' , 'chunk_length_kb' : '64' } AND COMPACTION = { 'class' : 'SizeTieredCompactionStrategy' , 'cold_reads_to_omit' : '0.05' } AND CACHING = { 'rows_per_partition' : '25' };"
+    var cql = "CREATE COLUMNFAMILY \"cassanKnexy\".\"columnFamily\" WITH gc_grace_seconds = '0' AND default_time_to_live = '3600' AND COMPRESSION = { 'sstable_compression ' : 'DeflateCompressor' , 'chunk_length_kb' : '64' } AND COMPACTION = { 'class' : 'SizeTieredCompactionStrategy' , 'cold_reads_to_omit' : '0.05' } AND CACHING = { 'rows_per_partition' : '25' } AND comment = 'For Knex!';"
       , qb = cassanKnex("cassanKnexy");
     qb.createColumnFamily("columnFamily")
+      .with("gc_grace_seconds", 0)
+      .with("default_time_to_live", 3600)
       .withCompression({"sstable_compression ": "DeflateCompressor", "chunk_length_kb": 64})
       .withCompaction({"class": "SizeTieredCompactionStrategy", "cold_reads_to_omit": 0.05})
-      .withCaching({"rows_per_partition": 25});
+      .withCaching({"rows_per_partition": 25})
+      .with("comment", "For Knex!");
 
     var _cql = qb.cql();
     assert(_cql === cql, "Expected compilation: '" + cql + "' but compiled: " + _cql);
