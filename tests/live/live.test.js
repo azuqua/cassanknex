@@ -107,6 +107,8 @@ describe("yolo", function () {
           .primary("id", "timestamp", "rando")
           .withClusteringOrderBy("timestamp", "asc")
           .withClusteringOrderBy("rando", "asc")
+          .with("default_time_to_live", 3600)
+          .with("comment", "For Knex!")
           .exec(next);
       },
       // test simple insert

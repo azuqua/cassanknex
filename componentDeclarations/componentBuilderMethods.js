@@ -30,6 +30,7 @@ module.exports = {
     "uuid": {"name": "uuid", "grouping": "column", jsType: "string"},
     "varchar": {"name": "varchar", "grouping": "column", jsType: "string"},
 
+    "with": {"name": "with", "grouping": "with"},
     "withCaching": {"name": "caching", "grouping": "with"},
     "withCompression": {"name": "compression", "grouping": "with"},
     "withCompaction": {"name": "compaction", "grouping": "with"},

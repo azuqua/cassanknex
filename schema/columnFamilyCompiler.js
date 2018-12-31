@@ -431,7 +431,10 @@ function _compileWith(client) {
   if (_.has(client._grouped, "with")) {
     var statements = [];
     _.each(client._grouped.with, function (withStatement) {
-      if (withStatement.type !== "clustering") {
+      if (withStatement.type === "with") {
+        statements.push(withStatement.args[0] + " = " + formatter.wrapSingleQuotes(withStatement.args[1]));
+      }
+      else if (withStatement.type !== "clustering") {
         statements.push((withStatement.type || "").toUpperCase() + " = " + formatter.toMapString(withStatement.value));
       }
       else {
