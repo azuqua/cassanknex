@@ -415,13 +415,13 @@ qb.insert(values)
     .insert({foo: "is bar"})
     .usingTimestamp(250000)
     .usingTTL(50000)
-    .from("columnFamily");
+    .into("columnFamily");
 
   var qb2 = cassanKnex("cassanKnexy")
     .insert({bar: "is foo"})
     .usingTimestamp(250000)
     .usingTTL(50000)
-    .from("columnFamily");
+    .into("columnFamily");
 
   // w/o options
   cassanKnex().batch([qb1, qb2], function(err, res) {
