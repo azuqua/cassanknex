@@ -1,11 +1,11 @@
 
 [![NPM Version][npm-image]][npm-url]
 [![Inline docs][inch-image]][inch-url]
-[![Build Status][travis-image]][travis-url]
+[![Build Status][circleci-image]][circleci-url]
 
 # CassanKnex
 
-A [fully tested][travis-url] Apache Cassandra CQL query builder with support for the [DataStax NodeJS driver][cassandra-driver-url], written in the spirit of [Knex][knexjs-url] for [CQL 3.x][cassandra-cql-3_1-ref-url].
+A [fully tested][circleci-url] Apache Cassandra CQL query builder with support for the [DataStax NodeJS driver][cassandra-driver-url], written in the spirit of [Knex][knexjs-url] for [CQL 3.x][cassandra-cql-3_1-ref-url].
 
 ## Installation
 
@@ -808,8 +808,8 @@ var driver = cassanKnex.getDriver();
 [npm-url]: https://npmjs.org/package/cassanknex
 [inch-image]: http://inch-ci.org/github/azuqua/cassanknex.svg?branch=master&style=shields
 [inch-url]: http://inch-ci.org/github/azuqua/cassanknex
-[travis-image]: https://travis-ci.org/azuqua/cassanknex.svg?branch=master&style=flat
-[travis-url]: https://travis-ci.org/azuqua/cassanknex
+[circleci-image]: https://circleci.com/gh/azuqua/cassanknex/tree/master.svg?style=svg
+[circleci-url]: https://circleci.com/gh/azuqua/cassanknex
 
 [cassandra-cql-3_1-ref-url]: http://docs.datastax.com/en/cql/3.1/cql/cql_reference/cqlReferenceTOC.html
 [cassandra-driver-url]: https://github.com/datastax/nodejs-driver

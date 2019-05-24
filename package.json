@@ -15,7 +15,7 @@
     "test": "tests"
   },
   "scripts": {
-    "test": "grunt"
+    "test": "mocha tests/*.js"
   },
   "author": "austin brown <austin@azuqua.com> (http://www.azuqua.com/)",
   "license": "MIT",
@@ -31,6 +31,7 @@
     "grunt-contrib-jshint": "^1.1.0",
     "grunt-mocha-test": "^0.13.3",
     "mocha": "^5.2.0",
+    "mocha-junit-reporter": "^1.22.0",
     "uuid": "^3.3.2"
   },
   "keywords": [
