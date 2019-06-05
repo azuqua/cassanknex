@@ -20,17 +20,17 @@
   "author": "austin brown <austin@azuqua.com> (http://www.azuqua.com/)",
   "license": "MIT",
   "dependencies": {
-    "cassandra-driver": "^3.5.0",
+    "cassandra-driver": "^3.6.0",
     "inherits": "^2.0.3",
     "lodash": "^4.17.10"
   },
   "devDependencies": {
-    "async": "^2.6.1",
+    "async": "^3.0.1",
     "chai": "^4.1.2",
     "grunt": "^1.0.3",
-    "grunt-contrib-jshint": "^1.1.0",
+    "grunt-contrib-jshint": "^2.1.0",
     "grunt-mocha-test": "^0.13.3",
-    "mocha": "^5.2.0",
+    "mocha": "^6.1.4",
     "mocha-junit-reporter": "^1.22.0",
     "uuid": "^3.3.2"
   },
