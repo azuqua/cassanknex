@@ -35,9 +35,15 @@ jobs:
 
       - run:
           name: Run mocha unit tests with JUnit as reporter
-          command: yarn test --exit --reporter mocha-junit-reporter --reporter-options mochaFile=reports/junit/mocha-junit-results.xml
+          command: | 
+            npx nyc@latest \
+              --reporter=clover --reporter=cobertura --reporter=lcov --reporter=text \
+              --report-dir=reports/coverage \
+              mocha tests/*.js --exit \
+              --reporter mocha-junit-reporter \
+              --reporter-options mochaFile=reports/junit/mocha-junit-results.xml
           when: always
       - store_test_results:
-          path: reports/junit
+          path: reports/
       - store_artifacts:
-          path: ./reports/junit/mocha-junit-results.xml
+          path: ./reports/

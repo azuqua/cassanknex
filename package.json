@@ -15,7 +15,7 @@
     "test": "tests"
   },
   "scripts": {
-    "test": "mocha tests/*.js"
+    "test": "nyc mocha tests/*.js"
   },
   "author": "austin brown <austin@azuqua.com> (http://www.azuqua.com/)",
   "license": "MIT",
@@ -32,6 +32,7 @@
     "grunt-mocha-test": "^0.13.3",
     "mocha": "^6.1.4",
     "mocha-junit-reporter": "^1.22.0",
+    "nyc": "^14.1.1",
     "uuid": "^3.3.2"
   },
   "keywords": [
