@@ -740,6 +740,8 @@ var driver = cassanKnex.getDriver();
 
 #### <a name="ChangeLog"></a>ChangeLog
 
+- 1.20.1
+  - Update dependencies.
 - 1.20.0
   - Add QueryModifier `with` for column family statements.
 - 1.19.0 (@dekelev is killing it w/ new features :thumbsup:)
