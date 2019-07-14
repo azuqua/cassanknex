@@ -22,7 +22,7 @@
   "dependencies": {
     "cassandra-driver": "^3.6.0",
     "inherits": "^2.0.3",
-    "lodash": "^4.17.10"
+    "lodash": "^4.17.14"
   },
   "devDependencies": {
     "async": "^3.0.1",
