@@ -740,6 +740,8 @@ var driver = cassanKnex.getDriver();
 
 #### <a name="ChangeLog"></a>ChangeLog
 
+- 1.20.2
+  - Upgrade lodash per CVE-2019-10744
 - 1.20.1
   - Update dependencies.
 - 1.20.0
