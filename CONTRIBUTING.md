@@ -16,7 +16,7 @@ Follow the same coding format seen in the source code; the one hard requirement 
 
 ## Tests
 
-There is an exhaustive test suite under `/tests`; statement compilation tests may be run using `grunt` (executing `tests/*.js` files),
-and tests against a live Cassandra cluster may be run via `grunt test-live` (executing `tests/live/live.test.js`).
+There is an exhaustive test suite under `/tests`; statement compilation tests may be run using `yarn run test` (executing `tests/*.js` files),
+and tests against a live Cassandra cluster may be run via `yarn run test:live` (executing `tests/live/live.test.js`).
 
 PR's that provide additional functionality should also provide corresponding unit test cases.

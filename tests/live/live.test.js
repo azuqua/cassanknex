@@ -1,5 +1,5 @@
 /**
- * usage: grunt test-live
+ * usage: yarn run test:live
  *
  * This script will perform several executions against a given cassandra cluster.
  *
