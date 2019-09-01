@@ -10,7 +10,6 @@
   "extends": "eslint:recommended",
   "rules": {
     "no-empty": "off",
-    "no-unused-vars": "off",
-    "no-useless-escape": "off"
+    "no-unused-vars": "off"
   }
 }
