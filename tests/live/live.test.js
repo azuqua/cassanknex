@@ -202,9 +202,10 @@ describe("yolo", function () {
 
         var onReadable = function () {
             // Readable is emitted as soon a row is received and parsed
-            var row;
-            while (row = this.read()) {
+            var row = this.read();
+            while (row) {
               assert(_.has(row, "id"), "Response must contain the id.");
+              row = this.read()
             }
           }
           , onEnd = function () {
@@ -278,7 +279,7 @@ describe("yolo", function () {
           .select()
           .count({ "*": "theCount" })
           .from(columnFamily)
-          .exec(function(err, resp) {
+          .exec(function (err, resp) {
             assert(!err, err);
             assert.equal(rows, resp.first().theCount);
             next(err);

@@ -103,6 +103,7 @@ function _getSelect() {
     if (_.has(this._grouped, "aggregate")) {
       _.each(this._grouped.aggregate, function (aggregate) {
         // TODO add.. more.. aggregates
+        var key, val;
         switch (aggregate.type) {
           case "dateOf":
           case "unixTimestampOf":
@@ -111,7 +112,6 @@ function _getSelect() {
           case "toUnixTimestamp":
           case "writetime":
           case "ttl":
-            var key, val;
             if (_.isObject(aggregate.val)) {
               key = Object.keys(aggregate.val)[0];
               val = aggregate.val[key];
@@ -124,7 +124,6 @@ function _getSelect() {
               (val ? " AS " + formatter.wrapQuotes(val) : "");
             break;
           case "count":
-            var key, val;
             if (_.isObject(aggregate.val)) {
               key = Object.keys(aggregate.val)[0];
               val = aggregate.val[key];

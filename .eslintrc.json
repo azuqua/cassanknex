@@ -1,0 +1,32 @@
+{
+  "env": {
+    "node": true,
+    "mocha": true
+  },
+  "globals": {
+    "jake": "readable",
+    "task": "readable",
+    "namespace": "readable",
+    "desc": "readable",
+    "complete": "readable",
+    "file": "readable",
+    "directory": "readable",
+    "fail": "readable"
+  },
+  "parserOptions": {
+    "ecmaVersion": 2018,
+    "sourceType": "module"
+  },
+  "extends": "eslint:recommended",
+  "rules": {
+    "no-console": "off",
+    "no-empty": "off",
+    "no-unused-vars": "off",
+    "no-useless-escape": "off",
+    "space-before-function-paren": ["error", {
+      "anonymous": "always",
+      "named": "never",
+      "asyncArrow": "always"
+    }]
+  }
+}
