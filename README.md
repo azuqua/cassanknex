@@ -740,6 +740,8 @@ var driver = cassanKnex.getDriver();
 
 #### <a name="ChangeLog"></a>ChangeLog
 
+- 1.20.4
+  - Upgrades to dependency versions.
 - 1.20.3
   - Changes to test framework per [61](https://github.com/azuqua/cassanknex/pull/61).
   - Upgrades to all dependency versions.
