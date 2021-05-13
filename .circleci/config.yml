@@ -59,7 +59,7 @@ workflows:
       - test:
           matrix:
             parameters:
-              node_version: ["8", "10", "12", "14"]
+              node_version: ["10", "12", "14"]
       - publish:
           context: org-global
           requires:
