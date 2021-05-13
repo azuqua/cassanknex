@@ -60,6 +60,9 @@ workflows:
           matrix:
             parameters:
               node_version: ["10", "12", "14"]
+          filters:
+            tags:
+              only: /^v.*/
       - publish:
           context: org-global
           requires:
