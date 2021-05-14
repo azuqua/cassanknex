@@ -44,8 +44,7 @@ jobs:
     docker:
       - image: circleci/node:14
     steps:
-      - attach_workspace:
-          at: ~/repo
+      - checkout
       - run:
           name: Authenticate with registry
           command: echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" > ~/repo/.npmrc
