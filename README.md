@@ -740,6 +740,8 @@ var driver = cassanKnex.getDriver();
 
 #### <a name="ChangeLog"></a>ChangeLog
 
+- 1.20.5
+  - Upgrades to dependency versions.
 - 1.20.4
   - Upgrades to dependency versions.
 - 1.20.3
