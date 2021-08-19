@@ -37,6 +37,7 @@ npm install cassanknex
     - [Keyspaces](#QueryModifiers-Keyspaces)
   - [Utility Methods](#UtilityMethods)
 - [ChangeLog](#ChangeLog)
+- [Releasing to NPM](#ReleasingToNPM)
 
 ## <a name="WhyCassanknex"></a>Why (what's in a name)
 
@@ -814,6 +815,14 @@ var driver = cassanKnex.getDriver();
 - 1.1.0
   - Add QueryCommand `createIndex`.
   - Add QueryModifier `allowFiltering`.
+
+#### <a name="ReleasingToNPM"></a>Releasing To NPM
+
+All CICD logic is managed by CircleCI via the configuration in the `.circleci/` directory.
+
+This configuration will automatically package and publish a new version to NPM when an appropriate Github Release is created.
+
+So, to publish a new version, simply create a new Github Release whose name matches the current release version (i.e., `v1.20.5`).
 
 [npm-image]: https://img.shields.io/npm/v/cassanknex.svg?style=flat
 [npm-url]: https://npmjs.org/package/cassanknex
