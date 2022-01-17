@@ -702,6 +702,7 @@ qb.insert(values)
 - withOptions
 
 ##### <a name="QueryModifiers-Keyspaces"></a>*For keyspace queries*:
+- withSingleRegionStrategy
 - withNetworkTopologyStrategy
 - withSimpleStrategy
 - withDurableWrites

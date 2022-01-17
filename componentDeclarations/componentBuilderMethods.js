@@ -44,6 +44,7 @@ module.exports = {
   "keyspace": {
     "withNetworkTopologyStrategy": {"name": "NetworkTopologyStrategy", "grouping": "strategy"},
     "withSimpleStrategy": {"name": "SimpleStrategy", "grouping": "strategy"},
+    "withSingleRegionStrategy": {"name": "SingleRegionStrategy", "grouping": "strategy"},
     "withDurableWrites": {"name": "DURABLE_WRITES", "grouping": "and"}//,
     //"raw": {"name": "raw", "grouping": "raw"}
   },

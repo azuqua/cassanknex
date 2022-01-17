@@ -33,7 +33,7 @@ _.each(Object.keys(methods), function (method) {
 
 /**
  * Returns function used to build the `with replication` clause in a create keyspace statement
- *
+ * 
  * @param _class
  * @returns {Function}
  * @private
@@ -65,6 +65,9 @@ function _getStrategyGrouping(_class) {
           replication[k] = dataCenterParam[k];
         });
       });
+    }
+    else if (_class === methods.withSingleRegionStrategy.name) {
+      //AWS Keyspace, no replication factor required
     }
 
     this._statements.push({
