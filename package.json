@@ -24,7 +24,7 @@
   "author": "austin brown <austin@azuqua.com> (http://www.azuqua.com/)",
   "license": "MIT",
   "dependencies": {
-    "cassandra-driver": "^3.6.0",
+    "cassandra-driver": "^4.6.3",
     "inherits": "^2.0.4",
     "lodash": "^4.17.21"
   },
