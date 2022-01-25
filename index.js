@@ -158,7 +158,11 @@ function _attachExecMethod(qb) {
 
     if (cassandra !== null && cassandra.connected) {
       var cql = qb.cql();
-      cassandra.execute(cql, qb.bindings(), _options, _cb);
+      if(qb.awsKeyspace()) {
+        cassandra.execute(cql, qb.bindings(), _cb);
+      } else {
+        cassandra.execute(cql, qb.bindings(), _options, _cb);
+      }
     }
     else {
       _cb(new Error("Cassandra client is not initialized."));

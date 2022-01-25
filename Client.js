@@ -39,10 +39,11 @@ function Client(config) {
   var self = this;
 
   this._debug = config.debug ? config.debug : false;
+  this._awsKeyspace = config.awsKeyspace ? config.awsKeyspace : false;
   if (config.connection) {
     this._connectionSettings = config.connection;
   }
-
+  
   this._dialect = "cql";
   this._exec = _.has(config, "exec") ? config.exec : {};
   this._execPrepare = (_.has(this._exec, "prepare") ? this._exec.prepare : true);
@@ -137,6 +138,11 @@ Client.prototype.keyspace = function () {
 // get the current debug value
 Client.prototype.debug = function () {
   return this._debug;
+};
+
+// get the current debug value
+Client.prototype.awsKeyspace = function () {
+  return this._awsKeyspace;
 };
 
 // get the current executing value

@@ -66,15 +66,22 @@ function _getStrategyGrouping(_class) {
         });
       });
     }
-    else if (_class === methods.withSingleRegionStrategy.name) {
+    
+    if (_class === methods.withSingleRegionStrategy.name) {
       //AWS Keyspace, no replication factor required
+      this._statements.push({
+        grouping: "strategy",
+        type: methods[nameToCallMap[_class]].name
+      });
+    } else {
+      this._statements.push({
+        grouping: "strategy",
+        type: methods[nameToCallMap[_class]].name,
+        value: replication
+      });
     }
 
-    this._statements.push({
-      grouping: "strategy",
-      type: methods[nameToCallMap[_class]].name,
-      value: replication
-    });
+    
 
     return this;
   };
