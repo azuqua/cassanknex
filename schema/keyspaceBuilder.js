@@ -67,19 +67,14 @@ function _getStrategyGrouping(_class) {
       });
     }
     
-    if (_class === methods.withSingleRegionStrategy.name) {
-      //AWS Keyspace, no replication factor required
-      this._statements.push({
-        grouping: "strategy",
-        type: methods[nameToCallMap[_class]].name
-      });
-    } else {
-      this._statements.push({
-        grouping: "strategy",
-        type: methods[nameToCallMap[_class]].name,
-        value: replication
-      });
-    }
+    //if (_class === methods.withSingleRegionStrategy.name) {
+      //AWS Keyspace, Replication factor will already set to SingleRegionStrategy
+    //} 
+    this._statements.push({
+      grouping: "strategy",
+      type: methods[nameToCallMap[_class]].name,
+      value: replication
+    });
 
     
 
