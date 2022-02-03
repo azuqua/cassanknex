@@ -65,17 +65,15 @@ function _getStrategyGrouping(_class) {
           replication[k] = dataCenterParam[k];
         });
       });
-    }
-    
-    //if (_class === methods.withSingleRegionStrategy.name) {
-      //AWS Keyspace, Replication factor will already set to SingleRegionStrategy
-    //} 
+    }else if (_class === methods.withSingleRegionStrategy.name) {
+      //replication.replication_factor = replicationParams[0];
+    } 
+
     this._statements.push({
       grouping: "strategy",
       type: methods[nameToCallMap[_class]].name,
       value: replication
     });
-
     
 
     return this;
