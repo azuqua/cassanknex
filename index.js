@@ -124,6 +124,19 @@ CassanKnex.initialize = function (config) {
   return cassanKnex;
 };
 
+//Check if the cql is a DDL Statement
+//Return false if it is a DML Statement
+function _isDDL(cql) {
+  const command = cql.split(' ')[0];
+  if(command === "SELECT" ||
+    command === "INSERT" ||
+    command === "UPDATE" ||
+    command === "DELETE") {
+      return false;
+    }
+  return true;
+}
+
 /**
  * hooks the 'exec' cassandra client method to our query builder object
  * @param qb
@@ -158,7 +171,10 @@ function _attachExecMethod(qb) {
 
     if (cassandra !== null && cassandra.connected) {
       var cql = qb.cql();
-      if(qb.awsKeyspace()) {
+      //Aws Keyspaces does not support prepared statements for DDL but does for DML
+      //So if the cql is DDL we don't send { prepare: true } options
+      //https://docs.aws.amazon.com/keyspaces/latest/devguide/functional-differences.html#functional-differences.prepared-statements
+      if(qb.awsKeyspace() && _isDDL(cql)) {
         cassandra.execute(cql, qb.bindings(), _cb);
       } else {
         cassandra.execute(cql, qb.bindings(), _options, _cb);
