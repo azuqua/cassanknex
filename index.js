@@ -174,11 +174,13 @@ function _attachExecMethod(qb) {
       //Aws Keyspaces does not support prepared statements for DDL but does for DML
       //So if the cql is DDL we don't send { prepare: true } options
       //https://docs.aws.amazon.com/keyspaces/latest/devguide/functional-differences.html#functional-differences.prepared-statements
-      if(qb.awsKeyspace() && _isDDL(cql)) {
-        cassandra.execute(cql, qb.bindings(), _cb);
-      } else {
-        cassandra.execute(cql, qb.bindings(), _options, _cb);
+      //This is required to be set to false and not removed as it will use the default in queryOptions
+      if(qb.awsKeyspace() && _isDDL(cql) && _options.prepare) {
+        _options.prepare=false;
       }
+
+
+      cassandra.execute(cql, qb.bindings(), _options, _cb);
     }
     else {
       _cb(new Error("Cassandra client is not initialized."));
