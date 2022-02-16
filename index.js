@@ -179,7 +179,6 @@ function _attachExecMethod(qb) {
         _options.prepare=false;
       }
 
-
       cassandra.execute(cql, qb.bindings(), _options, _cb);
     }
     else {

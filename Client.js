@@ -43,7 +43,7 @@ function Client(config) {
   if (config.connection) {
     this._connectionSettings = config.connection;
   }
-  
+
   this._dialect = "cql";
   this._exec = _.has(config, "exec") ? config.exec : {};
   this._execPrepare = (_.has(this._exec, "prepare") ? this._exec.prepare : true);
