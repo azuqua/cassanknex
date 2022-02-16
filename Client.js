@@ -140,7 +140,7 @@ Client.prototype.debug = function () {
   return this._debug;
 };
 
-// get the current debug value
+// get the current aws keyspaces value
 Client.prototype.awsKeyspace = function () {
   return this._awsKeyspace;
 };
