@@ -99,6 +99,16 @@
     "@babel/helper-validator-identifier" "^7.14.9"
     to-fast-properties "^2.0.0"
 
+"@types/long@^4.0.0":
+  version "4.0.1"
+  resolved "https://registry.yarnpkg.com/@types/long/-/long-4.0.1.tgz#459c65fa1867dafe6a8f322c4c51695663cc55e9"
+  integrity sha512-5tXH6Bx/kNGd3MgffdmP4dy2Z+G4eaXw0SE81Tq3BNadtnMR5/ySMzX4SLEzHJzSmPNn4HIdpQsBvXMUykr58w==
+
+"@types/node@>=8":
+  version "17.0.18"
+  resolved "https://registry.yarnpkg.com/@types/node/-/node-17.0.18.tgz#3b4fed5cfb58010e3a2be4b6e74615e4847f1074"
+  integrity sha512-eKj4f/BsN/qcculZiRSujogjvp5O/k4lOW5m35NopjZM/QwLOR075a8pJW5hD+Rtdm2DaCVPENS6KtSQnUD6BA==
+
 acorn-jsx@^5.2.0:
   version "5.3.2"
   resolved "https://registry.yarnpkg.com/acorn-jsx/-/acorn-jsx-5.3.2.tgz#7ed5bb55908b3b2f1bc55c6af1653bada7f07937"
@@ -108,6 +118,11 @@ acorn@^7.1.1:
   version "7.4.1"
   resolved "https://registry.yarnpkg.com/acorn/-/acorn-7.4.1.tgz#feaed255973d2e77555b83dbc08851a6c63520fa"
   integrity sha512-nQyp0o1/mNdbTO1PO6kHkwSrmgZ0MT/jCCpNiwbUjGoRN4dlBhqJtoQuCnEOKzgTVwg0ZWiCoQy6SxMebQVh8A==
+
+adm-zip@^0.5.3:
+  version "0.5.9"
+  resolved "https://registry.yarnpkg.com/adm-zip/-/adm-zip-0.5.9.tgz#b33691028333821c0cf95c31374c5462f2905a83"
+  integrity sha512-s+3fXLkeeLjZ2kLjCBwQufpI5fuN+kIGBxu6530nVQZGVol0d7Y/M88/xw9HGGUcJjKf8LutN3VPRUBq6N7Ajg==
 
 ajv@^6.10.0, ajv@^6.10.2:
   version "6.12.6"
@@ -240,11 +255,14 @@ camelcase@^5.0.0:
   resolved "https://registry.yarnpkg.com/camelcase/-/camelcase-5.3.1.tgz#e3c9b31569e106811df242f715725a1f4c494320"
   integrity sha512-L28STB170nwWS63UjtlEOE3dldQApaJXZkOI1uMFfzf3rRuPegHaHesyee+YxQ+W6SvRDQV6UrdOdRiR153wJg==
 
-cassandra-driver@^3.6.0:
-  version "3.6.0"
-  resolved "https://registry.yarnpkg.com/cassandra-driver/-/cassandra-driver-3.6.0.tgz#a9fb78ca6fcc1f5bf3f3258efb6cc683a9c3f558"
-  integrity sha512-CkN3V+oPaF5RvakUjD3uUjEm8f6U8S0aT1+YqeQsVT3UDpPT2K8SOdNDEHA1KjamakHch6zkDgHph1xWyqBGGw==
+cassandra-driver@^4.6.3:
+  version "4.6.3"
+  resolved "https://registry.yarnpkg.com/cassandra-driver/-/cassandra-driver-4.6.3.tgz#134cd797ad11c8a51da153db3aa5917589e17088"
+  integrity sha512-npW670TXjTHrdb15LUFN01wssb9vvz6SuNYcppesoKcUXx3Q29nXVhRtnvsnkG0BaSnDGvCCR4udrzYLsbh+sg==
   dependencies:
+    "@types/long" "^4.0.0"
+    "@types/node" ">=8"
+    adm-zip "^0.5.3"
     long "^2.2.0"
 
 chai@^4.2.0:
