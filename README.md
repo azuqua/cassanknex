@@ -224,7 +224,8 @@ var cassanKnex = require("cassanknex")({
   },
   exec: { // default is '{}'
     prepare: false // default is 'true'
-  }
+  },
+  awsKeyspace: false // default is 'false'
 });
 
 cassanKnex.on("ready", function (err) {
@@ -742,6 +743,9 @@ var driver = cassanKnex.getDriver();
 
 #### <a name="ChangeLog"></a>ChangeLog
 
+- 1.21.0
+  - Added support for managed Aws Keyspaces when cassanknex is initualized with `awsKeyspace`
+  - Added Single Region Replication Strategy for Aws Keyspaces
 - 1.20.5
   - Upgrades to dependency versions.
 - 1.20.4
