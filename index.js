@@ -128,10 +128,9 @@ CassanKnex.initialize = function (config) {
 //Check if the cql is a DDL Statement
 //Return false if it is a DML Statement
 function _isDDL(qb) {
-  // _component for DDL is "query", other _component values (for DML) are "columnFamily" and "keyspace"
-  return (qb._component === components.query);
+  // _component for DML is "query", other _component values (for DDL) are "columnFamily" and "keyspace"
+  return (qb._component !== components.query);
 }
-
 /**
  * hooks the 'exec' cassandra client method to our query builder object
  * @param qb
