@@ -39,6 +39,7 @@ function Client(config) {
   var self = this;
 
   this._debug = config.debug ? config.debug : false;
+  this._awsKeyspace = config.awsKeyspace ? config.awsKeyspace : false;
   if (config.connection) {
     this._connectionSettings = config.connection;
   }
@@ -137,6 +138,11 @@ Client.prototype.keyspace = function () {
 // get the current debug value
 Client.prototype.debug = function () {
   return this._debug;
+};
+
+// get the current aws keyspaces value
+Client.prototype.awsKeyspace = function () {
+  return this._awsKeyspace;
 };
 
 // get the current executing value

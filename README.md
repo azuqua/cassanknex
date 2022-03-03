@@ -73,9 +73,11 @@ Where `KEYSPACE` is the name of the relevant keyspace and
 - `connection`: `<InitializedDatastaxDriverInstance>` or `<DatastaxConnectionArguments>`
   The client will use an initialized datastax driver instance if provied (either the [Cassandra driver][cassandra-driver-url] or [DSE driver][dse-driver-url] will work).
   Alternatively, you can provide arguments that will be forwarded to the underlying Cassandra driver instance.
+  Default is 'undefined'
 - `debug`: `boolean`
-  Toggle debug logs (see [debugging](#Debugging)).
-
+  Toggle debug logs (see [debugging](#Debugging)). Default is false
+- `awsKeyspace`: `boolean`
+  Toggle when using aws managed keyspaces. Will disable prepared statements on DDL statements. Default is false
 ### <a name="ExecutingQueries"></a>As a query executor
 
 Execution of a given query is performed by invoking either the `exec`, `stream` or `eachRow` methods
@@ -224,7 +226,8 @@ var cassanKnex = require("cassanknex")({
   },
   exec: { // default is '{}'
     prepare: false // default is 'true'
-  }
+  },
+  awsKeyspace: false // default is 'false'
 });
 
 cassanKnex.on("ready", function (err) {
@@ -702,6 +705,7 @@ qb.insert(values)
 - withOptions
 
 ##### <a name="QueryModifiers-Keyspaces"></a>*For keyspace queries*:
+- withSingleRegionStrategy
 - withNetworkTopologyStrategy
 - withSimpleStrategy
 - withDurableWrites
@@ -741,6 +745,9 @@ var driver = cassanKnex.getDriver();
 
 #### <a name="ChangeLog"></a>ChangeLog
 
+- 1.21.0
+  - Added support for managed Aws Keyspaces when cassanknex is initialized with `awsKeyspace`
+  - Added Single Region Replication Strategy for Aws Keyspaces
 - 1.20.5
   - Upgrades to dependency versions.
 - 1.20.4

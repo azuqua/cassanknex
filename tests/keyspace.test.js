@@ -42,6 +42,16 @@ describe("KeyspaceMethods", function () {
     var _cql = qb.cql();
     assert(_cql === cql, "Expected compilation: '" + cql + "' but compiled: " + _cql);
   });
+  it("should compile a create keyspace statement w/ replication single region strategy", function () {
+
+    var cql = "CREATE KEYSPACE \"cassanKnexy\" WITH REPLICATION = { 'class' : 'SingleRegionStrategy' };"
+      , qb = cassanKnex();
+    qb.createKeyspace("cassanKnexy")
+      .withSingleRegionStrategy();
+
+    var _cql = qb.cql();
+    assert(_cql === cql, "Expected compilation: '" + cql + "' but compiled: " + _cql);
+  });
   it("should compile a create keyspace statement w/ network topology strategy using single object param", function () {
 
     var cql = "CREATE KEYSPACE \"cassanKnexy\" WITH REPLICATION = { 'class' : 'NetworkTopologyStrategy' , 'dataCenter1' : '1' , 'dataCenter2' : '2' };"
@@ -76,6 +86,16 @@ describe("KeyspaceMethods", function () {
 
   // ALTER KEYSPACE
 
+  it("should compile an alter keyspace statement w/ single region strategy using no object params", function () {
+
+    var cql = "ALTER KEYSPACE \"cassanKnexy\" WITH REPLICATION = { 'class' : 'SingleRegionStrategy' };"
+      , qb = cassanKnex();
+    qb.alterKeyspace("cassanKnexy")
+      .withSingleRegionStrategy();
+
+    var _cql = qb.cql();
+    assert(_cql === cql, "Expected compilation: '" + cql + "' but compiled: " + _cql);
+  });
   it("should compile an alter keyspace statement w/ network topology strategy using single object param", function () {
 
     var cql = "ALTER KEYSPACE \"cassanKnexy\" WITH REPLICATION = { 'class' : 'NetworkTopologyStrategy' , 'dataCenter1' : '1' , 'dataCenter2' : '2' };"

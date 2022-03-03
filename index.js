@@ -8,6 +8,7 @@ var _ = require("lodash")
   , cassandraDriver = require("cassandra-driver")
 
   , _package = require("./package.json")
+  , components = require("./componentDeclarations/components")
   , Client = require("./Client");
 
 var cassandra = null
@@ -124,6 +125,12 @@ CassanKnex.initialize = function (config) {
   return cassanKnex;
 };
 
+//Check if the cql is a DDL Statement
+//Return false if it is a DML Statement
+function _isDDL(qb) {
+  // _component for DML is "query", other _component values (for DDL) are "columnFamily" and "keyspace"
+  return (qb._component !== components.query);
+}
 /**
  * hooks the 'exec' cassandra client method to our query builder object
  * @param qb
@@ -158,6 +165,14 @@ function _attachExecMethod(qb) {
 
     if (cassandra !== null && cassandra.connected) {
       var cql = qb.cql();
+      //Aws Keyspaces does not support prepared statements for DDL but does for DML
+      //So if the cql is DDL we don't send { prepare: true } options
+      //https://docs.aws.amazon.com/keyspaces/latest/devguide/functional-differences.html#functional-differences.prepared-statements
+      //This is required to be set to false and not removed as it will use the default in queryOptions
+      if(qb.awsKeyspace() && _isDDL(qb) && _options.prepare) {
+        _options.prepare=false;
+      }
+
       cassandra.execute(cql, qb.bindings(), _options, _cb);
     }
     else {
