@@ -58,7 +58,7 @@ workflows:
       - test:
           matrix:
             parameters:
-              node_version: ["10", "12", "14"]
+              node_version: ["12", "14", "16"]
           filters:
             tags:
               only: /^v.*/
