@@ -745,6 +745,8 @@ var driver = cassanKnex.getDriver();
 
 #### <a name="ChangeLog"></a>ChangeLog
 
+- 1.21.1
+  - Upgrades to dependency versions.
 - 1.21.0
   - Added support for managed Aws Keyspaces when cassanknex is initialized with `awsKeyspace`
   - Added Single Region Replication Strategy for Aws Keyspaces
