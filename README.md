@@ -745,6 +745,8 @@ var driver = cassanKnex.getDriver();
 
 #### <a name="ChangeLog"></a>ChangeLog
 
+- 2.0.0
+  - Major version upgrade of `cassandra-driver` dependency from v3 to v4
 - 1.21.1
   - Upgrades to dependency versions.
 - 1.21.0
