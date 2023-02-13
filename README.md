@@ -744,7 +744,8 @@ var driver = cassanKnex.getDriver();
 ```
 
 #### <a name="ChangeLog"></a>ChangeLog
-
+- 2.0.1
+  - Major version upgrade of `mocha` dev dependency from 6.2.0 to 9.2.2
 - 2.0.0
   - Major version upgrade of `cassandra-driver` dependency from v3 to v4
 - 1.21.1
