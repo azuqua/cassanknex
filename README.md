@@ -744,6 +744,8 @@ var driver = cassanKnex.getDriver();
 ```
 
 #### <a name="ChangeLog"></a>ChangeLog
+- 2.0.2
+  - Upgrades to dependency versions.
 - 2.0.1
   - Major version upgrade of `mocha` dev dependency from 6.2.0 to 9.2.2
 - 2.0.0

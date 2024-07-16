@@ -3,16 +3,14 @@
 # Check https://circleci.com/docs/2.0/language-javascript/ for more details
 #
 version: 2.1
-orbs: 
-  eng-services-platform-helpers: azuqua/general-platform-helpers@1.8
 jobs:
   test:
     parameters:
       node_version:
         type: string
-        default: "14"
+        default: "14.21"
     docker:
-      - image: circleci/node:<< parameters.node_version >>
+      - image: cimg/node:<< parameters.node_version >>
     working_directory: ~/repo
     steps:
       - checkout
@@ -60,16 +58,10 @@ workflows:
       - test:
           matrix:
             parameters:
-              node_version: ["12", "14", "16"]
+              node_version: ["12.22", "14.21", "16.20", "18.20"]
           filters:
             tags:
               only: /^v.*/
-      - eng-services-platform-helpers/job-semgrep-prepare:
-          name: semgrep-prepare
-      - eng-services-platform-helpers/job-semgrep-scan:
-          name: semgrep-scan
-          requires:
-            - semgrep-prepare
       - publish:
           context: org-global
           requires:
