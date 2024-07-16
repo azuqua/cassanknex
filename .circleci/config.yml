@@ -3,8 +3,6 @@
 # Check https://circleci.com/docs/2.0/language-javascript/ for more details
 #
 version: 2.1
-orbs: 
-  eng-services-platform-helpers: azuqua/general-platform-helpers@1.8
 jobs:
   test:
     parameters:
@@ -64,12 +62,6 @@ workflows:
           filters:
             tags:
               only: /^v.*/
-      - eng-services-platform-helpers/job-semgrep-prepare:
-          name: semgrep-prepare
-      - eng-services-platform-helpers/job-semgrep-scan:
-          name: semgrep-scan
-          requires:
-            - semgrep-prepare
       - publish:
           context: org-global
           requires:
